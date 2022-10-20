@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model;
+package fr.pldagile.model;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -12,12 +13,17 @@ import java.util.List;
  * @author nmngo
  */
 public class Map {
-    private List<Intersection> listIntersection;
+    private HashMap<Long, Intersection> listIntersection;
     private List<Segment> listSegment;
 
-    public Map(List<Intersection> listIntersection, List<Segment> listSegment) {
+    public Map(HashMap<Long, Intersection> listIntersection, List<Segment> listSegment) {
         this.listIntersection = listIntersection;
         this.listSegment = listSegment;
     }
+
+    public List<Segment> getListSegment() {
+        return listSegment;
+    }
+    
     
 }

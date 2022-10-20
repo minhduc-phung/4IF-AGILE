@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package view;
+package fr.pldagile.view;
 
-import controller.Service;
-import model.Map;
+import fr.pldagile.controller.Service;
+import fr.pldagile.model.Map;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;

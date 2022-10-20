@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model;
+package fr.pldagile.model;
 
 /**
  *
@@ -18,6 +18,11 @@ public class Intersection {
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    @Override
+    public String toString() {
+        return "Intersection{" + "id=" + id + ", latitude=" + latitude + ", longitude=" + longitude + '}';
     }
     
 }
