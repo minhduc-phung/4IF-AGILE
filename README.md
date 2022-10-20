@@ -31,6 +31,7 @@ To install and setup:
 
 #### __NetBeans__ IDE
 (Not sure if this is correct, it's GitHub CoPilot suggesting all of these.)
+
 3. In the project, go to `Tools > Libraries` and click on the `+` button.
 4. Select `Java` and select the `lib` folder of the JavaFX SDK.
 5. Click `OK`.
