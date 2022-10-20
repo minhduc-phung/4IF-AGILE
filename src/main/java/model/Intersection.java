@@ -19,5 +19,10 @@ public class Intersection {
         this.latitude = latitude;
         this.longitude = longitude;
     }
-    
+
+    @Override
+    public String toString() {
+        return "Intersection{" + "id=" + id + ", latitude=" + latitude + ", longitude=" + longitude + '}';
+    }
+
 }

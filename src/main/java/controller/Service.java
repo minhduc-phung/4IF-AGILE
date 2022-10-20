@@ -11,6 +11,7 @@ import model.Segment;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -28,38 +29,43 @@ public class Service {
 
     public Map loadMapFromXML(String XMLPath) throws ParserConfigurationException, IOException, SAXException {
         File XMLFile = new File(XMLPath);
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbf.newDocumentBuilder();
         Document doc = dBuilder.parse(XMLFile);
         doc.getDocumentElement().normalize();
-        
-        List<Intersection> listIntersection = new ArrayList<>();
+
+        HashMap<Long, Intersection> listIntersection = new HashMap<>();
         NodeList nodeList = doc.getElementsByTagName("intersection");
-        for (int itr = 0; itr < nodeList.getLength(); itr++) {  
-            Node node = nodeList.item(itr);  
+        for (int itr = 0; itr < nodeList.getLength(); itr++) {
+            Node node = nodeList.item(itr);
             NamedNodeMap nodeMap = node.getAttributes();
             Long idInter = Long.parseLong(nodeMap.getNamedItem("id").getNodeValue());
             Double latitude = Double.parseDouble(nodeMap.getNamedItem("latitude").getNodeValue());
             Double longitude = Double.parseDouble(nodeMap.getNamedItem("longitude").getNodeValue());
             Intersection intersection = new Intersection(idInter, latitude, longitude);
-            listIntersection.add(intersection); 
+            listIntersection.put(idInter, intersection);
         }
-        
+
         List<Segment> listSegment = new ArrayList<>();
         NodeList nodeListSeg = doc.getElementsByTagName("segment");
-        for (int itr = 0; itr < nodeListSeg.getLength(); itr++) {  
-            Node node = nodeListSeg.item(itr);  
+        for (int itr = 0; itr < nodeListSeg.getLength(); itr++) {
+            Node node = nodeListSeg.item(itr);
             NamedNodeMap nodeMap = node.getAttributes();
-            Long origin = Long.parseLong(nodeMap.getNamedItem("origin").getNodeValue());
-            Long destination = Long.parseLong(nodeMap.getNamedItem("destination").getNodeValue());
+            Long idOrigin = Long.parseLong(nodeMap.getNamedItem("origin").getNodeValue());
+            Intersection origin = listIntersection.get(idOrigin);
+
+            Long idDesti = Long.parseLong(nodeMap.getNamedItem("destination").getNodeValue());
+            Intersection destination = listIntersection.get(idDesti);
+
             Double length = Double.parseDouble(nodeMap.getNamedItem("length").getNodeValue());
             String name = nodeMap.getNamedItem("name").getNodeValue();
             Segment segment = new Segment(origin, destination, length, name);
-            listSegment.add(segment);  
+            listSegment.add(segment);
         }
-        
+
         Map map = new Map(listIntersection, listSegment);
-        System.out.println("Map creation successful");
+        System.out.println(map.getListSegment().get(0));
         return map;
     }
+
 }

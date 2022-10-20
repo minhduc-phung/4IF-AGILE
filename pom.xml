@@ -17,7 +17,8 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx</artifactId>
-            <version>19</version>
+            <version>20-ea+4</version>
+            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -35,5 +36,4 @@
             <version>19</version>
         </dependency>
     </dependencies>
-
 </project>

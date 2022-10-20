@@ -10,16 +10,22 @@ package model;
  * @author nmngo
  */
 public class Segment {
-    private Long origin;
-    private Long destination;
+    private Intersection origin;
+    private Intersection destination;
     private Double length;
     private String name;
 
-    public Segment(Long origin, Long destination, Double length, String name) {
+    public Segment(Intersection origin, Intersection destination, Double length, String name) {
         this.origin = origin;
         this.destination = destination;
         this.length = length;
         this.name = name;
     }
-    
+
+    @Override
+    public String toString() {
+        return "Segment{" + "origin=" + origin + ", destination=" + destination + ", length=" + length + ", name=" + name + '}';
+    }
+
+
 }
