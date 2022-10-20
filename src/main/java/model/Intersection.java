@@ -25,4 +25,15 @@ public class Intersection {
         return "Intersection{" + "id=" + id + ", latitude=" + latitude + ", longitude=" + longitude + '}';
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
 }

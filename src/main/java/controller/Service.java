@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -46,6 +47,17 @@ public class Service {
             listIntersection.put(idInter, intersection);
         }
 
+        Intersection warehouse = new Intersection(0L, 0.0, 0.0);
+        NodeList nodeListWarehouse = doc.getElementsByTagName("warehouse");
+        Node nodeWarehouse = nodeListWarehouse.item(0);
+        NamedNodeMap nodeMapWarehouse = nodeWarehouse.getAttributes();
+        Long idWarehouse = Long.parseLong(nodeMapWarehouse.getNamedItem("address").getNodeValue());
+        for (Intersection intersection : listIntersection.values()) {
+            if (Objects.equals(intersection.getId(), idWarehouse)) {
+                warehouse = intersection;
+            }
+        }
+
         List<Segment> listSegment = new ArrayList<>();
         NodeList nodeListSeg = doc.getElementsByTagName("segment");
         for (int itr = 0; itr < nodeListSeg.getLength(); itr++) {
@@ -63,8 +75,9 @@ public class Service {
             listSegment.add(segment);
         }
 
-        Map map = new Map(listIntersection, listSegment);
+        Map map = new Map(listIntersection, listSegment, warehouse);
         System.out.println(map.getListSegment().get(0));
+        System.out.println(warehouse);
         return map;
     }
 

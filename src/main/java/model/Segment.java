@@ -27,5 +27,19 @@ public class Segment {
         return "Segment{" + "origin=" + origin + ", destination=" + destination + ", length=" + length + ", name=" + name + '}';
     }
 
+    public Double getLength() {
+        return length;
+    }
 
+    public Intersection getOrigin() {
+        return origin;
+    }
+
+    public Intersection getDestination() {
+        return destination;
+    }
+
+    public String getName() {
+        return name;
+    }
 }
