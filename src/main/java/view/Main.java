@@ -40,8 +40,8 @@ public class Main {
     public static void testSaveDeliveryPoints() {
         Service service = new Service();
         Courier c = new Courier(Long.parseLong("3"), "Minh");
-        String xml = service.saveDeliveryPointToFile(c);
-        System.out.println(formatXml(xml));
+        //String xml = service.saveDeliveryPointToFile(c);
+        //System.out.println(formatXml(xml));
     }
     
     public static String formatXml(String xml) {
