@@ -9,7 +9,7 @@ This part is here to guide any installation of external libraries that are neede
 JavaFX is a library that is used to create graphical interfaces. It is used in this project to create the graphical interface of the application.
 To install and setup:
 1. Download the JavaFX SDK from [here](https://gluonhq.com/products/javafx/).
-2. Extract the archive and copy the folder to anywhere that you like (put it in the Java folder).
+2. Extract the archive and copy the folder to anywhere that you like (I recommend to put it in the same folder that you installed Java.).
 
 #### __IntelliJ IDEA__ IDE
 3. In the project, go to `File > Project Structure > Libraries` and click on the `+` button.
@@ -35,7 +35,7 @@ To install and setup:
 3. In the project, go to `Tools > Libraries` and click on the `+` button.
 4. Select `Java` and select the `lib` folder of the JavaFX SDK.
 5. Click `OK`.
-6. In the project, go to `Run > Set Project Configuration` and select the `Run` tab.
+6. In the project properties (right-click the , go to `Run > Set Project Configuration` and select the `Run` tab.
 7. Click on the `+` button and select `VM Options`.
 8. Enter the following line:
 ```
