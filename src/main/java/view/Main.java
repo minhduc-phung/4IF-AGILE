@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -43,7 +42,7 @@ public class Main {
                             XPathExpressionException {
         Service service = new Service();
         Courier c = new Courier(Long.parseLong("3"), "Minh");
-<<<<<<< HEAD
+        
         // respect this format
         SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd hh:mm:ss z yyyy");
         Date planDate = sdf.parse("Tue Oct 25 00:00:00 CEST 2022");
@@ -54,9 +53,5 @@ public class Main {
         c.addDeliveryPoint(dp);
         // call service
         service.saveDeliveryPointToFile(c);
-=======
-        //String xml = service.saveDeliveryPointToFile(c);
-        //System.out.println(formatXml(xml));
->>>>>>> ea8fcf2c74607a70c33bad5be376eb90335f8453
     }
 }

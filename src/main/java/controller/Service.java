@@ -5,7 +5,6 @@
  */
 package controller;
 
-//import com.thoughtworks.xstream.XStream;
 import model.Courier;
 import model.Intersection;
 import model.Map;
@@ -21,7 +20,6 @@ import java.util.Objects;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-<<<<<<< HEAD
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -37,9 +35,7 @@ import model.Courier;
 import model.DeliveryPoint;
 import org.w3c.dom.Document; 
 import org.w3c.dom.Element;
-=======
 import org.w3c.dom.Document;
->>>>>>> ea8fcf2c74607a70c33bad5be376eb90335f8453
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -102,7 +98,6 @@ public class Service {
         System.out.println(warehouse);
         return map;
     }
-<<<<<<< HEAD
     
     public void saveDeliveryPointToFile(Courier c) throws ParserConfigurationException, SAXException, 
                                         IOException, TransformerConfigurationException, TransformerException, XPathExpressionException {
@@ -139,14 +134,5 @@ public class Service {
         }
         // Export the XMLFile
         transformer.transform(source, result);
-=======
-/*
-    public String saveDeliveryPointToFile(Courier c) {
-        XStream xstream = new XStream();
-        String xml = xstream.toXML(c);
-        return xml;
->>>>>>> ea8fcf2c74607a70c33bad5be376eb90335f8453
     }
-*/
-
 }
