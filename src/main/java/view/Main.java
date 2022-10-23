@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -29,7 +30,8 @@ public class Main {
                                 TransformerConfigurationException, XPathExpressionException {
         //testLoadMap();
         //testSaveDeliveryPoints();
-        testSaveDeliveryPoints();
+        testRestoreDeliveryPoints();
+        
     }
     
     public static void testLoadMap() throws ParserConfigurationException, IOException, SAXException {
@@ -41,17 +43,29 @@ public class Main {
                             IOException, TransformerException, ParseException, TransformerConfigurationException, 
                             XPathExpressionException {
         Service service = new Service();
-        Courier c = new Courier(Long.parseLong("3"), "Minh");
-        
+        Courier c = service.getUser().getListCourier().get(Long.parseLong("4"));
+    
         // respect this format
         SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd hh:mm:ss z yyyy");
-        Date planDate = sdf.parse("Tue Oct 25 00:00:00 CEST 2022");
+        Date planDate = sdf.parse("Mon Oct 24 00:00:00 CEST 2022");
         DeliveryPoint dp = new DeliveryPoint(planDate, Long.parseLong("1850080438"),
                                             Double.parseDouble("45.754265"), Double.parseDouble("4.886816"));
         // persist deliveryPoint and courier
         dp.chooseCourier(c);
         c.addDeliveryPoint(dp);
         // call service
-        service.saveDeliveryPointToFile(c);
+        service.saveDeliveryPointToFile(c.getCurrentDeliveryPoints());
+    }
+    
+    public static void testRestoreDeliveryPoints() throws ParserConfigurationException, 
+                        IOException, XPathExpressionException, SAXException, ParseException {
+        Service service = new Service();
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd hh:mm:ss z yyyy");
+        Date planDate = sdf.parse("Sun Oct 23 00:00:00 CEST 2022");
+        List<DeliveryPoint> listDP = service.restoreDeliveryPointFromXML("maps/mediumMap.xml", 
+                                "saved_files/deliveryPoints.xml", planDate);
+        for (DeliveryPoint dp : listDP) {
+            System.out.println(dp);
+        }
     }
 }

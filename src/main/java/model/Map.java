@@ -15,7 +15,6 @@ import java.util.List;
 public class Map {
     private HashMap<Long, Intersection> listIntersection;
     private List<Segment> listSegment;
-
     private Intersection warehouse;
 
     public Map(HashMap<Long, Intersection> listIntersection, List<Segment> listSegment, Intersection warehouse) {

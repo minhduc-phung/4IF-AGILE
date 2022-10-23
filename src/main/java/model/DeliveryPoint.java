@@ -41,6 +41,11 @@ public class DeliveryPoint extends Intersection {
     public Date getPlanDate() {
         return planDate;
     }
+
+    @Override
+    public String toString() {
+        return "DeliveryPoint{" + "courier=" + courier + ", planDate=" + planDate + '}';
+    }
     
     
 }

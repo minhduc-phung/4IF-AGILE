@@ -33,6 +33,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import model.Courier;
 import model.DeliveryPoint;
+import model.User;
 import org.w3c.dom.Document; 
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
@@ -45,7 +46,12 @@ import org.xml.sax.SAXException;
  * @author nmngo
  */
 public class Service {
-
+    private User user = new User();
+    
+    public User getUser() {
+        return this.user;
+    }
+    
     public Map loadMapFromXML(String XMLPath) throws ParserConfigurationException, IOException, SAXException {
         File XMLFile = new File(XMLPath);
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -99,7 +105,7 @@ public class Service {
         return map;
     }
     
-    public void saveDeliveryPointToFile(Courier c) throws ParserConfigurationException, SAXException, 
+    public void saveDeliveryPointToFile(List<DeliveryPoint> listDP) throws ParserConfigurationException, SAXException, 
                                         IOException, TransformerConfigurationException, TransformerException, XPathExpressionException {
         File XMLFile = new File("saved_files/deliveryPoints.xml");
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
@@ -116,13 +122,11 @@ public class Service {
         Node nodePlanDates = doc.getElementsByTagName("planDates").item(0);
         XPath xPath = XPathFactory.newInstance().newXPath();
         
-        for (DeliveryPoint dp : c.getCurrentDeliveryPoints()) {
+        for (DeliveryPoint dp : listDP) {
             String expression = "/planDates/planDate[@date='" + dp.getPlanDate() + "']";
             XPathExpression xPathExpression = xPath.compile(expression);
             Element nodePlanDate = (Element) xPathExpression.evaluate(doc, XPathConstants.NODE);
-            Element nodeDeliveryPoint = doc.createElement("deliveryPoint");
-            nodeDeliveryPoint.setAttribute("id", dp.getId().toString());
-            nodeDeliveryPoint.setAttribute("courierId", dp.getCourier().getId().toString());
+            
             try {
                 nodePlanDates.appendChild(nodePlanDate);
             } catch (NullPointerException e) {
@@ -130,9 +134,46 @@ public class Service {
                 nodePlanDate.setAttribute("date", dp.getPlanDate().toString());
                 nodePlanDates.appendChild(nodePlanDate);
             }
-            nodePlanDate.appendChild(nodeDeliveryPoint);
+            
+            expression = "/planDates/planDate[@date='"+dp.getPlanDate()+"']/deliveryPoint[@id='"+dp.getId().toString()+"' and @courierId='"+dp.getCourier().getId().toString()+"']";
+            Element nodeDeliveryPoint = (Element) xPath.compile(expression).evaluate(doc, XPathConstants.NODE);
+            try {
+                nodePlanDate.appendChild(nodeDeliveryPoint);
+            } catch (NullPointerException e) {
+                nodeDeliveryPoint = doc.createElement("deliveryPoint");
+                nodeDeliveryPoint.setAttribute("id", dp.getId().toString());
+                nodeDeliveryPoint.setAttribute("courierId", dp.getCourier().getId().toString());
+                nodePlanDate.appendChild(nodeDeliveryPoint);
+            }
         }
         // Export the XMLFile
         transformer.transform(source, result);
+    }
+    
+    public List<DeliveryPoint> restoreDeliveryPointFromXML(String XMLPathMap, String XMLPathDeliveryPoint, Date planDate) 
+                                                    throws ParserConfigurationException, IOException, 
+                                                    SAXException, XPathExpressionException {
+        //precondition : Map is loaded and XMLfile of deliveryPoints exists
+        Map map = this.loadMapFromXML(XMLPathMap);
+        File XMLFileDP = new File(XMLPathDeliveryPoint);
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
+        DocumentBuilder dBuilder = dbf.newDocumentBuilder();
+        Document doc = dBuilder.parse(XMLFileDP);
+        doc.getDocumentElement().normalize();
+        
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        String expression = "planDates/planDate[@date='"+planDate.toString()+"']/deliveryPoint";
+        NodeList nodeListDP = (NodeList) xPath.compile(expression).evaluate(doc, XPathConstants.NODESET);
+        
+        List<DeliveryPoint> listDP = new ArrayList<>();
+        for (int i = 0 ; i < nodeListDP.getLength() ; i++) {
+            String idDP = nodeListDP.item(i).getAttributes().getNamedItem("id").getNodeValue();
+            String courierId = nodeListDP.item(i).getAttributes().getNamedItem("courierId").getNodeValue();
+            Intersection inter = map.getListIntersection().get(Long.parseLong(idDP));
+            DeliveryPoint dp = new DeliveryPoint(planDate, inter.getId(), inter.getLatitude(), inter.getLongitude());
+            dp.chooseCourier( this.user.getListCourier().get(Long.parseLong(courierId)) );
+            listDP.add(dp);
+        }
+        return listDP;
     }
 }
