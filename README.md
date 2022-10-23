@@ -47,6 +47,6 @@ To install and setup:
 ## Changelog
 Feel free to put anything in here so everyone can be up-to-date with the project!
 
-### 20/10/2022
-- Edited the code of the .XML file reading (Minh and Viet)
+### 23/10/2022
+- Finished the service of saving delivery points (Minh and Viet)
 - Added the GUI for showing the map read by the .XML file (Duc)

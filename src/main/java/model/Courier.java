@@ -15,12 +15,16 @@ import java.util.List;
 public class Courier {
     private Long id;
     private String name;
-    private List<DeliveryPoint> currentDeliveryPoints;
+    private List<DeliveryPoint> currentDeliveryPoints = new ArrayList<>();
     //private Tour currentTour;
 
     public Courier(Long id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public List<DeliveryPoint> getCurrentDeliveryPoints() {

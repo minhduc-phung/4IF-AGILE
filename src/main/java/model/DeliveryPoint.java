@@ -15,14 +15,32 @@ public class DeliveryPoint extends Intersection {
     private Date timeWindow;
     private Date timestamp;
     private Courier courier;
+    private Date planDate;
 
-    public DeliveryPoint(Date timeWindow, Date timestamp, Long id, Double latitude, Double longitude) {
+    public DeliveryPoint(Date planDate, Long id, Double latitude, Double longitude) {
         super(id, latitude, longitude);
-        this.timeWindow = timeWindow;
-        this.timestamp = timestamp;
+        this.planDate = planDate;
     }
     
     public void chooseCourier(Courier c) {
         this.courier = c;
     }
+
+    public Courier getCourier() {
+        return courier;
+    }
+    
+    public void assignTimeWindow(Date t) {
+        this.timeWindow = t;
+    }
+    
+    public void assignTimestamp(Date t) {
+        this.timestamp = t;
+    }
+
+    public Date getPlanDate() {
+        return planDate;
+    }
+    
+    
 }

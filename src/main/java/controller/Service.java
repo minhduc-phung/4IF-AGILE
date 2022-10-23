@@ -10,15 +10,30 @@ import model.Intersection;
 import model.Map;
 import model.Segment;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import model.Courier;
+import model.DeliveryPoint;
 import org.w3c.dom.Document; 
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -70,10 +85,41 @@ public class Service {
         return map;
     }
     
-    public String saveDeliveryPointToFile(Courier c) {
-        XStream xstream = new XStream();
-        String xml = xstream.toXML(c);
-        return xml;
+    public void saveDeliveryPointToFile(Courier c) throws ParserConfigurationException, SAXException, 
+                                        IOException, TransformerConfigurationException, TransformerException, XPathExpressionException {
+        File XMLFile = new File("saved_files/deliveryPoints.xml");
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
+        DocumentBuilder dBuilder = dbf.newDocumentBuilder();
+        Document doc = dBuilder.parse(XMLFile);
+        doc.getDocumentElement().normalize();
+        
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        FileWriter writer = new FileWriter(XMLFile);
+        StreamResult result = new StreamResult(writer);
+        DOMSource source = new DOMSource(doc);
+        
+        Node nodePlanDates = doc.getElementsByTagName("planDates").item(0);
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        
+        for (DeliveryPoint dp : c.getCurrentDeliveryPoints()) {
+            String expression = "/planDates/planDate[@date='" + dp.getPlanDate() + "']";
+            XPathExpression xPathExpression = xPath.compile(expression);
+            Element nodePlanDate = (Element) xPathExpression.evaluate(doc, XPathConstants.NODE);
+            Element nodeDeliveryPoint = doc.createElement("deliveryPoint");
+            nodeDeliveryPoint.setAttribute("id", dp.getId().toString());
+            nodeDeliveryPoint.setAttribute("courierId", dp.getCourier().getId().toString());
+            try {
+                nodePlanDates.appendChild(nodePlanDate);
+            } catch (NullPointerException e) {
+                nodePlanDate = doc.createElement("planDate");
+                nodePlanDate.setAttribute("date", dp.getPlanDate().toString());
+                nodePlanDates.appendChild(nodePlanDate);
+            }
+            nodePlanDate.appendChild(nodeDeliveryPoint);
+        }
+        // Export the XMLFile
+        transformer.transform(source, result);
     }
     
 }

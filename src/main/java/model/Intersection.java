@@ -20,6 +20,10 @@ public class Intersection {
         this.longitude = longitude;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     @Override
     public String toString() {
         return "Intersection{" + "id=" + id + ", latitude=" + latitude + ", longitude=" + longitude + '}';
