@@ -26,13 +26,19 @@ public class Courier {
     public Long getId() {
         return id;
     }
-
+    
     public List<DeliveryPoint> getCurrentDeliveryPoints() {
         return currentDeliveryPoints;
     }
     
     public void addDeliveryPoint(DeliveryPoint dp) {
-        this.currentDeliveryPoints.add(dp);
+        if(!currentDeliveryPoints.contains(dp)){
+            this.currentDeliveryPoints.add(dp);
+        }
+    }
+    
+    public void removeDeliveryPoint(DeliveryPoint dp){
+        this.currentDeliveryPoints.remove(dp);
     }
     
     public void updateCurrentDeliveryPoints(List<DeliveryPoint> aList) {
