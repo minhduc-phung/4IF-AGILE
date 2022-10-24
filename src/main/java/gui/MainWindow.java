@@ -23,51 +23,54 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 
 
 
-public class Main extends Application {
-    private static Intersection clickedIntersection = null;
+public class MainWindow extends Application {
+    private String mapXMLPath = "maps/smallMap.xml";
+    private static Intersection selectedIntersection = null;
+    private static Map map = null;
+    private static Pane mapPane = null;
+    private static Pane interactiveBoard = null;
+    private static ArrayList<Intersection> validatedIntersections = new ArrayList<>();
+    private static Double scale;
+
+
     @Override
     public void start(Stage stage) throws ParserConfigurationException, IOException, SAXException {
         // PUT THE MAP XML HERE FOR NOW
-        String mapXMLPath = "maps/smallMap.xml";
+        mapXMLPath = "maps/smallMap.xml";
+        // Program Title
         stage.setTitle("PLD Agile");
 
         // Map
-        Pane mapPane = drawMapPane(mapXMLPath);
+        mapPane = drawMapPane(mapXMLPath);
 
         // Interactive board
-        Pane interactiveBoard = drawInteractiveBoard();
-
-        // Label example
-        Label label = new Label(mapXMLPath);
-        label.setLayoutX(50);
-        label.setLayoutY(25);
+        interactiveBoard = drawInteractiveBoard();
 
         // Add containers to the window
         Group root = new Group();
         root.getChildren().add(mapPane);
         root.getChildren().add(interactiveBoard);
-        root.getChildren().add(label);
         Scene scene = new Scene(root, 1500, 900);
         stage.setScene(scene);
         stage.show();
     }
 
     private Pane drawMapPane(String mapPath) throws ParserConfigurationException, IOException, SAXException {
-
         Pane mapPane = new Pane();
         mapPane.setLayoutX(50);
         mapPane.setLayoutY(50);
         mapPane.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.GRAY, null, null)));
 
         Service service = new Service();
-        Map map = service.loadMapFromXML(mapPath);
+        map = service.loadMapFromXML(mapPath);
         Double[] coords = map.getMinMaxCoordinates();
-        /* print out the coords
+        /* Print coords
         System.out.println("minY: " + coords[0]);
         System.out.println("minX: " + coords[1]);
         System.out.println("maxY: " + coords[2]);
@@ -76,7 +79,7 @@ public class Main extends Application {
         System.out.println("width: " + (coords[3]-coords[1]));
         System.out.println(map.getListIntersection().values().size());
          */
-        Double scale = 900 / (coords[3] - coords[1]);
+        scale = 900 / (coords[3] - coords[1]);
 
 
         // Segments
@@ -97,9 +100,9 @@ public class Main extends Application {
             Double posY = 650 - (intersection.getLatitude() - coords[0]) * scale;
             //System.out.println("posX: " + posX + " posY: " + posY);
             Circle point = new Circle(posX, posY, 3);
-            point.setFill(javafx.scene.paint.Color.RED);
+            point.setFill(javafx.scene.paint.Color.WHITE);
             if (Objects.equals(intersection.getId(), map.getWarehouse().getId())) {
-                point.setFill(javafx.scene.paint.Color.BLUE);
+                point.setFill(javafx.scene.paint.Color.RED);
                 point.setRadius(4);
             }
             mapPane.getChildren().add(point);
@@ -110,15 +113,20 @@ public class Main extends Application {
         mapPane.setOnMouseMoved(new EventHandler<javafx.scene.input.MouseEvent>() {
             @Override
             public void handle(javafx.scene.input.MouseEvent event) {
-                nearestIntersection[0] = getNearestPoint(event, mapPane, map, scale, nearestIntersection[0]);
+                nearestIntersection[0] = drawNearestPointToCursor(event, mapPane, map, scale, nearestIntersection[0]);
             }
         });
 
         mapPane.setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() {
             @Override
             public void handle(javafx.scene.input.MouseEvent event) {
-                if (nearestIntersection[0] != null) {
-                    clickedIntersection = nearestIntersection[0];
+                if (selectedIntersection == null) {
+                    selectedIntersection = nearestIntersection[0];
+                    drawIntersection(mapPane, selectedIntersection, scale, map, javafx.scene.paint.Color.YELLOW);
+                } else {
+                    drawIntersection(mapPane, selectedIntersection, scale, map, javafx.scene.paint.Color.WHITE);
+                    selectedIntersection = nearestIntersection[0];
+                    drawIntersection(mapPane, selectedIntersection, scale, map, javafx.scene.paint.Color.YELLOW);
                 }
             }
         });
@@ -138,18 +146,19 @@ public class Main extends Application {
         Pane interactiveBoard = new Pane();
         interactiveBoard.setLayoutX(1000);
         interactiveBoard.setLayoutY(50);
-        // Set size of the board
+        // Board size and background
         interactiveBoard.setPrefSize(400, 800);
-        // Set background color
         interactiveBoard.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.GRAY, null, null)));
-        // Draw the frame
+
+        // The frame
         Rectangle rectangle = new Rectangle(400, 800);
         rectangle.setStroke(javafx.scene.paint.Color.BLACK);
         rectangle.setStrokeWidth(10);
         rectangle.setFill(javafx.scene.paint.Color.WHITE);
         interactiveBoard.getChildren().add(rectangle);
 
-        Label label = new Label("Interactive board");
+        // Labels
+        Label label = new Label("Set up a delivery plan");
         // Center the label manually
         label.layoutXProperty().bind(interactiveBoard.widthProperty().subtract(label.widthProperty()).divide(2));
         // Change the font size
@@ -171,8 +180,11 @@ public class Main extends Application {
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if (clickedIntersection != null) {
-                    intersectionInfo.setText("Intersection " + clickedIntersection.getId() + " selected.");
+                if (selectedIntersection != null) {
+                    intersectionInfo.setText("Intersection " + selectedIntersection.getId() + " validated.");
+                    drawIntersection(mapPane, selectedIntersection, scale, map, javafx.scene.paint.Color.GREEN);
+                    validatedIntersections.add(selectedIntersection);
+                    selectedIntersection = null;
                 }
             }
         });
@@ -183,7 +195,7 @@ public class Main extends Application {
         return interactiveBoard;
     }
 
-    public Intersection getNearestPoint(javafx.scene.input.MouseEvent e, Pane mapPane, Map map, Double scale, Intersection oldNearestIntersection) {
+    public Intersection drawNearestPointToCursor(javafx.scene.input.MouseEvent e, Pane mapPane, Map map, Double scale, Intersection oldNearestIntersection) {
         double x = e.getX();
         double y = e.getY();
         double minDistance = 1000000000;
@@ -200,23 +212,32 @@ public class Main extends Application {
                 nearestIntersection = intersection;
             }
         }
+
         if (oldNearestIntersection != nearestIntersection) {
             // If it's the first time the mouse enter the map
             if (oldNearestIntersection == null) {
-                drawIntersection(mapPane, nearestIntersection, scale, map, javafx.scene.paint.Color.GREEN);
+                drawIntersection(mapPane, nearestIntersection, scale, map, javafx.scene.paint.Color.ORANGE);
                 //System.out.println("First time");
                 //System.out.println("Nearest intersection: " + nearestIntersection.getId() + "at x: "+ point.getLayoutX() + "; y: " + point.getLayoutY());
             } else {
-                drawIntersection(mapPane, oldNearestIntersection, scale, map, javafx.scene.paint.Color.RED);
+                if (oldNearestIntersection == selectedIntersection) {
+                    drawIntersection(mapPane, oldNearestIntersection, scale, map, javafx.scene.paint.Color.YELLOW);
+                }
+                else if (validatedIntersections.contains(oldNearestIntersection)) {
+                    drawIntersection(mapPane, oldNearestIntersection, scale, map, javafx.scene.paint.Color.GREEN);
+                }  else {
+                    drawIntersection(mapPane, oldNearestIntersection, scale, map, javafx.scene.paint.Color.WHITE);
+                }
                 // Remove warning "nearestIntersection might be null"
                 assert nearestIntersection != null;
-                drawIntersection(mapPane, nearestIntersection, scale, map, javafx.scene.paint.Color.GREEN);
+                drawIntersection(mapPane, nearestIntersection, scale, map, javafx.scene.paint.Color.ORANGE);
                 //System.out.println("Old nearest intersection: " + oldNearestIntersection.getId() + "at x: "+ oldPoint.getCenterX() + "; y: " + oldPoint.getCenterY());
                 //System.out.println("Nearest intersection: " + nearestIntersection.getId() + " at x: "+ point.getCenterX() + "; y: " + point.getCenterY());
             }
         }
         return nearestIntersection;
     }
+
     public static void main(String[] args) {
         launch();
     }
