@@ -195,6 +195,7 @@ public class Main extends Application {
             Double posX = (intersection.getLongitude() - map.getMinMaxCoordinates()[1]) * scale;
             Double posY = 650 - (intersection.getLatitude() - map.getMinMaxCoordinates()[0]) * scale;
             double distance = Math.sqrt(Math.pow(posX - x, 2) + Math.pow(posY - y, 2));
+
             if (distance < minDistance) {
                 minDistance = distance;
                 nearestIntersection = intersection;
