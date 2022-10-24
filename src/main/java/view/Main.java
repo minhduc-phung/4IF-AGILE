@@ -12,12 +12,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import model.Courier;
 import model.DeliveryPoint;
+import model.Intersection;
 import org.xml.sax.SAXException;
 
 /**
@@ -30,8 +32,10 @@ public class Main {
                                 TransformerConfigurationException, XPathExpressionException {
         //testLoadMap();
         //testSaveDeliveryPoints();
-        testRestoreDeliveryPoints();
-        
+        //testRestoreDeliveryPoints();
+        //testDijkstra();
+        //testEnterDeliveryPoint();
+        testRemoveDeliveryPoint();
     }
     
     public static void testLoadMap() throws ParserConfigurationException, IOException, SAXException {
@@ -66,6 +70,57 @@ public class Main {
                                 "saved_files/deliveryPoints.xml", planDate);
         for (DeliveryPoint dp : listDP) {
             System.out.println(dp);
+        }
+    }
+    
+    public static void testDijkstra() throws ParserConfigurationException, IOException, SAXException {
+        Service service = new Service();
+        Map map = service.loadMapFromXML("maps/mediumMap.xml");
+        System.out.println( service.dijkstra(map, Long.parseLong("2129259176"), Long.parseLong("1373825334")) );
+    }
+    
+    public static void testEnterDeliveryPoint() throws ParserConfigurationException, IOException, SAXException, ParseException {
+        Service service = new Service();
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd hh:mm:ss z yyyy");
+        Date planDate = sdf.parse("Sun Oct 23 00:00:00 CEST 2022");
+        Map map = service.loadMapFromXML("maps/mediumMap.xml");
+        Set<Long> listIdInter = map.getListIntersection().keySet();
+        Courier c = service.getUser().getCourier(Long.parseLong("1"));
+        Integer i = 0;
+        for (Long idInter : listIdInter) {
+            if (i < 20) {
+                DeliveryPoint dp = new DeliveryPoint(planDate, idInter, map.getIntersection(idInter).getLatitude(), map.getIntersection(idInter).getLongitude());    
+                service.enterDeliveryPoint(map, idInter, planDate, Long.parseLong("1"), planDate);
+                System.out.println(c.getShortestPathBetweenDPs().get(dp.getId()));
+                i++;
+            } else break;
+        }
+    }
+    
+    public static void testRemoveDeliveryPoint() throws ParserConfigurationException, IOException, SAXException, ParseException {
+        Service service = new Service();
+        Map map = service.loadMapFromXML("maps/mediumMap.xml");
+        Courier c = service.getUser().getCourier(Long.parseLong("1"));
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd hh:mm:ss z yyyy");
+        Date planDate = sdf.parse("Sun Oct 23 00:00:00 CEST 2022");
+        // add 20 points to listDP
+        Integer i = 0;
+        for (Long idInter : map.getListIntersection().keySet()) {
+            if (i < 20) {
+                DeliveryPoint dp = new DeliveryPoint(planDate, idInter, map.getIntersection(idInter).getLatitude(), map.getIntersection(idInter).getLongitude());    
+                service.enterDeliveryPoint(map, idInter, planDate, Long.parseLong("1"), null);
+                System.out.println(dp.getId().toString() + c.getShortestPathBetweenDPs().get(dp.getId()));
+                i++;
+            } else break;
+        }   
+        System.out.println("==========================================================");
+        // Delete 1st point
+        DeliveryPoint firstDP = new DeliveryPoint(planDate, Long.parseLong("26155402"), Double.parseDouble("45.748585"), Double.parseDouble("4.8837514"));
+        firstDP.chooseCourier(c);
+        System.out.println(firstDP.toString() + "in current " + c.getCurrentDeliveryPoints());
+        service.removeShortestPathBetweenDP(c, firstDP);
+        for (DeliveryPoint dp : c.getCurrentDeliveryPoints()) {
+            System.out.println(dp.getId().toString() + c.getShortestPathBetweenDPs().get(dp.getId()));
         }
     }
 }

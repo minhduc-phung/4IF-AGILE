@@ -5,19 +5,24 @@
  */
 package model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  *
  * @author nmngo
  */
 public class Intersection {
-    private Long id;
-    private Double latitude;
-    private Double longitude;
+    protected Long id;
+    protected Double latitude;
+    protected Double longitude;
+    protected HashMap<Long, Double> timeToConnectedIntersection;
 
     public Intersection(Long id, Double latitude, Double longitude) {
         this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.timeToConnectedIntersection = new HashMap<>();
     }
 
     public Long getId() {
@@ -32,8 +37,16 @@ public class Intersection {
     public Double getLatitude() {
         return latitude;
     }
-    
+
     public Double getLongitude() {
         return longitude;
+    }
+
+    public HashMap<Long, Double> getTimeToConnectedIntersection() {
+        return timeToConnectedIntersection;
+    }
+    
+    public void addTravelTimeToNextIntersection (Long idIntersection, Double time) {
+        this.timeToConnectedIntersection.put(idIntersection, time);
     }
 }

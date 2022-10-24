@@ -6,6 +6,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -18,9 +19,14 @@ public class Courier {
     private List<DeliveryPoint> currentDeliveryPoints = new ArrayList<>();
     //private Tour currentTour;
 
+    private ArrayList<Long> positionIntersection = new ArrayList<>();
+    private HashMap<Long, HashMap<Long, Double>> shortestPathBetweenDPs;
+    
+    
     public Courier(Long id, String name) {
         this.id = id;
         this.name = name;
+        this.shortestPathBetweenDPs = new HashMap<>();
     }
 
     public Long getId() {
@@ -37,8 +43,18 @@ public class Courier {
         }
     }
     
-    public void removeDeliveryPoint(DeliveryPoint dp){
-        this.currentDeliveryPoints.remove(dp);
+    public Boolean removeDeliveryPoint(DeliveryPoint aDP) {
+        for (DeliveryPoint dp : this.currentDeliveryPoints) {
+            if (dp.getId().equals(aDP.getId())) {
+                this.currentDeliveryPoints.remove(dp);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public HashMap<Long, HashMap<Long, Double>> getShortestPathBetweenDPs() {
+        return shortestPathBetweenDPs;
     }
     
     public void updateCurrentDeliveryPoints(List<DeliveryPoint> aList) {
