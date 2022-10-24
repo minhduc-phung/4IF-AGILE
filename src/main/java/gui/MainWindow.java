@@ -2,11 +2,13 @@ package gui;
 
 import controller.Service;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -16,9 +18,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import model.Intersection;
-import model.Map;
-import model.Segment;
+import model.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -37,7 +37,7 @@ public class MainWindow extends Application {
     private static Pane interactiveBoard = null;
     private static ArrayList<Intersection> validatedIntersections = new ArrayList<>();
     private static Double scale;
-
+    private static Courier selectedCourier = null;
 
     @Override
     public void start(Stage stage) throws ParserConfigurationException, IOException, SAXException {
@@ -166,18 +166,65 @@ public class MainWindow extends Application {
         // Bold
         label.setStyle("-fx-font-weight: bold");
         label.setLayoutY(50);
-
-
         Label intersectionInfo = new Label("Click on the map and click validate to select a point.");
         intersectionInfo.layoutXProperty().bind(interactiveBoard.widthProperty().subtract(intersectionInfo.widthProperty()).divide(2));
         intersectionInfo.setLayoutY(500);
+        Label courierLabel = new Label("Courier");
+        courierLabel.setLayoutX(10);
+        courierLabel.setLayoutY(100);
 
+        // ComboBox
+        User user = new User();
+        ComboBox couriers = new ComboBox(FXCollections.observableArrayList(user.getListCourierName()));
+        couriers.setPromptText("Select a courier...");
+        couriers.setLayoutX(100);
+        couriers.setLayoutY(100);
+        couriers.setPrefWidth(200);
+        couriers.setPrefHeight(25);
+        couriers.setStyle("-fx-font-size: 12px;");
+        couriers.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                selectedCourier = user.getCourierByName(couriers.getValue().toString());
+            }
+            // TODO: update the map content to show the selected courier's chosen delivery points
+        });
+
+        String[] timeWindow = {"08:00 - 09:00", "09:00 - 10:00", "10:00 - 11:00", "11:00 - 12:00", "12:00 - 13:00", "13:00 - 14:00", "14:00 - 15:00", "15:00 - 16:00", "16:00 - 17:00"};
+        ComboBox timeWindows = new ComboBox(FXCollections.observableArrayList(timeWindow));
+
+
+
+
+
+        // Buttons
         // Add a button in the middle
-        Button button = new Button("Validate");
+        Button cancelButton = new Button("Cancel");
+        cancelButton.setLayoutX(75);
+        cancelButton.setLayoutY(400);
+        cancelButton.setPrefWidth(100);
+        cancelButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (validatedIntersections.contains(selectedIntersection)) {
+                    validatedIntersections.remove(selectedIntersection);
+                    drawIntersection(mapPane, selectedIntersection, scale, map, javafx.scene.paint.Color.WHITE);
+                    intersectionInfo.setText("Intersection " + selectedIntersection.getId() + " removed.");
+                    selectedCourier = null;
+                } else if (selectedIntersection == null) {
+                    intersectionInfo.setText("No intersection selected.");
+                } else {
+                    intersectionInfo.setText("Intersection " + selectedIntersection.getId() + " not validated.");
+                }
+            }
+        });
+        Button validateButton = new Button("Validate");
         // Center the button manually
-        button.layoutXProperty().bind(interactiveBoard.widthProperty().subtract(button.widthProperty()).divide(2));
-        button.setLayoutY(400);
-        button.setOnAction(new EventHandler<ActionEvent>() {
+        //validateButton.layoutXProperty().bind(interactiveBoard.widthProperty().subtract(validateButton.widthProperty()).divide(2));
+        validateButton.setLayoutX(225);
+        validateButton.setLayoutY(400);
+        validateButton.setPrefWidth(100);
+        validateButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 if (selectedIntersection != null) {
@@ -190,8 +237,11 @@ public class MainWindow extends Application {
         });
 
         interactiveBoard.getChildren().add(label);
+        interactiveBoard.getChildren().add(courierLabel);
         interactiveBoard.getChildren().add(intersectionInfo);
-        interactiveBoard.getChildren().add(button);
+        interactiveBoard.getChildren().add(validateButton);
+        interactiveBoard.getChildren().add(cancelButton);
+        interactiveBoard.getChildren().add(couriers);
         return interactiveBoard;
     }
 

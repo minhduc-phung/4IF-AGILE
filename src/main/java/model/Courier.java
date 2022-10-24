@@ -70,6 +70,8 @@ public class Courier {
             }            
         }
     }
-    
-    
+
+    public String getName() {
+        return name;
+    }
 }

@@ -85,7 +85,7 @@ public class Main {
         Date planDate = sdf.parse("Sun Oct 23 00:00:00 CEST 2022");
         Map map = service.loadMapFromXML("maps/mediumMap.xml");
         Set<Long> listIdInter = map.getListIntersection().keySet();
-        Courier c = service.getUser().getCourier(Long.parseLong("1"));
+        Courier c = service.getUser().getCourierById(Long.parseLong("1"));
         Integer i = 0;
         for (Long idInter : listIdInter) {
             if (i < 20) {
@@ -100,7 +100,7 @@ public class Main {
     public static void testRemoveDeliveryPoint() throws ParserConfigurationException, IOException, SAXException, ParseException {
         Service service = new Service();
         Map map = service.loadMapFromXML("maps/mediumMap.xml");
-        Courier c = service.getUser().getCourier(Long.parseLong("1"));
+        Courier c = service.getUser().getCourierById(Long.parseLong("1"));
         SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd hh:mm:ss z yyyy");
         Date planDate = sdf.parse("Sun Oct 23 00:00:00 CEST 2022");
         // add 20 points to listDP
