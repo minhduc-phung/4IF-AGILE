@@ -30,7 +30,12 @@ public class Map {
     public HashMap<Long, Intersection> getListIntersection() {
         return listIntersection;
     }
-
+    
+    public Intersection getIntersection(Long idIntersection){
+        Intersection inter = listIntersection.get(idIntersection);
+        return inter;
+        
+    }
     public Intersection getWarehouse() {
         return warehouse;
     }

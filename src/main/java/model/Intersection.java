@@ -32,7 +32,7 @@ public class Intersection {
     public Double getLatitude() {
         return latitude;
     }
-
+    
     public Double getLongitude() {
         return longitude;
     }
