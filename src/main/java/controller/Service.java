@@ -176,4 +176,12 @@ public class Service {
         }
         return listDP;
     }
+    
+    public HashMap<Long, Courier> getListAvailableCourier(){
+        return this.user.getListCourier();
+    }
+    
+    public Courier selectCourier(Long idCourier){
+        return this.user.getCourier(idCourier);
+    }
 }
