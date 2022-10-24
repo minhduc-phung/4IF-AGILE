@@ -192,4 +192,8 @@ public class Service {
         DP.chooseCourier(c);
         c.addDeliveryPoint(DP);
     }
+    public void deleteDeliveryPoint(DeliveryPoint DP, List<DeliveryPoint> listDP){
+        listDP.remove(DP);
+    }
+    
 }
