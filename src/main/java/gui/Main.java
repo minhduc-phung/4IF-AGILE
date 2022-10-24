@@ -158,7 +158,6 @@ public class Main extends Application {
         label.setStyle("-fx-font-weight: bold");
         label.setLayoutY(50);
 
-
         Label intersectionInfo = new Label("Click on the map and click validate to select a point.");
         intersectionInfo.layoutXProperty().bind(interactiveBoard.widthProperty().subtract(intersectionInfo.widthProperty()).divide(2));
         intersectionInfo.setLayoutY(500);
