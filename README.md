@@ -35,15 +35,14 @@ To install and setup:
 3. In the project, go to `Tools > Libraries` and click on the `+` button.
 4. Select `Java` and select the `lib` folder of the JavaFX SDK.
 5. Click `OK`.
-6. In the project properties (right-click the , go to `Run > Set Project Configuration` and select the `Run` tab.
-7. Click on the `+` button and select `VM Options`.
-8. Enter the following line:
+6. In the project properties (right-click the name of the project and go to properties), go to `Run > Set Project Configuration` and select the `Run` tab.
+7. Enter the following line in the VM Option:
 ```
 --module-path "path/to/javafx-sdk-11.0.2/lib" --add-modules javafx.controls,javafx.fxml
 ```
-9. Replace `path/to/javafx-sdk-11.0.2/lib` with the path to the `lib` folder of the JavaFX SDK.
-10. Click `OK`.
-11. Run the project.
+8. __Replace `path/to/javafx-sdk-11.0.2/lib` with the path to the `lib` folder of the JavaFX SDK.__
+9. Click `OK`.
+10. Run the project.
 ## Changelog
 Feel free to put anything in here so everyone can be up-to-date with the project!
 
