@@ -7,12 +7,11 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -23,6 +22,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -35,9 +35,12 @@ public class MainWindow extends Application {
     private static Map map = null;
     private static Pane mapPane = null;
     private static Pane interactiveBoard = null;
+    private static Pane deliveryPointsInfoPane = null;
     private static ArrayList<Intersection> validatedIntersections = new ArrayList<>();
     private static Double scale;
     private static Courier selectedCourier = null;
+    private static String selectedTimeWindow = null;
+    private static LocalDate selectedDate = null;
 
     @Override
     public void start(Stage stage) throws ParserConfigurationException, IOException, SAXException {
@@ -52,20 +55,53 @@ public class MainWindow extends Application {
         // Interactive board
         interactiveBoard = drawInteractiveBoard();
 
+        // Delivery points info pane
+        deliveryPointsInfoPane = drawDeliveryPointsInfoPane();
         // Add containers to the window
         Group root = new Group();
         root.getChildren().add(mapPane);
         root.getChildren().add(interactiveBoard);
+        root.getChildren().add(deliveryPointsInfoPane);
         Scene scene = new Scene(root, 1500, 900);
         stage.setScene(scene);
         stage.show();
+    }
+
+    private Pane drawDeliveryPointsInfoPane() {
+        Pane deliveryPointsInfoPane = new Pane();
+        deliveryPointsInfoPane.setPrefSize(900, 100);
+        deliveryPointsInfoPane.setLayoutX(50);
+        deliveryPointsInfoPane.setLayoutY(750);
+        deliveryPointsInfoPane.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, null, null)));
+
+        // The frame
+        Rectangle rectangle = new Rectangle(900, 100);
+        rectangle.setStroke(Color.BLACK);
+        rectangle.setStrokeWidth(6);
+        rectangle.setFill(Color.WHITE);
+        deliveryPointsInfoPane.getChildren().add(rectangle);
+
+        // Buttons
+        Button saveDeliveryPointsButton = new Button("Save delivery points");
+        saveDeliveryPointsButton.setLayoutX(50);
+        saveDeliveryPointsButton.setLayoutY(50);
+        saveDeliveryPointsButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+
+            }
+        });
+        deliveryPointsInfoPane.getChildren().add(saveDeliveryPointsButton);
+
+
+        return deliveryPointsInfoPane;
     }
 
     private Pane drawMapPane(String mapPath) throws ParserConfigurationException, IOException, SAXException {
         Pane mapPane = new Pane();
         mapPane.setLayoutX(50);
         mapPane.setLayoutY(50);
-        mapPane.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.GRAY, null, null)));
+        mapPane.setBackground(new Background(new BackgroundFill(Color.GRAY, null, null)));
 
         Service service = new Service();
         map = service.loadMapFromXML(mapPath);
@@ -90,7 +126,7 @@ public class MainWindow extends Application {
             Double posY2 = 650 - (segment.getDestination().getLatitude() - coords[0]) * scale;
             Line line = new Line(posX1, posY1, posX2, posY2);
             line.setStrokeWidth(2);
-            line.setStroke(javafx.scene.paint.Color.WHITE);
+            line.setStroke(Color.WHITE);
             mapPane.getChildren().add(line);
         }
 
@@ -100,9 +136,9 @@ public class MainWindow extends Application {
             Double posY = 650 - (intersection.getLatitude() - coords[0]) * scale;
             //System.out.println("posX: " + posX + " posY: " + posY);
             Circle point = new Circle(posX, posY, 3);
-            point.setFill(javafx.scene.paint.Color.WHITE);
+            point.setFill(Color.WHITE);
             if (Objects.equals(intersection.getId(), map.getWarehouse().getId())) {
-                point.setFill(javafx.scene.paint.Color.RED);
+                point.setFill(Color.RED);
                 point.setRadius(4);
             }
             mapPane.getChildren().add(point);
@@ -122,11 +158,11 @@ public class MainWindow extends Application {
             public void handle(javafx.scene.input.MouseEvent event) {
                 if (selectedIntersection == null) {
                     selectedIntersection = nearestIntersection[0];
-                    drawIntersection(mapPane, selectedIntersection, scale, map, javafx.scene.paint.Color.YELLOW);
+                    drawIntersection(mapPane, selectedIntersection, scale, map, Color.YELLOW);
                 } else {
-                    drawIntersection(mapPane, selectedIntersection, scale, map, javafx.scene.paint.Color.WHITE);
+                    drawIntersection(mapPane, selectedIntersection, scale, map, Color.WHITE);
                     selectedIntersection = nearestIntersection[0];
-                    drawIntersection(mapPane, selectedIntersection, scale, map, javafx.scene.paint.Color.YELLOW);
+                    drawIntersection(mapPane, selectedIntersection, scale, map, Color.YELLOW);
                 }
             }
         });
@@ -134,7 +170,7 @@ public class MainWindow extends Application {
         return mapPane;
     }
 
-    private void drawIntersection(Pane mapPane, Intersection intersection, Double scale, Map map, javafx.scene.paint.Color color) {
+    private void drawIntersection(Pane mapPane, Intersection intersection, Double scale, Map map, Color color) {
         Double posX = (intersection.getLongitude() - map.getMinMaxCoordinates()[1]) * scale;
         Double posY = 650 - (intersection.getLatitude() - map.getMinMaxCoordinates()[0]) * scale;
         Circle point = new Circle(posX, posY, 3);
@@ -147,14 +183,14 @@ public class MainWindow extends Application {
         interactiveBoard.setLayoutX(1000);
         interactiveBoard.setLayoutY(50);
         // Board size and background
-        interactiveBoard.setPrefSize(400, 800);
-        interactiveBoard.setBackground(new Background(new BackgroundFill(javafx.scene.paint.Color.GRAY, null, null)));
+        interactiveBoard.setPrefSize(450, 800);
+        interactiveBoard.setBackground(new Background(new BackgroundFill(Color.GRAY, null, null)));
 
         // The frame
-        Rectangle rectangle = new Rectangle(400, 800);
-        rectangle.setStroke(javafx.scene.paint.Color.BLACK);
-        rectangle.setStrokeWidth(10);
-        rectangle.setFill(javafx.scene.paint.Color.WHITE);
+        Rectangle rectangle = new Rectangle(450, 800);
+        rectangle.setStroke(Color.BLACK);
+        rectangle.setStrokeWidth(6);
+        rectangle.setFill(Color.WHITE);
         interactiveBoard.getChildren().add(rectangle);
 
         // Labels
@@ -166,12 +202,24 @@ public class MainWindow extends Application {
         // Bold
         label.setStyle("-fx-font-weight: bold");
         label.setLayoutY(50);
-        Label intersectionInfo = new Label("Click on the map and click validate to select a point.");
+        Label intersectionInfo = new Label("Click on the map to select a point. Click Validate to validate the selection.");
         intersectionInfo.layoutXProperty().bind(interactiveBoard.widthProperty().subtract(intersectionInfo.widthProperty()).divide(2));
         intersectionInfo.setLayoutY(500);
         Label courierLabel = new Label("Courier");
         courierLabel.setLayoutX(10);
         courierLabel.setLayoutY(100);
+        Label timeWindowLabel = new Label("Time-window");
+        timeWindowLabel.setLayoutX(10);
+        timeWindowLabel.setLayoutY(150);
+        Label dateLabel = new Label("Date");
+        dateLabel.setLayoutX(10);
+        dateLabel.setLayoutY(300);
+        Label infoLabel = new Label("To enter delivery points, click on an intersection on the map, or restore them from a file.");
+        infoLabel.setWrapText(true);
+        infoLabel.layoutXProperty().bind(interactiveBoard.widthProperty().subtract(infoLabel.widthProperty()).divide(2));
+        infoLabel.setLayoutY(200);
+        infoLabel.setPrefSize(375, 100);
+
 
         // ComboBox
         User user = new User();
@@ -192,23 +240,41 @@ public class MainWindow extends Application {
 
         String[] timeWindow = {"08:00 - 09:00", "09:00 - 10:00", "10:00 - 11:00", "11:00 - 12:00", "12:00 - 13:00", "13:00 - 14:00", "14:00 - 15:00", "15:00 - 16:00", "16:00 - 17:00"};
         ComboBox timeWindows = new ComboBox(FXCollections.observableArrayList(timeWindow));
+        timeWindows.setPromptText("Select a time window...");
+        timeWindows.setLayoutX(100);
+        timeWindows.setLayoutY(150);
+        timeWindows.setPrefWidth(200);
+        timeWindows.setPrefHeight(25);
+        timeWindows.setStyle("-fx-font-size: 12px;");
+        timeWindows.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                selectedTimeWindow = timeWindows.getValue().toString();
+            }
+        });
 
-
-
-
+        //DatePicker
+        DatePicker datePicker = new DatePicker();
+        datePicker.setLayoutX(100);
+        datePicker.setLayoutY(300);
+        datePicker.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                selectedDate = datePicker.getValue();
+            }
+        });
 
         // Buttons
-        // Add a button in the middle
-        Button cancelButton = new Button("Cancel");
-        cancelButton.setLayoutX(75);
-        cancelButton.setLayoutY(400);
-        cancelButton.setPrefWidth(100);
-        cancelButton.setOnAction(new EventHandler<ActionEvent>() {
+        Button removeButton = new Button("Remove");
+        removeButton.setLayoutX(75);
+        removeButton.setLayoutY(400);
+        removeButton.setPrefWidth(100);
+        removeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 if (validatedIntersections.contains(selectedIntersection)) {
                     validatedIntersections.remove(selectedIntersection);
-                    drawIntersection(mapPane, selectedIntersection, scale, map, javafx.scene.paint.Color.WHITE);
+                    drawIntersection(mapPane, selectedIntersection, scale, map, Color.WHITE);
                     intersectionInfo.setText("Intersection " + selectedIntersection.getId() + " removed.");
                     selectedCourier = null;
                 } else if (selectedIntersection == null) {
@@ -221,7 +287,7 @@ public class MainWindow extends Application {
         Button validateButton = new Button("Validate");
         // Center the button manually
         //validateButton.layoutXProperty().bind(interactiveBoard.widthProperty().subtract(validateButton.widthProperty()).divide(2));
-        validateButton.setLayoutX(225);
+        validateButton.setLayoutX(275);
         validateButton.setLayoutY(400);
         validateButton.setPrefWidth(100);
         validateButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -229,19 +295,49 @@ public class MainWindow extends Application {
             public void handle(ActionEvent event) {
                 if (selectedIntersection != null) {
                     intersectionInfo.setText("Intersection " + selectedIntersection.getId() + " validated.");
-                    drawIntersection(mapPane, selectedIntersection, scale, map, javafx.scene.paint.Color.GREEN);
+                    drawIntersection(mapPane, selectedIntersection, scale, map, Color.GREEN);
                     validatedIntersections.add(selectedIntersection);
                     selectedIntersection = null;
                 }
             }
         });
 
+        Button restoreButton = new Button("Restore points");
+        restoreButton.setLayoutX(285);
+        restoreButton.setLayoutY(300);
+        restoreButton.setPrefWidth(150);
+        restoreButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+
+            }
+        });
+
+        Button calculateButton = new Button("Calculate the tour");
+        calculateButton.setLayoutX(225);
+        calculateButton.setLayoutY(750);
+        calculateButton.setPrefWidth(200);
+        calculateButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+            }
+        });
+
         interactiveBoard.getChildren().add(label);
         interactiveBoard.getChildren().add(courierLabel);
+        interactiveBoard.getChildren().add(timeWindowLabel);
+        interactiveBoard.getChildren().add(dateLabel);
         interactiveBoard.getChildren().add(intersectionInfo);
+        interactiveBoard.getChildren().add(infoLabel);
+
         interactiveBoard.getChildren().add(validateButton);
-        interactiveBoard.getChildren().add(cancelButton);
+        interactiveBoard.getChildren().add(removeButton);
+        interactiveBoard.getChildren().add(calculateButton);
+        interactiveBoard.getChildren().add(restoreButton);
+
         interactiveBoard.getChildren().add(couriers);
+        interactiveBoard.getChildren().add(timeWindows);
+        interactiveBoard.getChildren().add(datePicker);
         return interactiveBoard;
     }
 
@@ -266,21 +362,21 @@ public class MainWindow extends Application {
         if (oldNearestIntersection != nearestIntersection) {
             // If it's the first time the mouse enter the map
             if (oldNearestIntersection == null) {
-                drawIntersection(mapPane, nearestIntersection, scale, map, javafx.scene.paint.Color.ORANGE);
+                drawIntersection(mapPane, nearestIntersection, scale, map, Color.ORANGE);
                 //System.out.println("First time");
                 //System.out.println("Nearest intersection: " + nearestIntersection.getId() + "at x: "+ point.getLayoutX() + "; y: " + point.getLayoutY());
             } else {
                 if (oldNearestIntersection == selectedIntersection) {
-                    drawIntersection(mapPane, oldNearestIntersection, scale, map, javafx.scene.paint.Color.YELLOW);
+                    drawIntersection(mapPane, oldNearestIntersection, scale, map, Color.YELLOW);
                 }
                 else if (validatedIntersections.contains(oldNearestIntersection)) {
-                    drawIntersection(mapPane, oldNearestIntersection, scale, map, javafx.scene.paint.Color.GREEN);
+                    drawIntersection(mapPane, oldNearestIntersection, scale, map, Color.GREEN);
                 }  else {
-                    drawIntersection(mapPane, oldNearestIntersection, scale, map, javafx.scene.paint.Color.WHITE);
+                    drawIntersection(mapPane, oldNearestIntersection, scale, map, Color.WHITE);
                 }
                 // Remove warning "nearestIntersection might be null"
                 assert nearestIntersection != null;
-                drawIntersection(mapPane, nearestIntersection, scale, map, javafx.scene.paint.Color.ORANGE);
+                drawIntersection(mapPane, nearestIntersection, scale, map, Color.ORANGE);
                 //System.out.println("Old nearest intersection: " + oldNearestIntersection.getId() + "at x: "+ oldPoint.getCenterX() + "; y: " + oldPoint.getCenterY());
                 //System.out.println("Nearest intersection: " + nearestIntersection.getId() + " at x: "+ point.getCenterX() + "; y: " + point.getCenterY());
             }

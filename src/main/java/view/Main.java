@@ -19,7 +19,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import model.Courier;
 import model.DeliveryPoint;
-import model.Intersection;
 import org.xml.sax.SAXException;
 
 /**

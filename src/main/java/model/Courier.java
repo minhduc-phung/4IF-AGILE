@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  *
- * @author bbbbb
+ * @author nmngo
  */
 public class Courier {
     private Long id;
