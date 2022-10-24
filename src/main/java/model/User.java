@@ -32,4 +32,9 @@ public class User {
     public HashMap<Long, Courier> getListCourier() {
         return this.listCourier;
     }
+    
+    public Courier getCourier(Long idCourier){
+        Courier chosenCourier = listCourier.get(idCourier);
+        return chosenCourier;
+    }
 }
