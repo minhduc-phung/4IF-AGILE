@@ -184,4 +184,12 @@ public class Service {
     public Courier selectCourier(Long idCourier){
         return this.user.getCourier(idCourier);
     }
+    public void enterDeliveryPoint(Map map, Long idIntersection, Date planDate, Long idCourier, Date TW ){
+        Intersection i = map.getIntersection(idIntersection);
+        DeliveryPoint DP = new DeliveryPoint(planDate,idIntersection,i.getLatitude(),i.getLongitude());
+        Courier c = user.getCourier(idCourier);
+        DP.assignTimeWindow(TW);
+        DP.chooseCourier(c);
+        c.addDeliveryPoint(DP);
+    }
 }
