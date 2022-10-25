@@ -13,6 +13,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -49,7 +50,7 @@ public class Main {
         Courier c = service.getUser().getListCourier().get(Long.parseLong("4"));
     
         // respect this format
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd hh:mm:ss z yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd hh:mm:ss z yyyy", Locale.ENGLISH);
         Date planDate = sdf.parse("Mon Oct 24 00:00:00 CEST 2022");
         DeliveryPoint dp = new DeliveryPoint(planDate, Long.parseLong("1850080438"),
                                             Double.parseDouble("45.754265"), Double.parseDouble("4.886816"));
