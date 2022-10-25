@@ -1,4 +1,4 @@
-package gui;
+package view;
 
 import controller.Service;
 import javafx.application.Application;
