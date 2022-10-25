@@ -13,7 +13,7 @@ import java.util.HashMap;
  */
 public class User {
     private HashMap<Long, Courier> listCourier = new HashMap<>();
-    
+
     public User() {
         Courier c1 = new Courier(Long.parseLong("1"), "GIYRAUD Vincent");
         Courier c2 = new Courier(Long.parseLong("2"), "KLOEN Benjamin");

@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  *
- * @author nmngo
+ * @author bbbbb
  */
 public class Courier {
     private Long id;
@@ -20,13 +20,12 @@ public class Courier {
     //private Tour currentTour;
 
     private ArrayList<Long> positionIntersection = new ArrayList<>();
-    private HashMap<Long, HashMap<Long, Double>> shortestPathBetweenDPs;
+    private HashMap<Long, HashMap<Long, Double>> shortestPathBetweenDPs = new HashMap<>();;
     
     
     public Courier(Long id, String name) {
         this.id = id;
         this.name = name;
-        this.shortestPathBetweenDPs = new HashMap<>();
     }
 
     public Long getId() {
@@ -35,6 +34,10 @@ public class Courier {
     
     public List<DeliveryPoint> getCurrentDeliveryPoints() {
         return currentDeliveryPoints;
+    }
+
+    public String getName() {
+        return name;
     }
     
     public void addDeliveryPoint(DeliveryPoint dp) {
@@ -70,8 +73,6 @@ public class Courier {
             }            
         }
     }
-
-    public String getName() {
-        return name;
-    }
+    
+    
 }

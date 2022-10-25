@@ -89,10 +89,14 @@ public class Main {
         for (Long idInter : listIdInter) {
             if (i < 20) {
                 DeliveryPoint dp = new DeliveryPoint(planDate, idInter, map.getIntersection(idInter).getLatitude(), map.getIntersection(idInter).getLongitude());    
-                service.enterDeliveryPoint(map, idInter, planDate, Long.parseLong("1"), planDate);
-                System.out.println(c.getShortestPathBetweenDPs().get(dp.getId()));
+                service.enterDeliveryPoint(map, idInter, planDate, c.getId(), null);
                 i++;
             } else break;
+        }
+        
+        // shortest path of courier 1
+        for (Long key : c.getShortestPathBetweenDPs().keySet()) {
+            System.out.println(key.toString() + c.getShortestPathBetweenDPs().get(key));
         }
     }
     
@@ -107,19 +111,17 @@ public class Main {
         for (Long idInter : map.getListIntersection().keySet()) {
             if (i < 20) {
                 DeliveryPoint dp = new DeliveryPoint(planDate, idInter, map.getIntersection(idInter).getLatitude(), map.getIntersection(idInter).getLongitude());    
-                service.enterDeliveryPoint(map, idInter, planDate, Long.parseLong("1"), null);
-                System.out.println(dp.getId().toString() + c.getShortestPathBetweenDPs().get(dp.getId()));
+                service.enterDeliveryPoint(map, idInter, planDate, c.getId(), null);
                 i++;
             } else break;
         }   
-        System.out.println("==========================================================");
-        // Delete 1st point
-        DeliveryPoint firstDP = new DeliveryPoint(planDate, Long.parseLong("26155402"), Double.parseDouble("45.748585"), Double.parseDouble("4.8837514"));
-        firstDP.chooseCourier(c);
-        System.out.println(firstDP.toString() + "in current " + c.getCurrentDeliveryPoints());
-        service.removeShortestPathBetweenDP(c, firstDP);
-        for (DeliveryPoint dp : c.getCurrentDeliveryPoints()) {
-            System.out.println(dp.getId().toString() + c.getShortestPathBetweenDPs().get(dp.getId()));
+        
+        // Delete a point
+        DeliveryPoint aDP = new DeliveryPoint(planDate, Long.parseLong("25303831"), Double.parseDouble("25303831"), 
+                            Double.parseDouble("4.87572"));
+        service.removeDeliveryPoint(map, aDP, c);
+        for (Long key : c.getShortestPathBetweenDPs().keySet()) {
+            System.out.println(key.toString() + c.getShortestPathBetweenDPs().get(key));
         }
     }
 }

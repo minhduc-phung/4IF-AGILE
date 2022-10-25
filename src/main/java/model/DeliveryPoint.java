@@ -44,7 +44,8 @@ public class DeliveryPoint extends Intersection {
 
     @Override
     public String toString() {
-        return "DeliveryPoint{" + "timeWindow=" + timeWindow + ", timestamp=" + timestamp + ", courier=" + courier + ", planDate=" + planDate + '}';
+        return "DeliveryPoint{" + "id="+id+ ", timeWindow=" + timeWindow + ", timestamp=" + timestamp + 
+                ", courier=" + courier + ", planDate=" + planDate + '}';
     }
 
 
