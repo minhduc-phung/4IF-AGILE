@@ -16,31 +16,30 @@ To install and setup:
 4. Select `Java` and select the `lib` folder of the JavaFX SDK.
 5. Click `Apply` and `OK`.
 6. In the project, go to `File > Project Structure > Modules` and select the `Dependencies` tab.
-7. Click on the `+` button and select `Module Dependency`.
-8. Select `javafx.graphics` and click `OK`.
-9. Click `Apply` and `OK`.
-10. In the project, go to `Run > Edit Configurations...`.
-11. Select the `Application` configuration and click on the `+` button.
-12. Select `VM Options` and enter the following line:
+7. Select `javafx.graphics` and click `OK`.
+8. Click `Apply` and `OK`.
+9. In the project, go to `Run > Edit Configurations...`.
+10. Select the `Application` configuration and click on the `+` button.
+11. Select `VM Options` and enter the following line:
 ```
 --module-path "path/to/javafx-sdk-11.0.2/lib" --add-modules javafx.controls,javafx.fxml
 ```
-13. Replace `path/to/javafx-sdk-11.0.2/lib` with the path to the `lib` folder of the JavaFX SDK.
-14. Click `Apply` and `OK`.
-15. Run the project.
+12. __Replace__ `path/to/javafx-sdk-11.0.2/lib` __with the path to the `lib` folder of the JavaFX SDK.__
+13. Click `Apply` and `OK`.
+14. Run the project.
 
 #### __NetBeans__ IDE
 (Not sure if this is correct, it's GitHub CoPilot suggesting all of these.)
 
 3. In the project, go to `Tools > Libraries` and click on the `+` button.
-4. Select `Java` and select the `lib` folder of the JavaFX SDK.
+4. Select `Java` and select __the content__ of the `lib` folder of the JavaFX SDK.
 5. Click `OK`.
 6. In the project properties (right-click the name of the project and go to properties), go to `Run > Set Project Configuration` and select the `Run` tab.
 7. Enter the following line in the VM Option:
 ```
 --module-path "path/to/javafx-sdk-11.0.2/lib" --add-modules javafx.controls,javafx.fxml
 ```
-8. __Replace `path/to/javafx-sdk-11.0.2/lib` with the path to the `lib` folder of the JavaFX SDK.__
+8. __Replace__ `path/to/javafx-sdk-11.0.2/lib` __with the path to the__ `lib` __folder of the JavaFX SDK.__
 9. Click `OK`.
 10. Run the project.
 ## Changelog
