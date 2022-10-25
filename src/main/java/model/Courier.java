@@ -39,6 +39,10 @@ public class Courier {
     public String getName() {
         return name;
     }
+
+    public ArrayList<Long> getPositionIntersection() {
+        return positionIntersection;
+    }
     
     public void addDeliveryPoint(DeliveryPoint dp) {
         if(!currentDeliveryPoints.contains(dp)){
@@ -60,19 +64,8 @@ public class Courier {
         return shortestPathBetweenDPs;
     }
     
-    public void updateCurrentDeliveryPoints(List<DeliveryPoint> aList) {
-        if (this.currentDeliveryPoints.isEmpty()) {
-            for (DeliveryPoint d : aList) {
-                this.currentDeliveryPoints = new ArrayList<>();
-                this.currentDeliveryPoints.add(d);
-            }
-        } else {
-            this.currentDeliveryPoints.clear();
-            for (DeliveryPoint d : aList) {
-                this.currentDeliveryPoints.add(d);
-            }            
-        }
+    public void addPositionIntersection(Long idIntersection) {
+        this.positionIntersection.add(idIntersection);
     }
-    
     
 }

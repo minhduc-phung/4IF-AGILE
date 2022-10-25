@@ -85,6 +85,7 @@ public class Service {
             Courier c = this.getUser().getListCourier().get(key);
             dpWarehouse.chooseCourier(c);
             c.addDeliveryPoint(dpWarehouse);
+            c.addPositionIntersection(idWarehouse);
             HashMap<Long, Double> nestedMap = new HashMap<Long, Double>();
             nestedMap.put(warehouse.getId(), Double.parseDouble("0.0"));
             c.getShortestPathBetweenDPs().put(warehouse.getId(), nestedMap);
@@ -281,6 +282,7 @@ public class Service {
         dp.assignTimeWindow(TW);
         dp.chooseCourier(c);
         c.addDeliveryPoint(dp);
+        c.addPositionIntersection(idIntersection);
         if (!c.getShortestPathBetweenDPs().isEmpty()) {
             this.addShortestPathBetweenDP(map, c, dp);
         } else {
@@ -294,6 +296,7 @@ public class Service {
         }       
         dp.chooseCourier(null);
         c.removeDeliveryPoint(dp);
+        c.getPositionIntersection().remove(dp.getId());
         this.removeShortestPathBetweenDP(c, dp);
     }
     

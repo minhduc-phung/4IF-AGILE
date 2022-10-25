@@ -1,18 +1,23 @@
 package tsp;
 
+import java.util.HashMap;
+import model.Courier;
+
 public class CompleteGraph implements Graph {
 	private static final int MAX_COST = 40;
 	private static final int MIN_COST = 10;
 	int nbVertices;
-	int[][] cost;
+	double[][] cost;
 	
 	/**
 	 * Create a complete directed graph such that each edge has a weight within [MIN_COST,MAX_COST]
-	 * @param nbVertices
+         * @param completeMap
 	 */
-	public CompleteGraph(int nbVertices){
-		this.nbVertices = nbVertices;
-		int iseed = 1;
+	public CompleteGraph(Courier c, Long idWarehouse){
+            HashMap<Long, HashMap<Long, Double>> completeMap = c.getShortestPathBetweenDPs();
+            this.nbVertices = completeMap.size();
+            this.cost = new double[this.nbVertices][this.nbVertices];
+		/*int iseed = 1;
 		cost = new int[nbVertices][nbVertices];
 		for (int i=0; i<nbVertices; i++){
 		    for (int j=0; j<nbVertices; j++){
@@ -24,7 +29,20 @@ public class CompleteGraph implements Graph {
 		            cost[i][j] = MIN_COST + iseed % (MAX_COST-MIN_COST+1);
 		        }
 		    }
-		}
+		}*/
+            
+            for (int i = 0 ; i < c.getPositionIntersection().size() ; i++) {
+                Long keyOrigin = c.getPositionIntersection().get(i);
+                for (int j = 0 ; j < c.getPositionIntersection().size() ; j++) {
+                    Long keyDesti = c.getPositionIntersection().get(j);
+                    if (keyDesti.equals(idWarehouse)) {
+                        // warehouse is destination, we do not add 5 mins of shipping
+                        cost[i][j] = completeMap.get(keyOrigin).get(keyDesti);
+                    } else {
+                        cost[i][j] = completeMap.get(keyOrigin).get(keyDesti) + 5;
+                    }
+                }
+            }
 	}
 
 	@Override
@@ -33,7 +51,7 @@ public class CompleteGraph implements Graph {
 	}
 
 	@Override
-	public int getCost(int i, int j) {
+	public double getCost(int i, int j) {
 		if (i<0 || i>=nbVertices || j<0 || j>=nbVertices)
 			return -1;
 		return cost[i][j];

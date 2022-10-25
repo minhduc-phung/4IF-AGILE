@@ -11,7 +11,7 @@
         </goals>
         <properties>
             <exec.vmArgs>--module-path "C:\Program Files\Java\javafx-sdk-19\lib" --add-modules javafx.fxml,javafx.controls,javafx.graphics</exec.vmArgs>
-            <exec.args>-classpath %classpath view.Main</exec.args>
+            <exec.args>-classpath %classpath tsp.RunTSP</exec.args>
             <exec.appArgs></exec.appArgs>
             <exec.mainClass>${packageClassName}</exec.mainClass>
             <exec.executable>java</exec.executable>
@@ -28,7 +28,7 @@
         </goals>
         <properties>
             <exec.vmArgs>--module-path "C:\Program Files\Java\javafx-sdk-19\lib" --add-modules javafx.fxml,javafx.controls,javafx.graphics -agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</exec.vmArgs>
-            <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath view.Main</exec.args>
+            <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath tsp.RunTSP</exec.args>
             <exec.appArgs></exec.appArgs>
             <exec.mainClass>${packageClassName}</exec.mainClass>
             <exec.executable>java</exec.executable>
@@ -46,7 +46,7 @@
         </goals>
         <properties>
             <exec.vmArgs>--module-path "C:\Program Files\Java\javafx-sdk-19\lib" --add-modules javafx.fxml,javafx.controls,javafx.graphics</exec.vmArgs>
-            <exec.args>-classpath %classpath view.Main</exec.args>
+            <exec.args>-classpath %classpath tsp.RunTSP</exec.args>
             <exec.mainClass>${packageClassName}</exec.mainClass>
             <exec.executable>java</exec.executable>
             <exec.appArgs></exec.appArgs>

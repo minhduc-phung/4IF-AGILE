@@ -33,8 +33,8 @@ public class Main {
         //testSaveDeliveryPoints();
         //testRestoreDeliveryPoints();
         //testDijkstra();
-        //testEnterDeliveryPoint();
-        testRemoveDeliveryPoint();
+        testEnterDeliveryPoint();
+        //testRemoveDeliveryPoint();
     }
     
     public static void testLoadMap() throws ParserConfigurationException, IOException, SAXException {
@@ -87,8 +87,7 @@ public class Main {
         Courier c = service.getUser().getCourierById(Long.parseLong("1"));
         Integer i = 0;
         for (Long idInter : listIdInter) {
-            if (i < 20) {
-                DeliveryPoint dp = new DeliveryPoint(planDate, idInter, map.getIntersection(idInter).getLatitude(), map.getIntersection(idInter).getLongitude());    
+            if (i < 10) {
                 service.enterDeliveryPoint(map, idInter, planDate, c.getId(), null);
                 i++;
             } else break;
@@ -96,7 +95,10 @@ public class Main {
         
         // shortest path of courier 1
         for (Long key : c.getShortestPathBetweenDPs().keySet()) {
-            System.out.println(key.toString() + c.getShortestPathBetweenDPs().get(key));
+            for (Long key2 : c.getShortestPathBetweenDPs().get(key).keySet()) {
+                System.out.print(c.getShortestPathBetweenDPs().get(key).get(key2) + "  ");
+            }
+            System.out.println();
         }
     }
     
