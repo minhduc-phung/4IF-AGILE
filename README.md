@@ -35,17 +35,22 @@ To install and setup:
 #### __NetBeans__ IDE
 (Not sure if this is correct, it's GitHub CoPilot suggesting all of these.)
 
-3. In the project, go to `Tools > Libraries` and click on the `+` button.
-4. Select `Java` and select __the content__ of the `lib` folder of the JavaFX SDK.
-5. Click `OK`.
-6. In the project properties (right-click the name of the project -> `Properties`), select the `Run` tab.
-7. Enter the following line in the VM Option:
+3. In the project, go to `Tools > Libraries` and click `New Libraries...`.
+4. Name the library as you wish (JavaFX for example).
+5. Choose `Add JAR/Folder...` and add __THE CONTENT__ of the `lib` folder of the JavaFX SDK. (go to the folder and do a Ctrl+A)
+6. Click `OK`.
+You should have something like this:
+![image](https://user-images.githubusercontent.com/94907884/197817683-1952bd5f-ec94-4fd0-8a1e-c377d4f458bb.png)
+7. In the project properties (right-click the name of the project -> `Properties`), select the `Run` tab.
+8. Enter the following line in the VM Option:
 ```
 --module-path "path/to/javafx-sdk-11.0.2/lib" --add-modules javafx.controls,javafx.fxml
 ```
-8. __Replace__ `path/to/javafx-sdk-11.0.2/lib` __with the path to the__ `lib` __folder of the JavaFX SDK.__
-9. Click `OK`.
-10. Run the project.
+9. __Replace__ `path/to/javafx-sdk-11.0.2/lib` __with the path to the__ `lib` __folder of the JavaFX SDK.__
+![image](https://user-images.githubusercontent.com/94907884/197818177-074d329d-4e3f-48f8-8e80-e03d43158a18.png)
+
+10. Click `OK`.
+11. Run the project.
 ## Changelog
 Feel free to put anything in here so everyone can be up-to-date with the project!
 
