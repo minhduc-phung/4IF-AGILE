@@ -6,13 +6,13 @@
 package test;
 
 import controller.Service;
+import java.io.FileWriter;
 import model.Map;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -32,8 +32,8 @@ public class Main {
         //testLoadMap();
         //testSaveDeliveryPoints();
         //testRestoreDeliveryPoints();
-        //testDijkstra();
-        testEnterDeliveryPoint();
+        testDijkstra();
+        //testEnterDeliveryPoint();
         //testRemoveDeliveryPoint();
     }
     
@@ -75,7 +75,7 @@ public class Main {
     public static void testDijkstra() throws ParserConfigurationException, IOException, SAXException {
         Service service = new Service();
         Map map = service.loadMapFromXML("maps/mediumMap.xml");
-        System.out.println( service.dijkstra(map, Long.parseLong("2129259176"), Long.parseLong("1373825334")) );
+        System.out.println( service.dijkstra(map, Long.parseLong("60901982"), Long.parseLong("143370")) );
     }
     
     public static void testEnterDeliveryPoint() throws ParserConfigurationException, IOException, SAXException, ParseException {
@@ -83,14 +83,12 @@ public class Main {
         SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd hh:mm:ss z yyyy");
         Date planDate = sdf.parse("Sun Oct 23 00:00:00 CEST 2022");
         Map map = service.loadMapFromXML("maps/mediumMap.xml");
-        Set<Long> listIdInter = map.getListIntersection().keySet();
+        Long[] listIdInter = {Long.parseLong("2129259178"), Long.parseLong("2129259180"), Long.parseLong("239601996"),
+                                Long.parseLong("21703589"), Long.parseLong("60901982")};
         Courier c = service.getUser().getCourierById(Long.parseLong("1"));
-        Integer i = 0;
+
         for (Long idInter : listIdInter) {
-            if (i < 10) {
-                service.enterDeliveryPoint(map, idInter, planDate, c.getId(), null);
-                i++;
-            } else break;
+            service.enterDeliveryPoint(map, idInter, planDate, c.getId(), null);
         }
         
         // shortest path of courier 1

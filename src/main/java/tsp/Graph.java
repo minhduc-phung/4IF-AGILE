@@ -19,5 +19,7 @@ public interface Graph {
 	 * @return true if <code>(i,j)</code> is an arc of <code>this</code>
 	 */
 	public abstract boolean isArc(int i, int j);
+        
+        public abstract double[][] getCostTable(); 
 
 }

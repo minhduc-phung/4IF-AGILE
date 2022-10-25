@@ -30,7 +30,7 @@ import java.util.Objects;
 
 
 public class MainWindow extends Application {
-    private String mapXMLPath = "maps/smallMap.xml";
+    private String mapXMLPath;
     private static Intersection selectedIntersection = null;
     private static Map map = null;
     private static Pane mapPane = null;
@@ -45,7 +45,7 @@ public class MainWindow extends Application {
     @Override
     public void start(Stage stage) throws ParserConfigurationException, IOException, SAXException {
         // PUT THE MAP XML HERE FOR NOW
-        mapXMLPath = "maps/smallMap.xml";
+        mapXMLPath = "maps/mediumMap.xml";
         // Program Title
         stage.setTitle("PLD Agile");
 
@@ -164,6 +164,7 @@ public class MainWindow extends Application {
                     selectedIntersection = nearestIntersection[0];
                     drawIntersection(mapPane, selectedIntersection, scale, map, Color.YELLOW);
                 }
+                System.out.println(selectedIntersection);
             }
         });
 

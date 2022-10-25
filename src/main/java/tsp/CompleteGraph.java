@@ -1,5 +1,7 @@
 package tsp;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import model.Courier;
 
@@ -11,9 +13,10 @@ public class CompleteGraph implements Graph {
 	
 	/**
 	 * Create a complete directed graph such that each edge has a weight within [MIN_COST,MAX_COST]
-         * @param completeMap
+         * @param c
+         * @param idWarehouse
 	 */
-	public CompleteGraph(Courier c, Long idWarehouse){
+	public CompleteGraph(Courier c, Long idWarehouse) throws IOException{
             HashMap<Long, HashMap<Long, Double>> completeMap = c.getShortestPathBetweenDPs();
             this.nbVertices = completeMap.size();
             this.cost = new double[this.nbVertices][this.nbVertices];
@@ -30,12 +33,12 @@ public class CompleteGraph implements Graph {
 		        }
 		    }
 		}*/
-            
+
             for (int i = 0 ; i < c.getPositionIntersection().size() ; i++) {
                 Long keyOrigin = c.getPositionIntersection().get(i);
                 for (int j = 0 ; j < c.getPositionIntersection().size() ; j++) {
                     Long keyDesti = c.getPositionIntersection().get(j);
-                    if (keyDesti.equals(idWarehouse)) {
+                    if (keyDesti.equals(idWarehouse) || i==j) {
                         // warehouse is destination, we do not add 5 mins of shipping
                         cost[i][j] = completeMap.get(keyOrigin).get(keyDesti);
                     } else {
@@ -63,5 +66,12 @@ public class CompleteGraph implements Graph {
 			return false;
 		return i != j;
 	}
+
+        @Override
+        public double[][] getCostTable() {
+            return cost;
+        }
+        
+        
 
 }

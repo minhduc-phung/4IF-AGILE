@@ -79,6 +79,7 @@ public class Service {
                 warehouse = intersection;
             }
         }
+        
         DeliveryPoint dpWarehouse = new DeliveryPoint(null, warehouse.getId(), 
                             warehouse.getLatitude(), warehouse.getLongitude());
         for (Long key : this.getUser().getListCourier().keySet()) {
