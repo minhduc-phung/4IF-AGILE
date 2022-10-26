@@ -87,7 +87,7 @@ public class ServicePane extends Pane {
         // Buttons
         Button removeButton = new Button("Remove");
         removeButton.setLayoutX(75);
-        removeButton.setLayoutY(400);
+        removeButton.setLayoutY(350);
         removeButton.setPrefWidth(100);
         removeButton.setStyle("-fx-background-color: #ff9aa2; ");
         removeButton.setDisable(true);
@@ -111,7 +111,7 @@ public class ServicePane extends Pane {
 
         Button validateButton = new Button("Validate");
         validateButton.setLayoutX(275);
-        validateButton.setLayoutY(400);
+        validateButton.setLayoutY(350);
         validateButton.setPrefWidth(100);
         validateButton.setStyle("-fx-background-color: #b5ead7; ");
         validateButton.setDisable(true);
@@ -130,7 +130,23 @@ public class ServicePane extends Pane {
             }
         });
 
-
+        Button modifyButton = new Button("Modify");
+        //center the button manually
+        modifyButton.layoutXProperty().bind(this.widthProperty().subtract(modifyButton.widthProperty()).divide(2));
+        modifyButton.setLayoutY(700);
+        modifyButton.setPrefWidth(100);
+        modifyButton.setDisable(true);
+        modifyButton.setVisible(false);
+        modifyButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Main.mapPane.setDisable(false);
+                modifyButton.setVisible(false);
+                calculatedInfoLabel.setVisible(true);
+                removeButton.setDisable(false);
+                validateButton.setDisable(false);
+            }
+        });
 
         Button generatePlanButton = new Button("Generate delivery plan");
         generatePlanButton.setLayoutX(25);
@@ -140,7 +156,8 @@ public class ServicePane extends Pane {
         generatePlanButton.setStyle("-fx-background-color: #c7ceea; ");
 
         // ComboBox
-        ComboBox timeWindows = new ComboBox(FXCollections.observableArrayList(timeWindow));
+        ComboBox timeWindows = new ComboBox(FXCollections.observableArrayList
+                (timeWindow));
         timeWindows.setPromptText("Select a time window...");
         timeWindows.setLayoutX(100);
         timeWindows.setLayoutY(150);
@@ -154,6 +171,7 @@ public class ServicePane extends Pane {
                 selectedTimeWindow = timeWindows.getValue().toString();
                 removeButton.setDisable(false);
                 validateButton.setDisable(false);
+                Main.mapPane.setDisable(false);
             }
         });
 
@@ -244,9 +262,14 @@ public class ServicePane extends Pane {
             public void handle(ActionEvent event) {
                 table.setVisible(true);
                 calculatedInfoLabel.setVisible(true);
-                calculateButton.setDisable(true);
+                calculateButton.setDisable(false);
                 generatePlanButton.setDisable(false);
                 deliveryPointInfoPane.setDeliveryInfoVisible(true);
+                removeButton.setDisable(true);
+                validateButton.setDisable(true);
+                Main.mapPane.setDisable(true);
+                modifyButton.setVisible(true);
+                modifyButton.setDisable(false);
             }
         });
 
@@ -264,6 +287,7 @@ public class ServicePane extends Pane {
         this.getChildren().add(calculateButton);
         this.getChildren().add(restoreButton);
         this.getChildren().add(generatePlanButton);
+        this.getChildren().add(modifyButton);
 
         this.getChildren().add(couriers);
         this.getChildren().add(timeWindows);

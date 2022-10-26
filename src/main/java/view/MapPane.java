@@ -26,6 +26,7 @@ public class MapPane extends Pane {
     private ArrayList<Intersection> validatedIntersections = new ArrayList<>();
     MapPane(String mapPath) throws ParserConfigurationException, IOException, SAXException {
         super();
+        this.setDisable(true);
         this.setLayoutX(50);
         this.setLayoutY(50);
         this.setBackground(new Background(new BackgroundFill(Color.GRAY, null, null)));

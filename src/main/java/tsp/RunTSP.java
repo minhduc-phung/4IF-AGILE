@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import model.Courier;
@@ -32,7 +33,7 @@ public class RunTSP {
         
     public static void testTsp() throws ParserConfigurationException, IOException, SAXException, ParseException {
         Service service = new Service();
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd hh:mm:ss z yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd hh:mm:ss z yyyy", Locale.ENGLISH);
         Date planDate = sdf.parse("Sun Oct 23 00:00:00 CEST 2022");
         Map map = service.loadMapFromXML("maps/mediumMap.xml");
         //Set<Long> listIdInter = map.getListIntersection().keySet();
