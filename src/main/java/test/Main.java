@@ -5,8 +5,8 @@
  */
 package test;
 
+import controller.Controller;
 import controller.Service;
-import java.io.FileWriter;
 import model.Map;
 import java.io.IOException;
 import java.text.ParseException;
@@ -20,6 +20,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import model.Courier;
 import model.DeliveryPoint;
+import org.junit.internal.TextListener;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 import org.xml.sax.SAXException;
 
 /**
@@ -30,17 +33,35 @@ public class Main {
     public static void main(String[] args) throws ParserConfigurationException, IOException, 
                                 SAXException, ParseException, TransformerException, 
                                 TransformerConfigurationException, XPathExpressionException {
-        //testLoadMap();
+        testLoadMap();
         //testSaveDeliveryPoints();
         //testRestoreDeliveryPoints();
-        testDijkstra();
+        //testDijkstra();
         //testEnterDeliveryPoint();
         //testRemoveDeliveryPoint();
+        
+        //testController();
+    }
+    
+    public static void testController() throws ParserConfigurationException, IOException, SAXException {
+        Controller controller = new Controller();
+        controller.loadMapFromXML("maps/mediumMap.xml");
     }
     
     public static void testLoadMap() throws ParserConfigurationException, IOException, SAXException {
-        Service service = new Service();
-        Map map = service.loadMapFromXML("maps/mediumMap.xml");
+        JUnitCore junit = new JUnitCore();
+        junit.addListener(new TextListener(System.out));
+        Result result = junit.run(
+                LoadMapTest.class);
+        resultReport(result);
+    }
+    
+    public static void resultReport(Result result) {
+        System.out.println("Finished. Result: Failures: " +
+            result.getFailureCount() + ". Ignored: " +
+            result.getIgnoreCount() + ". Tests run: " +
+            result.getRunCount() + ". Time: " +
+            result.getRunTime() + "ms.");
     }
     
     public static void testSaveDeliveryPoints() throws ParserConfigurationException, SAXException, 
