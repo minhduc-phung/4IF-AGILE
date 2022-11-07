@@ -10,6 +10,8 @@ import controller.Controller;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import model.Map;
+import observer.Observable;
+import observer.Observer;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -24,13 +26,16 @@ import org.xml.sax.SAXException;
  */
 public class LoadMapTest {
     private final Controller controller = new Controller();
+    private Observer observer;
+    private Boolean updateCalled;
     
     public LoadMapTest() {
     }
     
     @Before
     public void setUp() {
-   
+        updateCalled = false;
+	observer = new Observer(){public void update(Observable o, Object arg){updateCalled = true;}};   
     }
     
     @Test

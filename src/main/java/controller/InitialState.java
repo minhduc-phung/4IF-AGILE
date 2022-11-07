@@ -73,15 +73,15 @@ public class InitialState implements State {
         
         DeliveryPoint dpWarehouse = new DeliveryPoint(null, warehouse.getId(), 
                             warehouse.getLatitude(), warehouse.getLongitude());
-        for (Long key : controller.getUser().getListCourier().keySet()) {
-            Courier c = controller.getUser().getListCourier().get(key);
+        for (Long key : controller.user.getListCourier().keySet()) {
+            Courier c = controller.user.getListCourier().get(key);
             dpWarehouse.chooseCourier(c);
             c.addDeliveryPoint(dpWarehouse);
             c.addPositionIntersection(idWarehouse);
             HashMap<Long, Double> nestedMap = new HashMap<Long, Double>();
             nestedMap.put(warehouse.getId(), Double.parseDouble("0.0"));
             c.getShortestPathBetweenDPs().put(warehouse.getId(), nestedMap);
-            controller.getUser().getListCourier().replace(key, c);
+            controller.user.getListCourier().replace(key, c);
         }
 
         List<Segment> listSegment = new ArrayList<>();

@@ -38,7 +38,7 @@ public class DPEnteredState implements State {
             return;
         }
         DeliveryPoint dp = new DeliveryPoint(planDate,idIntersection,i.getLatitude(),i.getLongitude());
-        Courier c = controller.getUser().getCourierById(idCourier);        
+        Courier c = controller.user.getCourierById(idCourier);        
         dp.assignTimeWindow(timeWindow);
         dp.chooseCourier(c);
         c.addDeliveryPoint(dp);
@@ -56,7 +56,7 @@ public class DPEnteredState implements State {
         if (dp.getId().equals(map.getWarehouse().getId())) {
             return;
         }       
-        Courier c = controller.getUser().getCourierById(idCourier);
+        Courier c = controller.user.getCourierById(idCourier);
         dp.chooseCourier(null);
         c.removeDeliveryPoint(dp);
         c.getPositionIntersection().remove(dp.getId());

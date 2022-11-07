@@ -33,10 +33,10 @@ public class Main {
     public static void main(String[] args) throws ParserConfigurationException, IOException, 
                                 SAXException, ParseException, TransformerException, 
                                 TransformerConfigurationException, XPathExpressionException {
-        testLoadMap();
+        //testLoadMap();
         //testSaveDeliveryPoints();
         //testRestoreDeliveryPoints();
-        //testDijkstra();
+        testDijkstra();
         //testEnterDeliveryPoint();
         //testRemoveDeliveryPoint();
         
@@ -95,12 +95,15 @@ public class Main {
     }
     
     public static void testDijkstra() throws ParserConfigurationException, IOException, SAXException {
-        Service service = new Service();
-        Map map = service.loadMapFromXML("maps/mediumMap.xml");
-        System.out.println( service.dijkstra(map, Long.parseLong("60901982"), Long.parseLong("143370")) );
+        JUnitCore junit = new JUnitCore();
+        junit.addListener(new TextListener(System.out));
+        Result result = junit.run(
+                DijsktraTest.class);
+        resultReport(result);
     }
     
-    public static void testEnterDeliveryPoint() throws ParserConfigurationException, IOException, SAXException, ParseException {
+    public static void testEnterDeliveryPoint() throws ParserConfigurationException, IOException, 
+                                            SAXException, ParseException {
         Service service = new Service();
         SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd hh:mm:ss z yyyy");
         Date planDate = sdf.parse("Sun Oct 23 00:00:00 CEST 2022");

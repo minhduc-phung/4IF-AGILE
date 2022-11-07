@@ -67,7 +67,7 @@ public class Window extends Group {
         messageFrame.setLayoutY(WINDOW_HEIGHT - 50);
 
         lateDeliveriesNumber = new Label();
-        lateDeliveriesNumber.setBorder(Border.stroke(Paint.valueOf("black")));
+        lateDeliveriesNumber.setStyle("ffx-border-color: black; -fx-border-width: 5");
         lateDeliveriesNumber.setText("No late deliveries. Great!");
         lateDeliveriesNumber.setPrefSize(WINDOW_WIDTH, 50);
         lateDeliveriesNumber.setLayoutY(WINDOW_HEIGHT - 100);

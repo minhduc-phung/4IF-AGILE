@@ -38,7 +38,7 @@ public class CourierChosenState implements State {
             return;
         }
         DeliveryPoint dp = new DeliveryPoint(planDate,idIntersection,i.getLatitude(),i.getLongitude());
-        Courier c = controller.getUser().getCourierById(idCourier);        
+        Courier c = controller.user.getCourierById(idCourier);        
         dp.assignTimeWindow(timeWindow);
         dp.chooseCourier(c);
         c.addDeliveryPoint(dp);
@@ -73,7 +73,7 @@ public class CourierChosenState implements State {
             String courierId = nodeListDP.item(i).getAttributes().getNamedItem("courierId").getNodeValue();
             Intersection inter = map.getListIntersection().get(Long.parseLong(idDP));
             DeliveryPoint dp = new DeliveryPoint(planDate, inter.getId(), inter.getLatitude(), inter.getLongitude());
-            dp.chooseCourier( controller.getUser().getListCourier().get(Long.parseLong(courierId)) );
+            dp.chooseCourier( controller.user.getListCourier().get(Long.parseLong(courierId)) );
             listDP.add(dp);
         }
         controller.setCurrentState(controller.dpRestoredState);

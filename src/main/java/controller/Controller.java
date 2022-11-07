@@ -24,7 +24,7 @@ import view.Window;
  * @author bbbbb
  */
 public class Controller {
-    private User user = new User();
+    protected User user = new User();
     private State currentState;
     private Window window;
     private Map map;
@@ -41,10 +41,6 @@ public class Controller {
 
     public Controller() {
         this.currentState = initialState;
-    }
-    
-    public User getUser() {
-        return user;
     }
 
     protected void setCurrentState(State currentState) {
