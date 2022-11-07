@@ -7,12 +7,13 @@ package model;
 
 import java.util.HashMap;
 import java.util.List;
+import observer.Observable;
 
 /**
  *
  * @author nmngo
  */
-public class Map {
+public class Map extends Observable {
     private HashMap<Long, Intersection> listIntersection;
     private List<Segment> listSegment;
     private Intersection warehouse;

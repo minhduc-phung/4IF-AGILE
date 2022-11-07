@@ -23,14 +23,12 @@ import org.xml.sax.SAXException;
 public class DijsktraTest {
     private Controller controller = new Controller();
     private Map map;
-    private State state;
     public DijsktraTest() {
     }
     
     @Before
     public void setUp() throws ParserConfigurationException, IOException, SAXException {
         map = this.controller.loadMapFromXML("maps/mediumMap.xml");
-        state = new State(){ };
     }
     
     @After
@@ -38,24 +36,13 @@ public class DijsktraTest {
     }
     
     @Test
-    public void TestContain1() {
-        assert(map.getIntersection(Long.parseLong("1"))==null || map.getIntersection(Long.parseLong("2"))==null);        
-    }
-    
-    @Test
-    public void TestContain2() {
-        assert(map.getIntersection(Long.parseLong("2129259178")) != null && 
-                    map.getIntersection(Long.parseLong("25610684")) != null);          
-    }
-    
-    @Test
     public void TestDistance1() {
-        assert(state.dijkstra(map, Long.parseLong("26149167"), Long.parseLong("143386")) == Long.MAX_VALUE);
+        assert(this.controller.dijkstra(map, Long.parseLong("26149167"), Long.parseLong("143386")) == Long.MAX_VALUE);
     }
     
     @Test
     public void TestDistance2() {
-        Double dist = state.dijkstra(map, Long.parseLong("26149167"), Long.parseLong("891129809"));
+        Double dist = this.controller.dijkstra(map, Long.parseLong("26149167"), Long.parseLong("891129809"));
         assert(dist != Long.MAX_VALUE);
     }
 

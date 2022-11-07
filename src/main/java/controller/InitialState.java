@@ -71,7 +71,7 @@ public class InitialState implements State {
             }
         }
         
-        DeliveryPoint dpWarehouse = new DeliveryPoint(null, warehouse.getId(), 
+        DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), 
                             warehouse.getLatitude(), warehouse.getLongitude());
         for (Long key : controller.user.getListCourier().keySet()) {
             Courier c = controller.user.getListCourier().get(key);

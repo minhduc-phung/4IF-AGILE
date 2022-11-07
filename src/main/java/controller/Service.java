@@ -80,7 +80,7 @@ public class Service {
             }
         }
         
-        DeliveryPoint dpWarehouse = new DeliveryPoint(null, warehouse.getId(), 
+        DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), 
                             warehouse.getLatitude(), warehouse.getLongitude());
         for (Long key : this.getUser().getListCourier().keySet()) {
             Courier c = this.getUser().getListCourier().get(key);
@@ -258,7 +258,7 @@ public class Service {
             String idDP = nodeListDP.item(i).getAttributes().getNamedItem("id").getNodeValue();
             String courierId = nodeListDP.item(i).getAttributes().getNamedItem("courierId").getNodeValue();
             Intersection inter = map.getListIntersection().get(Long.parseLong(idDP));
-            DeliveryPoint dp = new DeliveryPoint(planDate, inter.getId(), inter.getLatitude(), inter.getLongitude());
+            DeliveryPoint dp = new DeliveryPoint(inter.getId(), inter.getLatitude(), inter.getLongitude());
             dp.chooseCourier( this.user.getListCourier().get(Long.parseLong(courierId)) );
             listDP.add(dp);
         }
@@ -273,12 +273,12 @@ public class Service {
         return this.user.getCourierById(idCourier);
     }
     
-    public void enterDeliveryPoint(Map map, Long idIntersection, Date planDate, Long idCourier, Date TW){
+    public void enterDeliveryPoint(Map map, Long idIntersection, Long idCourier, Integer TW){
         Intersection i = map.getIntersection(idIntersection);
         if (idIntersection.equals(map.getWarehouse().getId())) {
             return;
         }
-        DeliveryPoint dp = new DeliveryPoint(planDate,idIntersection,i.getLatitude(),i.getLongitude());
+        DeliveryPoint dp = new DeliveryPoint(idIntersection,i.getLatitude(),i.getLongitude());
         Courier c = user.getCourierById(idCourier);        
         dp.assignTimeWindow(TW);
         dp.chooseCourier(c);

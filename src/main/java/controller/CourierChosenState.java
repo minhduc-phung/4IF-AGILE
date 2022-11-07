@@ -32,19 +32,19 @@ import org.xml.sax.SAXException;
  */
 public class CourierChosenState implements State {
     @Override
-    public void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Date planDate, Long idCourier, Date timeWindow) {
+    public void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Long idCourier, Integer timeWindow) {
         Intersection i = map.getIntersection(idIntersection);
         if (idIntersection.equals(map.getWarehouse().getId())) {
             return;
         }
-        DeliveryPoint dp = new DeliveryPoint(planDate,idIntersection,i.getLatitude(),i.getLongitude());
+        DeliveryPoint dp = new DeliveryPoint(idIntersection,i.getLatitude(),i.getLongitude());
         Courier c = controller.user.getCourierById(idCourier);        
         dp.assignTimeWindow(timeWindow);
         dp.chooseCourier(c);
         c.addDeliveryPoint(dp);
         c.addPositionIntersection(idIntersection);
         if (!c.getShortestPathBetweenDPs().isEmpty()) {
-            this.addShortestPathBetweenDP(map, c, dp);
+            controller.addShortestPathBetweenDP(map, c, dp);
         } else {
             c.getShortestPathBetweenDPs().put(dp.getId(), new HashMap<>());
         }
@@ -72,7 +72,7 @@ public class CourierChosenState implements State {
             String idDP = nodeListDP.item(i).getAttributes().getNamedItem("id").getNodeValue();
             String courierId = nodeListDP.item(i).getAttributes().getNamedItem("courierId").getNodeValue();
             Intersection inter = map.getListIntersection().get(Long.parseLong(idDP));
-            DeliveryPoint dp = new DeliveryPoint(planDate, inter.getId(), inter.getLatitude(), inter.getLongitude());
+            DeliveryPoint dp = new DeliveryPoint(inter.getId(), inter.getLatitude(), inter.getLongitude());
             dp.chooseCourier( controller.user.getListCourier().get(Long.parseLong(courierId)) );
             listDP.add(dp);
         }

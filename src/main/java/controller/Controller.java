@@ -6,7 +6,9 @@
 package controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -14,6 +16,7 @@ import javax.xml.xpath.XPathExpressionException;
 
 import model.Courier;
 import model.DeliveryPoint;
+import model.Intersection;
 import model.Map;
 import model.User;
 import org.xml.sax.SAXException;
@@ -50,9 +53,85 @@ public class Controller {
     public Map loadMapFromXML(String XMLPath) throws ParserConfigurationException, IOException, SAXException {
         return this.currentState.loadMapFromXML(this, XMLPath);
     }
+    
+    public void addShortestPathBetweenDP(Map aMap, Courier c, DeliveryPoint aDP) {
+        List<DeliveryPoint> listDP = c.getCurrentDeliveryPoints();
+        HashMap<Long, Double> distanceFromADP = new HashMap<>();
+        for (DeliveryPoint dp : listDP) {
+            Double dist = dijkstra(aMap, dp.getId(), aDP.getId());
+            if (c.getShortestPathBetweenDPs().get(dp.getId()) == null){
+                HashMap<Long, Double> nestedMap = new HashMap<Long, Double>();
+                nestedMap.put(aDP.getId(), dist);
+                c.getShortestPathBetweenDPs().replace(dp.getId(), nestedMap);
+            } else {
+                c.getShortestPathBetweenDPs().get(dp.getId()).put(aDP.getId(), dist);
+            }
+            Double invertedDist = this.dijkstra(aMap, aDP.getId(), dp.getId());
+            distanceFromADP.put(dp.getId(), invertedDist);
+        }
+        c.getShortestPathBetweenDPs().put(aDP.getId(), distanceFromADP);    
+    }
+    
+    public void removeShortestPathBetweenDP(Courier c, DeliveryPoint aDP) {
+        //System.out.println(c.removeDeliveryPoint(aDP));
+        c.getShortestPathBetweenDPs().remove(aDP.getId());
+        for (DeliveryPoint dp : c.getCurrentDeliveryPoints()) {
+            c.getShortestPathBetweenDPs().get(dp.getId()).remove(aDP.getId());
+        }
+    }
+    
+    public Double dijkstra (Map aMap, Long idOrigin, Long idDest) {
+        List<Long> idWhiteNodes = new ArrayList<>();
+        List<Long> idGreyNodes = new ArrayList<>();
+        List<Long> idBlackNodes = new ArrayList<>();
+        
+        HashMap<Long, Long> precedentNode = new HashMap<>();
+        HashMap<Long, Double> distanceFromOrigin = new HashMap<>();
+        
+        for (Long id : aMap.getListIntersection().keySet()) {
+            distanceFromOrigin.put(id, Double.MAX_VALUE);
+            precedentNode.put(id, null);
+            idWhiteNodes.add(id);
+        }
+        
+        distanceFromOrigin.replace(idOrigin, 0.0);
+        idGreyNodes.add(idOrigin);
+        idWhiteNodes.remove(idOrigin);
+        
+        Long idGreyDistanceMin = Long.MAX_VALUE;
+        Double distanceFromGreyMin = Double.MAX_VALUE;
+        
+        while (!idGreyNodes.isEmpty()) {
+            for (Long idGrey : idGreyNodes) {
+                if (distanceFromGreyMin > distanceFromOrigin.get(idGrey)) {
+                    idGreyDistanceMin = idGrey;
+                    distanceFromGreyMin = distanceFromOrigin.get(idGrey);
+                }
+            }
+            Intersection greyMin = aMap.getIntersection(idGreyDistanceMin);
+            for (Long idSucc : greyMin.getTimeToConnectedIntersection().keySet()) {
+                if (idWhiteNodes.contains(idSucc) || idGreyNodes.contains(idSucc)) {
+                    //next 5 lines: relacher()
+                    Double newDistance = distanceFromOrigin.get(idGreyDistanceMin) + greyMin.getTimeToConnectedIntersection().get(idSucc);
+                    if (distanceFromOrigin.get(idSucc) > newDistance) {
+                        distanceFromOrigin.replace(idSucc, newDistance);
+                        precedentNode.replace(idSucc, idGreyDistanceMin);
+                    }
+                    if (idWhiteNodes.contains(idSucc)) {
+                        idWhiteNodes.remove(idSucc);
+                        idGreyNodes.add(idSucc);
+                    }
+                }
+            }
+            idBlackNodes.add(idGreyDistanceMin);
+            idGreyNodes.remove(idGreyDistanceMin);
+            distanceFromGreyMin = Double.MAX_VALUE;
+        }
+        return distanceFromOrigin.get(idDest);
+    }
 
-    public void enterDeliveryPoint(Map map, Long idIntersection, Date planDate, Long idCourier, Date timeWindow) {
-        this.currentState.enterDeliveryPoint(this, map, idIntersection, planDate, idCourier, timeWindow);
+    public void enterDeliveryPoint(Map map, Long idIntersection, Long idCourier, Integer timeWindow) {
+        this.currentState.enterDeliveryPoint(this, map, idIntersection, idCourier, timeWindow);
     }
 
     public List<DeliveryPoint> restoreDeliveryPointFromXML(String XMLPathMap, String XMLPathDeliveryPoint, Date planDate)

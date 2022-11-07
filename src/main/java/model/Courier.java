@@ -17,7 +17,7 @@ public class Courier {
     private Long id;
     private String name;
     private List<DeliveryPoint> currentDeliveryPoints = new ArrayList<>();
-    //private Tour currentTour;
+    private Tour currentTour;
 
     private ArrayList<Long> positionIntersection = new ArrayList<>();
     private HashMap<Long, HashMap<Long, Double>> shortestPathBetweenDPs = new HashMap<>();;

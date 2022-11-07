@@ -6,7 +6,6 @@
 package controller;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import model.CompleteGraph;
 import model.Courier;
@@ -32,19 +31,19 @@ public class DPEnteredState implements State {
     }
     
     @Override
-    public void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Date planDate, Long idCourier, Date timeWindow) {
+    public void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Long idCourier, Integer timeWindow) {
         Intersection i = map.getIntersection(idIntersection);
         if (idIntersection.equals(map.getWarehouse().getId())) {
             return;
         }
-        DeliveryPoint dp = new DeliveryPoint(planDate,idIntersection,i.getLatitude(),i.getLongitude());
+        DeliveryPoint dp = new DeliveryPoint(idIntersection,i.getLatitude(),i.getLongitude());
         Courier c = controller.user.getCourierById(idCourier);        
         dp.assignTimeWindow(timeWindow);
         dp.chooseCourier(c);
         c.addDeliveryPoint(dp);
         c.addPositionIntersection(idIntersection);
         if (!c.getShortestPathBetweenDPs().isEmpty()) {
-            this.addShortestPathBetweenDP(map, c, dp);
+            controller.addShortestPathBetweenDP(map, c, dp);
         } else {
             c.getShortestPathBetweenDPs().put(dp.getId(), new HashMap<>());
         }
@@ -60,7 +59,7 @@ public class DPEnteredState implements State {
         dp.chooseCourier(null);
         c.removeDeliveryPoint(dp);
         c.getPositionIntersection().remove(dp.getId());
-        this.removeShortestPathBetweenDP(c, dp);
+        controller.removeShortestPathBetweenDP(c, dp);
         controller.setCurrentState(controller.dpRemovedState);
     }
 }

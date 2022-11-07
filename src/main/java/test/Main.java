@@ -33,19 +33,13 @@ public class Main {
     public static void main(String[] args) throws ParserConfigurationException, IOException, 
                                 SAXException, ParseException, TransformerException, 
                                 TransformerConfigurationException, XPathExpressionException {
-        //testLoadMap();
+        testLoadMap();
         //testSaveDeliveryPoints();
         //testRestoreDeliveryPoints();
-        testDijkstra();
+        //testDijkstra();
         //testEnterDeliveryPoint();
         //testRemoveDeliveryPoint();
         
-        //testController();
-    }
-    
-    public static void testController() throws ParserConfigurationException, IOException, SAXException {
-        Controller controller = new Controller();
-        controller.loadMapFromXML("maps/mediumMap.xml");
     }
     
     public static void testLoadMap() throws ParserConfigurationException, IOException, SAXException {
@@ -72,8 +66,7 @@ public class Main {
     
         // respect this format
         SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd hh:mm:ss z yyyy", Locale.ENGLISH);
-        Date planDate = sdf.parse("Mon Oct 24 00:00:00 CEST 2022");
-        DeliveryPoint dp = new DeliveryPoint(planDate, Long.parseLong("1850080438"),
+        DeliveryPoint dp = new DeliveryPoint(Long.parseLong("1850080438"),
                                             Double.parseDouble("45.754265"), Double.parseDouble("4.886816"));
         // persist deliveryPoint and courier
         dp.chooseCourier(c);
@@ -113,7 +106,7 @@ public class Main {
         Courier c = service.getUser().getCourierById(Long.parseLong("1"));
 
         for (Long idInter : listIdInter) {
-            service.enterDeliveryPoint(map, idInter, planDate, c.getId(), null);
+            service.enterDeliveryPoint(map, idInter, c.getId(), Integer.parseInt("9"));
         }
         
         // shortest path of courier 1
@@ -130,19 +123,18 @@ public class Main {
         Map map = service.loadMapFromXML("maps/mediumMap.xml");
         Courier c = service.getUser().getCourierById(Long.parseLong("1"));
         SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd hh:mm:ss z yyyy");
-        Date planDate = sdf.parse("Sun Oct 23 00:00:00 CEST 2022");
         // add 20 points to listDP
         Integer i = 0;
         for (Long idInter : map.getListIntersection().keySet()) {
             if (i < 20) {
-                DeliveryPoint dp = new DeliveryPoint(planDate, idInter, map.getIntersection(idInter).getLatitude(), map.getIntersection(idInter).getLongitude());    
-                service.enterDeliveryPoint(map, idInter, planDate, c.getId(), null);
+                DeliveryPoint dp = new DeliveryPoint(idInter, map.getIntersection(idInter).getLatitude(), map.getIntersection(idInter).getLongitude());    
+                service.enterDeliveryPoint(map, idInter, c.getId(), Integer.parseInt("8"));
                 i++;
             } else break;
         }   
         
         // Delete a point
-        DeliveryPoint aDP = new DeliveryPoint(planDate, Long.parseLong("25303831"), Double.parseDouble("25303831"), 
+        DeliveryPoint aDP = new DeliveryPoint(Long.parseLong("25303831"), Double.parseDouble("25303831"), 
                             Double.parseDouble("4.87572"));
         service.removeDeliveryPoint(map, aDP, c);
         for (Long key : c.getShortestPathBetweenDPs().keySet()) {
