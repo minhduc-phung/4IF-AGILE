@@ -28,7 +28,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Test Load Map
-      run: javac TestRunner.java LoadMapTest.java
+      run: javac src/main/java/test/TestRunner.java src/main/java/test/LoadMapTest.java
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
