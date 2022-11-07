@@ -12,14 +12,12 @@ import java.util.Date;
  * @author bbbbb
  */
 public class DeliveryPoint extends Intersection {
-    private Date timeWindow;
+    private Integer timeWindow;
     private Date timestamp;
     private Courier courier;
-    private Date planDate;
 
-    public DeliveryPoint(Date planDate, Long id, Double latitude, Double longitude) {
+    public DeliveryPoint(Long id, Double latitude, Double longitude) {
         super(id, latitude, longitude);
-        this.planDate = planDate;
     }
     
     public void chooseCourier(Courier c) {
@@ -29,8 +27,12 @@ public class DeliveryPoint extends Intersection {
     public Courier getCourier() {
         return courier;
     }
+
+    public Integer getTimeWindow() {
+        return timeWindow;
+    }
     
-    public void assignTimeWindow(Date t) {
+    public void assignTimeWindow(Integer t) {
         this.timeWindow = t;
     }
     
@@ -38,14 +40,10 @@ public class DeliveryPoint extends Intersection {
         this.timestamp = t;
     }
 
-    public Date getPlanDate() {
-        return planDate;
-    }
-
     @Override
     public String toString() {
         return "DeliveryPoint{" + "id="+id+ ", timeWindow=" + timeWindow + ", timestamp=" + timestamp + 
-                ", courier=" + courier + ", planDate=" + planDate + '}';
+                ", courier=" + courier + '}';
     }
 
 
