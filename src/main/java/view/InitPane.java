@@ -4,8 +4,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -75,11 +73,7 @@ public class InitPane extends Pane {
                 }
                 try {
                     Main.setPanesVisible();
-                } catch (ParserConfigurationException e) {
-                    throw new RuntimeException(e);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } catch (SAXException e) {
+                } catch (ParserConfigurationException | SAXException | IOException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -87,8 +81,7 @@ public class InitPane extends Pane {
 
 
 
-        //choose file
-
+        // FileChooser
         Button chooseFileButton = new Button("Browse...");
         chooseFileButton.layoutXProperty().bind(this.widthProperty().subtract(chooseFileButton.widthProperty()).divide(2));
         chooseFileButton.setLayoutY(300);

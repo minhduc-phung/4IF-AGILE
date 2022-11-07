@@ -33,7 +33,6 @@ To install and setup:
 15. Run the project.
 
 #### __NetBeans__ IDE
-(Not sure if this is correct, it's GitHub CoPilot suggesting all of these.)
 
 3. In the project, go to `Tools > Libraries` and click `New Libraries...`.
 4. Name the library as you wish (JavaFX for example).

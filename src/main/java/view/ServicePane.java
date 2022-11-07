@@ -15,19 +15,16 @@ import javafx.scene.text.Font;
 import model.Courier;
 import model.Intersection;
 import model.User;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ServicePane extends Pane {
     private Courier selectedCourier = null;
     private String selectedTimeWindow = null;
-    private LocalDate selectedDate = null;
+    private Date selectedDate = null;
 
-    public ServicePane(String mapPath) throws ParserConfigurationException, IOException, SAXException {
+    public ServicePane() {
         super();
         DeliveryPointInfoPane deliveryPointInfoPane = Main.deliveryPointInfoPane;
         // Input example data, to be replaced with actual classes in the model
@@ -94,6 +91,7 @@ public class ServicePane extends Pane {
         removeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                System.out.println(event.toString());
                 ArrayList<Intersection> validatedIntersections = Main.mapPane.getValidatedIntersections();
                 Intersection selectedIntersection = Main.mapPane.getSelectedIntersection();
                 if (validatedIntersections.contains(selectedIntersection)) {
@@ -118,6 +116,7 @@ public class ServicePane extends Pane {
         validateButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                System.out.println(event.toString());
                 Intersection selectedIntersection = Main.mapPane.getSelectedIntersection();
                 System.out.println(selectedIntersection);
                 System.out.println(Main.mapPane.getSelectedIntersection());
@@ -140,6 +139,7 @@ public class ServicePane extends Pane {
         modifyButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                System.out.println(event.toString());
                 Main.mapPane.setDisable(false);
                 modifyButton.setVisible(false);
                 calculatedInfoLabel.setVisible(true);
@@ -168,6 +168,7 @@ public class ServicePane extends Pane {
         timeWindows.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                System.out.println(event.toString());
                 selectedTimeWindow = timeWindows.getValue().toString();
                 removeButton.setDisable(false);
                 validateButton.setDisable(false);
@@ -186,6 +187,7 @@ public class ServicePane extends Pane {
         couriers.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                System.out.println(event.toString());
                 selectedCourier = user.getCourierByName(couriers.getValue().toString());
                 timeWindows.setDisable(false);
             }
@@ -217,7 +219,7 @@ public class ServicePane extends Pane {
         datePicker.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                selectedDate = datePicker.getValue();
+                selectedDate = Date.from(datePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
                 restoreButton.setDisable(false);
             }
         });

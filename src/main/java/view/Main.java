@@ -44,7 +44,7 @@ public class Main extends Application {
         initPane = new InitPane(primaryStage);
 
         // Interactive board
-        servicePane = new ServicePane(mapXMLPath);
+        servicePane = new ServicePane();
 
         servicePane.setVisible(false);
         deliveryPointInfoPane.setVisible(false);
