@@ -12,10 +12,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -30,8 +32,13 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import model.CompleteGraph;
 import model.Courier;
 import model.DeliveryPoint;
+import model.Graph;
+import model.TSP;
+import model.TSP1;
+import model.Tour;
 import model.User;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
@@ -91,6 +98,10 @@ public class Service {
             nestedMap.put(warehouse.getId(), Double.parseDouble("0.0"));
             c.getShortestPathBetweenDPs().put(warehouse.getId(), nestedMap);
             this.getUser().getListCourier().replace(key, c);
+        
+            Tour tour = new Tour();
+            tour.addTour(idWarehouse, null);
+            c.getListSegmentBetweenDPs().put(idWarehouse, tour);
         }
 
         List<Segment> listSegment = new ArrayList<>();
@@ -117,38 +128,68 @@ public class Service {
         return map;
     }
     
-    public void addShortestPathBetweenDP (Map aMap, Courier c, DeliveryPoint aDP) {
+    public void addShortestPathBetweenDP(Map aMap, Courier c, DeliveryPoint aDP) {
         List<DeliveryPoint> listDP = c.getCurrentDeliveryPoints();
         HashMap<Long, Double> distanceFromADP = new HashMap<>();
+        Tour tour1 = new Tour();
+        
         for (DeliveryPoint dp : listDP) {
-            Double dist = dijkstra(aMap, dp.getId(), aDP.getId());
+            HashMap<Long, Long> precedentNode1 = new HashMap<>();
+            Double dist = dijkstra(aMap, dp.getId(), aDP.getId(), precedentNode1);
+            List<Segment> listSeg = new ArrayList<>();
+            Long key = aDP.getId();
+            while (precedentNode1.get(key) != null) {
+                Segment seg = aMap.getSegment(precedentNode1.get(key), key);
+                listSeg.add(seg);
+                key = precedentNode1.get(key);
+            }
+            Collections.reverse(listSeg);
+            
+            Tour tour = new Tour();
+            tour.addTour(aDP.getId(), listSeg);
             if (c.getShortestPathBetweenDPs().get(dp.getId()) == null){
                 HashMap<Long, Double> nestedMap = new HashMap<Long, Double>();
                 nestedMap.put(aDP.getId(), dist);
                 c.getShortestPathBetweenDPs().replace(dp.getId(), nestedMap);
+                
+                c.getListSegmentBetweenDPs().replace(dp.getId(), tour);
             } else {
-                c.getShortestPathBetweenDPs().get(dp.getId()).put(aDP.getId(), dist);
+                c.getShortestPathBetweenDPs().get(dp.getId()).put(aDP.getId(), dist);  
+                c.getListSegmentBetweenDPs().get(dp.getId()).getTour().put(aDP.getId(), listSeg);
             }
-            Double invertedDist = this.dijkstra(aMap, aDP.getId(), dp.getId());
+            
+            HashMap<Long, Long> precedentNode2 = new HashMap<>();
+            Double invertedDist = this.dijkstra(aMap, aDP.getId(), dp.getId(), precedentNode2);
             distanceFromADP.put(dp.getId(), invertedDist);
+            
+            List<Segment> listSeg1 = new ArrayList<>();
+            key = dp.getId();
+            while (precedentNode2.get(key) != null) {
+                Segment seg = aMap.getSegment(precedentNode2.get(key), key);
+                listSeg1.add(seg);
+                key = precedentNode2.get(key);
+            }
+            Collections.reverse(listSeg1);
+            tour1.getTour().put(dp.getId(), listSeg1);
         }
-        c.getShortestPathBetweenDPs().put(aDP.getId(), distanceFromADP);    
+        c.getShortestPathBetweenDPs().put(aDP.getId(), distanceFromADP);
+        c.getListSegmentBetweenDPs().put(aDP.getId(), tour1);
     }
     
     public void removeShortestPathBetweenDP(Courier c, DeliveryPoint aDP) {
-        //System.out.println(c.removeDeliveryPoint(aDP));
         c.getShortestPathBetweenDPs().remove(aDP.getId());
+        c.getListSegmentBetweenDPs().remove(aDP.getId());
         for (DeliveryPoint dp : c.getCurrentDeliveryPoints()) {
             c.getShortestPathBetweenDPs().get(dp.getId()).remove(aDP.getId());
+            c.getListSegmentBetweenDPs().get(dp.getId()).getTour().remove(aDP.getId());
         }
     }
     
-    public Double dijkstra (Map aMap, Long idOrigin, Long idDest) {
+    public Double dijkstra (Map aMap, Long idOrigin, Long idDest, HashMap<Long, Long> precedentNode) {
         List<Long> idWhiteNodes = new ArrayList<>();
         List<Long> idGreyNodes = new ArrayList<>();
         List<Long> idBlackNodes = new ArrayList<>();
         
-        HashMap<Long, Long> precedentNode = new HashMap<>();
         HashMap<Long, Double> distanceFromOrigin = new HashMap<>();
         
         for (Long id : aMap.getListIntersection().keySet()) {
@@ -193,7 +234,7 @@ public class Service {
         return distanceFromOrigin.get(idDest);
     }
     
-    public void saveDeliveryPointToFile(List<DeliveryPoint> listDP) throws ParserConfigurationException, SAXException, 
+/*    public void saveDeliveryPointToFile(List<DeliveryPoint> listDP) throws ParserConfigurationException, SAXException, 
                                         IOException, TransformerConfigurationException, TransformerException, XPathExpressionException {
         File XMLFile = new File("saved_files/deliveryPoints.xml");
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
@@ -236,7 +277,7 @@ public class Service {
         }
         // Export the XMLFile
         transformer.transform(source, result);
-    }
+    }*/
     
     public List<DeliveryPoint> restoreDeliveryPointFromXML(String XMLPathMap, String XMLPathDeliveryPoint, Date planDate) 
                                                     throws ParserConfigurationException, IOException, 
@@ -288,6 +329,7 @@ public class Service {
             this.addShortestPathBetweenDP(map, c, dp);
         } else {
             c.getShortestPathBetweenDPs().put(dp.getId(), new HashMap<>());
+            c.getListSegmentBetweenDPs().put(dp.getId(), new Tour());
         }
     }
     
@@ -301,4 +343,17 @@ public class Service {
         this.removeShortestPathBetweenDP(c, dp);
     }
     
+    public Double calculateTour(Courier c, Long idWarehouse) {
+        Graph g = new CompleteGraph(c, idWarehouse);
+        TSP tsp = new TSP1();
+        tsp.searchSolution(20000, g);
+        return tsp.getSolutionCost();
+    } 
+    
+    public void generatedDeliveryPlanForCourier(Controller controller, Map map, Courier c) {
+        // set timestamp for each delivery point
+        
+        
+        // set currentTour
+    }
 }

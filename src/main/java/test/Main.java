@@ -5,21 +5,28 @@
  */
 package test;
 
-import controller.Controller;
 import controller.Service;
+import java.io.FileWriter;
 import model.Map;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
+import model.CompleteGraph;
 import model.Courier;
 import model.DeliveryPoint;
+import model.Graph;
+import model.Segment;
+import model.TSP;
+import model.TSP1;
 import org.junit.internal.TextListener;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -33,13 +40,13 @@ public class Main {
     public static void main(String[] args) throws ParserConfigurationException, IOException, 
                                 SAXException, ParseException, TransformerException, 
                                 TransformerConfigurationException, XPathExpressionException {
-        testLoadMap();
+        //testLoadMap();
         //testSaveDeliveryPoints();
         //testRestoreDeliveryPoints();
         //testDijkstra();
         //testEnterDeliveryPoint();
         //testRemoveDeliveryPoint();
-        
+        testCalculateTour();
     }
     
     public static void testLoadMap() throws ParserConfigurationException, IOException, SAXException {
@@ -72,7 +79,7 @@ public class Main {
         dp.chooseCourier(c);
         c.addDeliveryPoint(dp);
         // call service
-        service.saveDeliveryPointToFile(c.getCurrentDeliveryPoints());
+        //service.saveDeliveryPointToFile(c.getCurrentDeliveryPoints());
     }
     
     public static void testRestoreDeliveryPoints() throws ParserConfigurationException, 
@@ -98,8 +105,6 @@ public class Main {
     public static void testEnterDeliveryPoint() throws ParserConfigurationException, IOException, 
                                             SAXException, ParseException {
         Service service = new Service();
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd hh:mm:ss z yyyy");
-        Date planDate = sdf.parse("Sun Oct 23 00:00:00 CEST 2022");
         Map map = service.loadMapFromXML("maps/mediumMap.xml");
         Long[] listIdInter = {Long.parseLong("2129259178"), Long.parseLong("2129259180"), Long.parseLong("239601996"),
                                 Long.parseLong("21703589"), Long.parseLong("60901982")};
@@ -110,35 +115,105 @@ public class Main {
         }
         
         // shortest path of courier 1
-        for (Long key : c.getShortestPathBetweenDPs().keySet()) {
+        /*for (Long key : c.getShortestPathBetweenDPs().keySet()) {
+            //writer.write("key:"+key+"\n");
             for (Long key2 : c.getShortestPathBetweenDPs().get(key).keySet()) {
-                System.out.print(c.getShortestPathBetweenDPs().get(key).get(key2) + "  ");
+                //writer.write(key2+":"+c.getShortestPathBetweenDPs().get(key).get(key2) + "  ");
             }
-            System.out.println();
-        }
+            //writer.write("\n");
+        }*/
+        System.out.println(c.getListSegmentBetweenInters(Long.parseLong("25303831"), Long.parseLong("2129259178")));
     }
     
     public static void testRemoveDeliveryPoint() throws ParserConfigurationException, IOException, SAXException, ParseException {
         Service service = new Service();
+        Courier c = service.getUser().getCourierById(1L);
         Map map = service.loadMapFromXML("maps/mediumMap.xml");
-        Courier c = service.getUser().getCourierById(Long.parseLong("1"));
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd hh:mm:ss z yyyy");
         // add 20 points to listDP
-        Integer i = 0;
-        for (Long idInter : map.getListIntersection().keySet()) {
-            if (i < 20) {
-                DeliveryPoint dp = new DeliveryPoint(idInter, map.getIntersection(idInter).getLatitude(), map.getIntersection(idInter).getLongitude());    
-                service.enterDeliveryPoint(map, idInter, c.getId(), Integer.parseInt("8"));
-                i++;
-            } else break;
-        }   
+        Long[] listIdInter = {Long.parseLong("2129259178"), Long.parseLong("2129259180"), Long.parseLong("239601996"),
+                                Long.parseLong("21703589"), Long.parseLong("60901982")};
+
+        for (Long idInter : listIdInter) {
+            service.enterDeliveryPoint(map, idInter, c.getId(), Integer.parseInt("9"));
+        } 
         
         // Delete a point
-        DeliveryPoint aDP = new DeliveryPoint(Long.parseLong("25303831"), Double.parseDouble("25303831"), 
-                            Double.parseDouble("4.87572"));
+        DeliveryPoint aDP = new DeliveryPoint(Long.parseLong("60901982"), 0.0, 0.0);
         service.removeDeliveryPoint(map, aDP, c);
         for (Long key : c.getShortestPathBetweenDPs().keySet()) {
             System.out.println(key.toString() + c.getShortestPathBetweenDPs().get(key));
         }
+    }
+    
+    public static void testCalculateTour() throws ParserConfigurationException, IOException, SAXException {
+        Service service = new Service();
+        Courier c = service.getUser().getCourierById(1L);
+        Map map = service.loadMapFromXML("maps/mediumMap.xml");
+        Long[] listIdInter = {Long.parseLong("2129259178"), Long.parseLong("2129259180"), Long.parseLong("239601996"),
+                                Long.parseLong("21703589"), Long.parseLong("60901982")};
+        // enter delivery points
+        for (Long idInter : listIdInter) {
+            service.enterDeliveryPoint(map, idInter, c.getId(), Integer.parseInt("9"));
+        }  
+        
+        // shortest path of courier 1
+        HashMap<Long, HashMap<Long, Double>> completeMap = c.getShortestPathBetweenDPs();
+        int nbVertices = completeMap.size();
+        Long idWarehouse = map.getWarehouse().getId();
+        System.out.println("Graphs with "+nbVertices+" vertices:");
+        Graph g = new CompleteGraph(c, idWarehouse);
+        
+        TSP tsp = new TSP1();
+        long startTime = System.currentTimeMillis();
+	tsp.searchSolution(200000, g);
+	System.out.print("Solution of cost "+tsp.getSolutionCost()+" found in "
+				+(System.currentTimeMillis() - startTime)+"ms : ");
+        System.out.println("ID of points: "+ c.getPositionIntersection() );
+        List<Integer> tspSolutions = new ArrayList<>();
+	for (int i=0; i<nbVertices; i++) {
+            System.out.print( tsp.getSolution(i)+" " );
+            tspSolutions.add( tsp.getSolution(i) );
+            
+        }
+	System.out.println("0");
+        
+        // Show timestamp
+        double sum = 0.0;
+        int i;
+        System.out.println(0.0);
+        DeliveryPoint dp = c.getCurrentDeliveryPoints().get(0);
+        dp.assignTimestamp(0.0);
+        for (i = 0 ; i < tspSolutions.size()-1 ; i++) {
+            double distance = g.getCost(tspSolutions.get(i), tspSolutions.get(i+1));
+            sum += distance;
+            dp = c.getCurrentDeliveryPoints().get(tspSolutions.get(i+1));
+            dp.assignTimestamp(sum);
+            System.out.println(sum);
+        }
+        double distance = g.getCost(tspSolutions.get(i), tspSolutions.get(0));
+        sum += distance;
+        System.out.println(sum);
+        
+        // set currentTour
+        for (i=0 ; i < c.getCurrentDeliveryPoints().size()-1 ; i++) {
+            Long idCurrentInter = c.getCurrentDeliveryPoints().get(tspSolutions.get(i)).getId();
+            Long idNextInter = c.getCurrentDeliveryPoints().get(tspSolutions.get(i+1)).getId();
+            List<Segment> listSeg = c.getListSegmentBetweenInters(idCurrentInter, idNextInter);
+            c.addCurrentTour(idCurrentInter, listSeg);
+        }
+        Long idCurrentInter = c.getCurrentDeliveryPoints().get(tspSolutions.get(i)).getId();
+        Long idNextInter = c.getCurrentDeliveryPoints().get(tspSolutions.get(0)).getId();
+        List<Segment> listSeg = c.getListSegmentBetweenInters(idCurrentInter, idNextInter);
+        c.addCurrentTour(idCurrentInter, listSeg);
+        
+        // generate plan
+        FileWriter writer = new FileWriter("text1.txt");
+        for (i = 0 ; i < tspSolutions.size() ; i++) {
+            DeliveryPoint deliP = c.getCurrentDeliveryPoints().get(tspSolutions.get(i));
+            writer.write("Point:" + deliP.getId() + " time:" + deliP.getTimestamp() + "\n");            
+            writer.write(c.getListSegmentCurrentTour(deliP.getId()).toString() + "\n");
+        }
+        writer.close();
+        
     }
 }

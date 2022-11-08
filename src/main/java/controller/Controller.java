@@ -18,6 +18,8 @@ import model.Courier;
 import model.DeliveryPoint;
 import model.Intersection;
 import model.Map;
+import model.Segment;
+import model.Tour;
 import model.User;
 import org.xml.sax.SAXException;
 import view.Window;
@@ -30,7 +32,6 @@ public class Controller {
     protected User user = new User();
     private State currentState;
     private Window window;
-    private Map map;
     
     protected final InitialState initialState = new InitialState();
     protected final MapLoadedState mapLoadedState = new MapLoadedState();
@@ -57,19 +58,45 @@ public class Controller {
     public void addShortestPathBetweenDP(Map aMap, Courier c, DeliveryPoint aDP) {
         List<DeliveryPoint> listDP = c.getCurrentDeliveryPoints();
         HashMap<Long, Double> distanceFromADP = new HashMap<>();
+        List<Segment> segmentFromADP = new ArrayList<>();
+        Tour tour1 = new Tour();
         for (DeliveryPoint dp : listDP) {
-            Double dist = dijkstra(aMap, dp.getId(), aDP.getId());
+            HashMap<Long, Long> precedentNode1 = new HashMap<>();
+            Double dist = dijkstra(aMap, dp.getId(), aDP.getId(), precedentNode1);
+            List<Segment> listSeg = new ArrayList<>();
+            for (Long key : precedentNode1.keySet()) {
+                if (precedentNode1.get(key) != null) {
+                    Segment seg = aMap.getSegment(key, precedentNode1.get(key));
+                    listSeg.add(seg);
+                }
+            }
             if (c.getShortestPathBetweenDPs().get(dp.getId()) == null){
                 HashMap<Long, Double> nestedMap = new HashMap<Long, Double>();
                 nestedMap.put(aDP.getId(), dist);
                 c.getShortestPathBetweenDPs().replace(dp.getId(), nestedMap);
+                
+                Tour tour = new Tour();    
+                tour.addTour(aDP.getId(), listSeg);
+                c.getListSegmentBetweenDPs().replace(dp.getId(), tour);
             } else {
                 c.getShortestPathBetweenDPs().get(dp.getId()).put(aDP.getId(), dist);
+                Tour tour = new Tour();    
+                tour.addTour(aDP.getId(), listSeg);
+                c.getListSegmentBetweenDPs().put(aDP.getId(), tour);
             }
-            Double invertedDist = this.dijkstra(aMap, aDP.getId(), dp.getId());
+            HashMap<Long, Long> precedentNode2 = new HashMap<>();
+            Double invertedDist = this.dijkstra(aMap, aDP.getId(), dp.getId(), precedentNode2);
             distanceFromADP.put(dp.getId(), invertedDist);
+            for (Long key:precedentNode2.keySet()) {
+                if (precedentNode2.get(key) != null) {
+                    Segment seg = aMap.getSegment(key, precedentNode2.get(key));
+                    segmentFromADP.add(seg);
+                }
+            }
+            tour1.addTour(dp.getId(), listSeg);
         }
-        c.getShortestPathBetweenDPs().put(aDP.getId(), distanceFromADP);    
+        c.getShortestPathBetweenDPs().put(aDP.getId(), distanceFromADP);
+        c.getListSegmentBetweenDPs().put(aDP.getId(), tour1);
     }
     
     public void removeShortestPathBetweenDP(Courier c, DeliveryPoint aDP) {
@@ -80,12 +107,11 @@ public class Controller {
         }
     }
     
-    public Double dijkstra (Map aMap, Long idOrigin, Long idDest) {
+    public Double dijkstra (Map aMap, Long idOrigin, Long idDest, HashMap<Long, Long> precedentNode) {
         List<Long> idWhiteNodes = new ArrayList<>();
         List<Long> idGreyNodes = new ArrayList<>();
         List<Long> idBlackNodes = new ArrayList<>();
         
-        HashMap<Long, Long> precedentNode = new HashMap<>();
         HashMap<Long, Double> distanceFromOrigin = new HashMap<>();
         
         for (Long id : aMap.getListIntersection().keySet()) {
@@ -140,7 +166,7 @@ public class Controller {
         return this.currentState.restoreDeliveryPointFromXML(this, XMLPathMap, XMLPathDeliveryPoint, planDate);
     }
 
-    public void calculateTour(Courier c, Long idWarehouse) throws IOException {
+    public void calculateTour(Courier c, Long idWarehouse) {
         this.currentState.calculateTour(this, c, idWarehouse);
     }
 
@@ -152,20 +178,12 @@ public class Controller {
         this.currentState.removeDeliveryPoint(this, map, dp, idCourier);
     }
 
-
-
     public void generatePlan(Courier c) {
         this.currentState.generatedDeliveryPlanForCourier(this, c);
     }
 
-
-
     public void selectCourier(Long idCourier) {
         this.currentState.selectCourier(this, idCourier);
     }
-
-
-
-
 
 }

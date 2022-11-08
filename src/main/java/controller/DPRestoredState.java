@@ -6,7 +6,6 @@
 package controller;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import model.CompleteGraph;
 import model.Courier;
@@ -23,7 +22,7 @@ import model.TSP1;
  */
 public class DPRestoredState implements State {
     @Override
-    public Double calculateTour(Controller controller, Courier c, Long idWarehouse) throws IOException {
+    public Double calculateTour(Controller controller, Courier c, Long idWarehouse) {
         Graph g = new CompleteGraph(c, idWarehouse);
         TSP tsp = new TSP1();
         tsp.searchSolution(20000, g);

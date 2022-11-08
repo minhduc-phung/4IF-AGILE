@@ -27,6 +27,15 @@ public class Map extends Observable {
     public List<Segment> getListSegment() {
         return listSegment;
     }
+    
+    public Segment getSegment(Long idOrigin, Long idDest) {
+        for (Segment seg : this.listSegment) {
+            if (seg.getOrigin().id.equals(idOrigin) && seg.getDestination().id.equals(idDest)) {
+                return seg;
+            }
+        }
+        return null;
+    }
 
     public HashMap<Long, Intersection> getListIntersection() {
         return listIntersection;

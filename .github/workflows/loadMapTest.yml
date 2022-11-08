@@ -27,31 +27,12 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: maven
-    - name: Cache node modules
-      id: cache-npm
-      uses: actions/cache@v3
-      env:
-        cache-name: cache-node-modules
-      with:
-        # npm cache files are stored in `~/.npm` on Linux/macOS
-        path: ~/.npm
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}-
-          ${{ runner.os }}-build-
-          ${{ runner.os }}-
-
-    - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
-      name: List the state of node modules
-      continue-on-error: true
-      run: npm list
-
-    - name: Install dependencies
-      run: npm install
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
       
     - name: Run unit test
-      run: javac src/main/java/test/TestRunner.java src/main/java/test/LoadMapTest.java src/main/java/controller/Controller.java src/main/java/model/Map.java src/main/java/observer/Observer.java src/main/java/observer/Observable.java 
+      run: javac src/main/java/test/TestRunner.java src/main/java/test/LoadMapTest.java src/main/java/test/DijsktraTest.java src/main/java/controller/Controller.java src/main/java/model/Map.java src/main/java/observer/Observer.java src/main/java/observer/Observable.java 
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
-    #- name: Update dependency graph
-    #  uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+    - name: Update dependency graph
+      uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6

@@ -13,7 +13,7 @@ import java.util.Date;
  */
 public class DeliveryPoint extends Intersection {
     private Integer timeWindow;
-    private Date timestamp;
+    private double timestamp;
     private Courier courier;
 
     public DeliveryPoint(Long id, Double latitude, Double longitude) {
@@ -36,8 +36,12 @@ public class DeliveryPoint extends Intersection {
         this.timeWindow = t;
     }
     
-    public void assignTimestamp(Date t) {
+    public void assignTimestamp(double t) {
         this.timestamp = t;
+    }
+
+    public double getTimestamp() {
+        return timestamp;
     }
 
     @Override

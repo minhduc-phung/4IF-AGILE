@@ -6,9 +6,7 @@
 package controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
@@ -16,7 +14,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import model.Courier;
 import model.DeliveryPoint;
-import model.Intersection;
 import model.Map;
 import org.xml.sax.SAXException;
 
@@ -29,7 +26,7 @@ public interface State {
         return null;
     };
     
-    public default Double calculateTour(Controller controller, Courier c, Long idWarehouse) throws IOException {
+    public default Double calculateTour(Controller controller, Courier c, Long idWarehouse) {
         return null;
     };
     

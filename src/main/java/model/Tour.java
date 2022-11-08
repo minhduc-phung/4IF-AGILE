@@ -14,5 +14,31 @@ import java.util.List;
  * @author bbbbb
  */
 public class Tour {
-    private HashMap<DeliveryPoint, List<Segment>> listDPs = new HashMap<>();
+    private HashMap<Long, List<Segment>> tour = new HashMap<>();
+    public Tour() {
+        
+    }
+    
+    public void addTour(Long idDeliveryPoint, List<Segment> listSeg) {
+        tour.put(idDeliveryPoint, listSeg);
+    }
+    
+    public List<Segment> getListSegment(Long idIntersection) {
+        return tour.get(idIntersection);
+    }
+    
+    public void emptyTour() {
+        tour.clear();
+    }
+
+    @Override
+    public String toString() {
+        return "Tour{" + "tour=" + tour + '}';
+    }
+
+    public HashMap<Long, List<Segment>> getTour() {
+        return tour;
+    }
+    
+    
 }

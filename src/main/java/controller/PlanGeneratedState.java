@@ -23,6 +23,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import model.Courier;
 import model.DeliveryPoint;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -34,7 +35,7 @@ import org.xml.sax.SAXException;
  * @author bbbbb
  */
 public class PlanGeneratedState implements State {
-    @Override
+    /*@Override
     public void saveDeliveryPointToFile(Controller controller, List<DeliveryPoint> listDP) throws ParserConfigurationException, SAXException, 
                                         IOException, TransformerConfigurationException, TransformerException, XPathExpressionException {
         File XMLFile = new File("saved_files/deliveryPoints.xml");
@@ -79,5 +80,12 @@ public class PlanGeneratedState implements State {
         // Export the XMLFile
         transformer.transform(source, result);
         controller.setCurrentState(controller.dpSavedState);
+    }*/
+    
+    @Override
+    public Courier selectCourier(Controller controller, Long idCourier) {
+        Courier c = controller.user.getCourierById(idCourier);
+        controller.setCurrentState(controller.courierChosenState);
+        return c;
     }
 }

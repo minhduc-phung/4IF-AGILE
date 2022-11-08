@@ -1,9 +1,6 @@
 package model;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.HashMap;
-import model.Courier;
 
 public class CompleteGraph implements Graph {
 	private static final int MAX_COST = 40;
@@ -16,7 +13,7 @@ public class CompleteGraph implements Graph {
          * @param c
          * @param idWarehouse
 	 */
-	public CompleteGraph(Courier c, Long idWarehouse) throws IOException{
+	public CompleteGraph(Courier c, Long idWarehouse) {
             HashMap<Long, HashMap<Long, Double>> completeMap = c.getShortestPathBetweenDPs();
             this.nbVertices = completeMap.size();
             this.cost = new double[this.nbVertices][this.nbVertices];
