@@ -42,7 +42,7 @@ public class MapLoadedState implements State {
         Intersection warehouse = controller.getMap().getWarehouse();
         addWarehouse(warehouse, controller.user);
         controller.setCurrentState(controller.mapLoadedState);
-        window.drawMap(controller.getMap());
+        window.getGraphicalView().drawMap(controller.getMap());
         window.setMessage("Map loaded!");
     }
     

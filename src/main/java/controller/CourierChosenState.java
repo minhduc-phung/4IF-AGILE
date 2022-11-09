@@ -53,7 +53,7 @@ public class CourierChosenState implements State {
         Intersection warehouse = controller.getMap().getWarehouse();
         addWarehouse(warehouse, controller.user);
         controller.setCurrentState(controller.mapLoadedState);
-        window.drawMap(controller.getMap());
+        window.getGraphicalView().drawMap(controller.getMap());
         window.setMessage("Map loaded!");
     }
     
@@ -73,7 +73,7 @@ public class CourierChosenState implements State {
     }
 
     @Override
-    public void mouseMovedOnMap(Controller controller, Window window, double mousePosX, double mousePosY) {
+    public void mouseMovedOnMap(Controller controller, double mousePosX, double mousePosY) {
         Double minDistance = Double.MAX_VALUE;
         Intersection nearestIntersection = null;
         for (Intersection i : controller.getMap().getListIntersection().values()) {
@@ -84,15 +84,15 @@ public class CourierChosenState implements State {
             }
         }
         controller.setHoveredIntersection(nearestIntersection);
-        window.getGraphicalView().paintIntersection(nearestIntersection, Color.ORANGE, controller.getMap());
+        controller.getWindow().getGraphicalView().paintIntersection(nearestIntersection, Color.ORANGE, controller.getMap());
     }
 
     @Override
-    public void mouseClickedOnMap(Controller controller, Window window) {
+    public void mouseClickedOnMap(Controller controller) {
         if (controller.getHoveredIntersection() != null) {
             controller.setSelectedIntersection(controller.getHoveredIntersection());
             controller.setHoveredIntersection(null);
-            window.getGraphicalView().paintIntersection(controller.getSelectedIntersection(), Color.YELLOW, controller.getMap());
+            controller.getWindow().getGraphicalView().paintIntersection(controller.getSelectedIntersection(), Color.YELLOW, controller.getMap());
         }
     }
 }

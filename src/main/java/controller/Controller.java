@@ -193,11 +193,11 @@ public class Controller {
     }
 
     public void mouseClickedOnMap() {
-        currentState.mouseClickedOnMap(this, window);
+        currentState.mouseClickedOnMap(this);
     }
 
     public void mouseMovedOnMap(double mousePosX, double mousePosY) {
-        currentState.mouseMovedOnMap(this, window, mousePosX, mousePosY);
+        currentState.mouseMovedOnMap(this, mousePosX, mousePosY);
     }
     public Map getMap() {
         return map;

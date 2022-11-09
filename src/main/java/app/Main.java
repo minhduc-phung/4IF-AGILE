@@ -9,8 +9,6 @@ import view.Window;
 
 public class Main extends Application {
     Controller controller = new Controller();
-    User user = new User();
-    private Window window = new Window(user, controller);
     private final int WINDOW_WIDTH = 1500;
     private final int WINDOW_HEIGHT = 900;
     private final String TITLE = "Delivery Planner";
@@ -26,7 +24,7 @@ public class Main extends Application {
 //        this.setTitle("Delivery Planner");
 //        this.setResizable(false);
 //        this.setOnCloseRequest(e -> System.exit(0));
-        stage.setScene(new Scene(window, WINDOW_WIDTH, WINDOW_HEIGHT));
+        stage.setScene(new Scene(controller.getWindow(), WINDOW_WIDTH, WINDOW_HEIGHT));
         stage.show();
     }
 }
