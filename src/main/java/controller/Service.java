@@ -58,7 +58,9 @@ public class Service {
     public User getUser() {
         return this.user;
     }
-
+    
+    //done
+    /*
     public Map loadMapFromXML(String XMLPath) throws ParserConfigurationException, IOException, SAXException {
         File XMLFile = new File(XMLPath);
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -129,6 +131,7 @@ public class Service {
         Map map = new Map(listIntersection, listSegment, warehouse);
         return map;
     }
+    */
 
     public void addShortestPathBetweenDP(Map aMap, Courier c, DeliveryPoint aDP) {
         List<DeliveryPoint> listDP = c.getCurrentDeliveryPoints();
@@ -235,7 +238,8 @@ public class Service {
         }
         return distanceFromOrigin.get(idDest);
     }
-
+    
+    /*
     public void saveDeliveryPointToFile(List<DeliveryPoint> listDP) throws ParserConfigurationException, SAXException,
             IOException, TransformerConfigurationException, TransformerException, XPathExpressionException {
         File XMLFile = new File("saved_files/deliveryPoints.xml");
@@ -342,6 +346,7 @@ public class Service {
         // Export the XMLFile
         transformer.transform(source, result);
     }
+*/
 
     public HashMap<Long, Courier> getListAllCouriers() {
         return this.user.getListCourier();

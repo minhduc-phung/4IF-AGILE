@@ -16,14 +16,15 @@ import model.Courier;
 import model.DeliveryPoint;
 import model.Map;
 import org.xml.sax.SAXException;
+import xml.ExceptionXML;
 
 /**
  *
  * @author bbbbb
  */
 public interface State {
-    public default Map loadMapFromXML(Controller controller, String XMLPath) throws ParserConfigurationException, IOException, SAXException {
-        return null;
+    public default void loadMapFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, IOException, SAXException {
+
     };
     
     public default Double calculateTour(Controller controller, Courier c, Long idWarehouse) {
@@ -35,7 +36,7 @@ public interface State {
     };
     
     public default List<DeliveryPoint> restoreDeliveryPointFromXML(Controller controller, String XMLPathMap, String XMLPathDeliveryPoint, Date planDate) 
-                                                    throws ParserConfigurationException, IOException, 
+                                                    throws ExceptionXML, ParserConfigurationException, IOException, 
                                                     SAXException, XPathExpressionException {
         return null;
     };

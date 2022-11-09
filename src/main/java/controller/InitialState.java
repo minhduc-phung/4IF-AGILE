@@ -19,11 +19,14 @@ import model.DeliveryPoint;
 import model.Intersection;
 import model.Map;
 import model.Segment;
+import model.User;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import xml.ExceptionXML;
+import xml.XMLmapDeserializer;
 
 /**
  *
@@ -36,76 +39,37 @@ public class InitialState implements State {
      * @param controller
      * @param XMLPath
      * @return
+     * @throws xml.ExceptionXML
      * @throws ParserConfigurationException
      * @throws IOException
      * @throws SAXException
      */
     @Override
-    public Map loadMapFromXML(Controller controller, String XMLPath) throws ParserConfigurationException, SAXException, IOException {
-        File XMLFile = new File(XMLPath);
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = dbf.newDocumentBuilder();
-        Document doc = dBuilder.parse(XMLFile);
-        doc.getDocumentElement().normalize();
-
-        HashMap<Long, Intersection> listIntersection = new HashMap<>();
-        NodeList nodeList = doc.getElementsByTagName("intersection");
-        for (int itr = 0; itr < nodeList.getLength(); itr++) {
-            Node node = nodeList.item(itr);
-            NamedNodeMap nodeMap = node.getAttributes();
-            Long idInter = Long.parseLong(nodeMap.getNamedItem("id").getNodeValue());
-            Double latitude = Double.parseDouble(nodeMap.getNamedItem("latitude").getNodeValue());
-            Double longitude = Double.parseDouble(nodeMap.getNamedItem("longitude").getNodeValue());
-            Intersection intersection = new Intersection(idInter, latitude, longitude);
-            listIntersection.put(idInter, intersection);
-        }
-
-        Intersection warehouse = new Intersection(0L, 0.0, 0.0);
-        NodeList nodeListWarehouse = doc.getElementsByTagName("warehouse");
-        Node nodeWarehouse = nodeListWarehouse.item(0);
-        NamedNodeMap nodeMapWarehouse = nodeWarehouse.getAttributes();
-        Long idWarehouse = Long.parseLong(nodeMapWarehouse.getNamedItem("address").getNodeValue());
-        for (Intersection intersection : listIntersection.values()) {
-            if (Objects.equals(intersection.getId(), idWarehouse)) {
-                warehouse = intersection;
-            }
-        }
+    public void loadMapFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
         
-        DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), 
-                            warehouse.getLatitude(), warehouse.getLongitude());
-        for (Long key : controller.user.getListCourier().keySet()) {
-            Courier c = controller.user.getListCourier().get(key);
+        controller.map = XMLmapDeserializer.load(controller.getMap());
+        
+        controller.user = new User();
+        Intersection warehouse = controller.getMap().getWarehouse();
+        
+        addWarehouse(warehouse, controller.user);
+        
+        controller.setCurrentState(controller.mapLoadedState);
+        
+    }
+    
+    private void addWarehouse (Intersection warehouse, User user) {
+        DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), warehouse.getLatitude(), warehouse.getLongitude());
+        for (Long key : user.getListCourier().keySet()) {
+            Courier c = user.getListCourier().get(key);
             dpWarehouse.chooseCourier(c);
             c.addDeliveryPoint(dpWarehouse);
-            c.addPositionIntersection(idWarehouse);
-            HashMap<Long, Double> nestedMap = new HashMap<Long, Double>();
-            nestedMap.put(warehouse.getId(), Double.parseDouble("0.0"));
+            
+            c.addPositionIntersection(warehouse.getId());
+            HashMap<Long, Double> nestedMap = new HashMap<>();
+            nestedMap.put(warehouse.getId(), Double.valueOf("0.0"));
             c.getShortestPathBetweenDPs().put(warehouse.getId(), nestedMap);
-            controller.user.getListCourier().replace(key, c);
+            user.getListCourier().replace(key, c);
         }
-
-        List<Segment> listSegment = new ArrayList<>();
-        NodeList nodeListSeg = doc.getElementsByTagName("segment");
-        for (int itr = 0; itr < nodeListSeg.getLength(); itr++) {
-            Node node = nodeListSeg.item(itr);
-            NamedNodeMap nodeMap = node.getAttributes();
-            Long idOrigin = Long.parseLong(nodeMap.getNamedItem("origin").getNodeValue());
-            Intersection origin = listIntersection.get(idOrigin);
-
-            Long idDesti = Long.parseLong(nodeMap.getNamedItem("destination").getNodeValue());
-            Intersection destination = listIntersection.get(idDesti);
-
-            Double length = Double.parseDouble(nodeMap.getNamedItem("length").getNodeValue());
-            
-            origin.addTravelTimeToNextIntersection(idDesti, length*60.0/(15.0*1000.0));
-            
-            String name = nodeMap.getNamedItem("name").getNodeValue();
-            Segment segment = new Segment(origin, destination, length, name);
-            listSegment.add(segment);
-        }
-
-        Map map = new Map(listIntersection, listSegment, warehouse);
-        controller.setCurrentState(controller.mapLoadedState);
-        return map;
     }
 }

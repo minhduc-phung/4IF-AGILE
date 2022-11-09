@@ -18,7 +18,7 @@ public class TestRunner {
         JUnitCore junit = new JUnitCore();
         junit.addListener(new TextListener(System.out));
         Result result = junit.run(
-                DijsktraTest.class, LoadMapTest.class);
+                LoadMapTest.class);
         resultReport(result);
     }
     

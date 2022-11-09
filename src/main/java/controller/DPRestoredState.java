@@ -7,6 +7,7 @@ package controller;
 
 import java.io.IOException;
 import java.util.HashMap;
+import javax.xml.parsers.ParserConfigurationException;
 import model.CompleteGraph;
 import model.Courier;
 import model.DeliveryPoint;
@@ -15,12 +16,46 @@ import model.Intersection;
 import model.Map;
 import model.TSP;
 import model.TSP1;
+import model.User;
+import org.xml.sax.SAXException;
+import xml.ExceptionXML;
+import xml.XMLmapDeserializer;
 
 /**
  *
  * @author bbbbb
  */
 public class DPRestoredState implements State {
+        
+    @Override
+    public void loadMapFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
+        
+        XMLmapDeserializer.load(controller.map);
+        
+        controller.user = new User();
+        Intersection warehouse = controller.map.getWarehouse();
+        
+        addWarehouse(warehouse, controller.user);
+        
+        controller.setCurrentState(controller.mapLoadedState);
+        
+    }
+    
+    private void addWarehouse (Intersection warehouse, User user) {
+        DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), warehouse.getLatitude(), warehouse.getLongitude());
+        for (Long key : user.getListCourier().keySet()) {
+            Courier c = user.getListCourier().get(key);
+            dpWarehouse.chooseCourier(c);
+            c.addDeliveryPoint(dpWarehouse);
+            
+            c.addPositionIntersection(warehouse.getId());
+            HashMap<Long, Double> nestedMap = new HashMap<>();
+            nestedMap.put(warehouse.getId(), Double.valueOf("0.0"));
+            c.getShortestPathBetweenDPs().put(warehouse.getId(), nestedMap);
+            user.getListCourier().replace(key, c);
+        }
+    }
+    
     @Override
     public Double calculateTour(Controller controller, Courier c, Long idWarehouse) {
         Graph g = new CompleteGraph(c, idWarehouse);

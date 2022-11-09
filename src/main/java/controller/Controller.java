@@ -22,7 +22,8 @@ import model.Segment;
 import model.Tour;
 import model.User;
 import org.xml.sax.SAXException;
-import view.Window;
+//import view.Window;
+import xml.ExceptionXML;
 
 /**
  *
@@ -30,8 +31,9 @@ import view.Window;
  */
 public class Controller {
     protected User user = new User();
+    protected Map map = new Map();
     private State currentState;
-    private Window window;
+    //private Window window;
     
     protected final InitialState initialState = new InitialState();
     protected final MapLoadedState mapLoadedState = new MapLoadedState();
@@ -51,8 +53,8 @@ public class Controller {
         this.currentState = currentState;
     }
     
-    public Map loadMapFromXML(String XMLPath) throws ParserConfigurationException, IOException, SAXException {
-        return this.currentState.loadMapFromXML(this, XMLPath);
+    public void loadMapFromXML() throws ParserConfigurationException, IOException, SAXException, ExceptionXML {
+        this.currentState.loadMapFromXML(this);
     }
     
     public void addShortestPathBetweenDP(Map aMap, Courier c, DeliveryPoint aDP) {
@@ -162,7 +164,7 @@ public class Controller {
 
     public List<DeliveryPoint> restoreDeliveryPointFromXML(String XMLPathMap, String XMLPathDeliveryPoint, Date planDate)
                                                     throws ParserConfigurationException, IOException,
-                                                    SAXException, XPathExpressionException {
+                                                    SAXException, XPathExpressionException, ExceptionXML {
         return this.currentState.restoreDeliveryPointFromXML(this, XMLPathMap, XMLPathDeliveryPoint, planDate);
     }
 
@@ -184,6 +186,10 @@ public class Controller {
 
     public void selectCourier(Long idCourier) {
         this.currentState.selectCourier(this, idCourier);
+    }
+
+    public Map getMap() {
+        return map;
     }
 
 }

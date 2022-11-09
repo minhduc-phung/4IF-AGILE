@@ -16,12 +16,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import model.Courier;
-import model.DeliveryPoint;
 import model.Intersection;
 import model.Map;
 import model.Segment;
-import model.User;
 
 public class XMLmapDeserializer {
 	/**
@@ -32,19 +29,22 @@ public class XMLmapDeserializer {
 	 * @throws IOException
 	 * @throws ExceptionXML
 	 */
-    public static void load(Map map, User user) throws ParserConfigurationException, SAXException, IOException, ExceptionXML {
+    public static Map load(Map map) throws ParserConfigurationException, SAXException, IOException, ExceptionXML {
         File xml = XMLfileOpener.getInstance().open(true);
         DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document document = docBuilder.parse(xml);
+       
         Element root = document.getDocumentElement();
         if (root.getNodeName().equals("map")) {
-            buildFromDOMXML(root, map, user);
+            buildFromDOMXML(root, map, xml.getName());
         } else {
             throw new ExceptionXML("Wrong format");
         }
+        
+        return map;
     }
 
-    private static void buildFromDOMXML(Element noeudDOMRacine, Map map, User user) throws ExceptionXML, NumberFormatException{               
+    private static Map buildFromDOMXML(Element noeudDOMRacine, Map map, String mapName) throws ExceptionXML, NumberFormatException{               
         HashMap<Long, Intersection> listIntersection = new HashMap<>();
         
         NodeList nodeList = noeudDOMRacine.getElementsByTagName("intersection");
@@ -54,7 +54,7 @@ public class XMLmapDeserializer {
 
         Intersection warehouse = new Intersection(0L, 0.0, 0.0);
         NodeList nodeListWarehouse = noeudDOMRacine.getElementsByTagName("warehouse");        
-        addWarehouse(warehouse, (Element) nodeListWarehouse.item(0), listIntersection, user);
+        addWarehouse(warehouse, (Element) nodeListWarehouse.item(0), listIntersection);
         
         List<Segment> listSegment = new ArrayList<>();
         NodeList nodeListSeg = noeudDOMRacine.getElementsByTagName("segment");
@@ -62,7 +62,8 @@ public class XMLmapDeserializer {
             createSegment((Element) nodeListSeg.item(itr),listSegment, listIntersection);
         }
 
-        map = new Map(listIntersection, listSegment, warehouse);
+        map = new Map(mapName, listIntersection, listSegment, warehouse);
+        return map;
     }
     
     private static void createIntersection(Element elt, HashMap<Long, Intersection> listIntersection) throws ExceptionXML {
@@ -92,7 +93,7 @@ public class XMLmapDeserializer {
     }
     
     public static void addWarehouse (Intersection warehouse, Element eltWarehouse, 
-            HashMap<Long, Intersection> listIntersection, User user) {
+            HashMap<Long, Intersection> listIntersection) {
         
         Long idWarehouse = Long.parseLong(eltWarehouse.getAttribute("address"));
         for (Intersection intersection : listIntersection.values()) {
@@ -101,18 +102,7 @@ public class XMLmapDeserializer {
             }
         }
         
-        DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), 
-                            warehouse.getLatitude(), warehouse.getLongitude());
-        for (Long key : user.getListCourier().keySet()) {
-            Courier c = user.getListCourier().get(key);
-            dpWarehouse.chooseCourier(c);
-            c.addDeliveryPoint(dpWarehouse);
-            c.addPositionIntersection(idWarehouse);
-            HashMap<Long, Double> nestedMap = new HashMap<>();
-            nestedMap.put(warehouse.getId(), Double.valueOf("0.0"));
-            c.getShortestPathBetweenDPs().put(warehouse.getId(), nestedMap);
-            user.getListCourier().replace(key, c);
-        }
+
     }
 }
 

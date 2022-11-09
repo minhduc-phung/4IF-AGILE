@@ -41,7 +41,7 @@ public class XMLdpsDeserializer {
         
         if (root.getNodeName().equals("maps")) {
             XPath xPath = XPathFactory.newInstance().newXPath();
-            String expression = "maps/map[@src='"+user.getMapSource()+"']/courier";
+            String expression = "maps/map[@src='"+map.getMapName()+"']/courier";
             NodeList nodeListCourier = (NodeList) xPath.compile(expression).evaluate(document, XPathConstants.NODESET);
             
             if (nodeListCourier.getLength() >0) {

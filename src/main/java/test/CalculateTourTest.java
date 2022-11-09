@@ -32,7 +32,7 @@ public class CalculateTourTest {
     
     public CalculateTourTest() {
     }
-    
+ /*   
     @Before
     public void setUp() throws ParserConfigurationException, IOException, SAXException {
         updateCalled = false;
@@ -43,7 +43,7 @@ public class CalculateTourTest {
     @After
     public void tearDown() {
     }
-
+*/
     // TODO add test methods here.
     // The methods must be annotated with annotation @Test. For example:
     //

@@ -13,7 +13,6 @@ import java.util.HashMap;
  */
 public class User {
     private HashMap<Long, Courier> listCourier = new HashMap<>();
-    private String mapSource;
 
     public User() {
         Courier c1 = new Courier(Long.parseLong("1"), "GIYRAUD Vincent");
@@ -53,14 +52,6 @@ public class User {
             }
         }
         return chosenCourier;
-    }
-
-    public String getMapSource() {
-        return mapSource;
-    }
-
-    public void setMapSource(String mapSource) {
-        this.mapSource = mapSource;
     }
     
 }

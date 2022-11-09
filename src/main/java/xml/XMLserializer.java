@@ -27,6 +27,7 @@ import org.w3c.dom.Element;
 
 
 import model.DeliveryPoint;
+import model.Map;
 import model.User;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -54,19 +55,19 @@ public class XMLserializer {//implements Visitor{// Singleton
      * @throws TransformerException
      * @throws ExceptionXML
      */
-    public void save(User user) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException, ExceptionXML, XPathExpressionException, SAXException, IOException{
+    public void save(Map map, User user) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException, ExceptionXML, XPathExpressionException, SAXException, IOException{
         File xml = XMLfileOpener.getInstance().open(false);
         StreamResult result = new StreamResult(xml);
         document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xml);
         document.getDocumentElement().normalize();
-        createMapsElt(user);
+        createMapsElt(map, user);
         DOMSource source = new DOMSource(document);
         Transformer xformer = TransformerFactory.newInstance().newTransformer();
         xformer.setOutputProperty(OutputKeys.INDENT, "yes");
         xformer.transform(source, result);
     }
 
-    private void createMapsElt(User user) throws XPathExpressionException {
+    private void createMapsElt(Map map, User user) throws XPathExpressionException {
         NodeList mapsList = document.getElementsByTagName("maps");
         Element maps;
         if (mapsList.getLength()==0) {
@@ -77,19 +78,19 @@ public class XMLserializer {//implements Visitor{// Singleton
         }
 
         NodeList mapList = maps.getChildNodes();
-        Element map = document.createElement("map");
+        Element eltMap = document.createElement("map");
         boolean mapExists = false;
         for (int i =0; i < mapList.getLength(); i++) {
             String mapSrc =  ((Element) mapList.item(i)).getAttribute("src");
-            if (mapSrc.equals(user.getMapSource())) {
+            if (mapSrc.equals(map.getMapName())) {
                 removeChildren(mapList.item(i));
-                map = (Element) mapList.item(i);
+                eltMap = (Element) mapList.item(i);
                 mapExists = true;
             }
         }
         if (!mapExists) {
-            map = document.createElement("map");
-            createAttribute(map, "src", user.getMapSource());
+            eltMap = document.createElement("map");
+            createAttribute(eltMap, "src", map.getMapName());
         }
 
         for (Long idCourier : user.getListCourier().keySet()) {
@@ -101,9 +102,9 @@ public class XMLserializer {//implements Visitor{// Singleton
                 eltCourier.appendChild(eltDP);
             }
 
-            map.appendChild(eltCourier);
+            eltMap.appendChild(eltCourier);
         }    
-        maps.appendChild(map);
+        maps.appendChild(eltMap);
     }
 
     private void createAttribute(Element root, String name, String value){

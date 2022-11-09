@@ -17,11 +17,17 @@ public class Map extends Observable {
     private HashMap<Long, Intersection> listIntersection;
     private List<Segment> listSegment;
     private Intersection warehouse;
+    private String mapName;
 
-    public Map(HashMap<Long, Intersection> listIntersection, List<Segment> listSegment, Intersection warehouse) {
+    public Map() {
+    
+    }
+    
+    public Map(String mapName, HashMap<Long, Intersection> listIntersection, List<Segment> listSegment, Intersection warehouse) {
         this.listIntersection = listIntersection;
         this.listSegment = listSegment;
         this.warehouse = warehouse;
+        this.mapName = mapName;
     }
 
     public List<Segment> getListSegment() {
@@ -48,6 +54,10 @@ public class Map extends Observable {
     }
     public Intersection getWarehouse() {
         return warehouse;
+    }
+
+    public String getMapName() {
+        return mapName;
     }
 
     public Double[] getMinMaxCoordinates() {

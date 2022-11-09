@@ -5,6 +5,7 @@
  */
 package test;
 
+import controller.Controller;
 import controller.Service;
 import java.io.FileWriter;
 import model.Map;
@@ -31,6 +32,7 @@ import org.junit.internal.TextListener;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.xml.sax.SAXException;
+import xml.ExceptionXML;
 
 /**
  *
@@ -39,22 +41,20 @@ import org.xml.sax.SAXException;
 public class Main {
     public static void main(String[] args) throws ParserConfigurationException, IOException, 
                                 SAXException, ParseException, TransformerException, 
-                                TransformerConfigurationException, XPathExpressionException {
-        //testLoadMap();
+                                TransformerConfigurationException, XPathExpressionException, ExceptionXML {
+        testLoadMap();
         //testSaveDeliveryPoints();
         //testRestoreDeliveryPoints();
         //testDijkstra();
         //testEnterDeliveryPoint();
         //testRemoveDeliveryPoint();
-        testCalculateTour();
+        //testCalculateTour();
     }
     
-    public static void testLoadMap() throws ParserConfigurationException, IOException, SAXException {
-        JUnitCore junit = new JUnitCore();
-        junit.addListener(new TextListener(System.out));
-        Result result = junit.run(
-                LoadMapTest.class);
-        resultReport(result);
+    public static void testLoadMap() throws ParserConfigurationException, IOException, SAXException, ExceptionXML {
+        Controller controller = new Controller();
+        controller.loadMapFromXML();
+        System.out.println(controller.getMap().getListIntersection());
     }
     
     public static void resultReport(Result result) {
@@ -82,6 +82,7 @@ public class Main {
         //service.saveDeliveryPointToFile(c.getCurrentDeliveryPoints());
     }
     
+    /*
     public static void testRestoreDeliveryPoints() throws ParserConfigurationException, 
                         IOException, XPathExpressionException, SAXException, ParseException {
         Service service = new Service();
@@ -93,6 +94,7 @@ public class Main {
             System.out.println(dp);
         }
     }
+    */
     
     public static void testDijkstra() throws ParserConfigurationException, IOException, SAXException {
         JUnitCore junit = new JUnitCore();
@@ -101,7 +103,7 @@ public class Main {
                 DijsktraTest.class);
         resultReport(result);
     }
-    
+    /*
     public static void testEnterDeliveryPoint() throws ParserConfigurationException, IOException, 
                                             SAXException, ParseException {
         Service service = new Service();
@@ -113,18 +115,18 @@ public class Main {
         for (Long idInter : listIdInter) {
             service.enterDeliveryPoint(map, idInter, c.getId(), Integer.parseInt("9"));
         }
-        
+       
         // shortest path of courier 1
-        /*for (Long key : c.getShortestPathBetweenDPs().keySet()) {
+        for (Long key : c.getShortestPathBetweenDPs().keySet()) {
             //writer.write("key:"+key+"\n");
             for (Long key2 : c.getShortestPathBetweenDPs().get(key).keySet()) {
                 //writer.write(key2+":"+c.getShortestPathBetweenDPs().get(key).get(key2) + "  ");
             }
             //writer.write("\n");
-        }*/
+        }
         System.out.println(c.getListSegmentBetweenInters(Long.parseLong("25303831"), Long.parseLong("2129259178")));
-    }
-    
+    }*/
+    /*
     public static void testRemoveDeliveryPoint() throws ParserConfigurationException, IOException, SAXException, ParseException {
         Service service = new Service();
         Courier c = service.getUser().getCourierById(1L);
@@ -215,5 +217,5 @@ public class Main {
         }
         writer.close();
         
-    }
+    }*/
 }

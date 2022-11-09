@@ -22,9 +22,12 @@ import model.Courier;
 import model.DeliveryPoint;
 import model.Intersection;
 import model.Map;
+import model.User;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import xml.ExceptionXML;
+import xml.XMLmapDeserializer;
 
 /**
  *
@@ -49,5 +52,34 @@ public class CourierChosenState implements State {
             c.getShortestPathBetweenDPs().put(dp.getId(), new HashMap<>());
         }
         controller.setCurrentState(controller.dpEnteredState);
+    }
+    
+    @Override
+    public void loadMapFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
+        
+        XMLmapDeserializer.load(controller.map);
+        
+        controller.user = new User();
+        Intersection warehouse = controller.map.getWarehouse();
+        
+        addWarehouse(warehouse, controller.user);
+        
+        controller.setCurrentState(controller.mapLoadedState);
+        
+    }
+    
+    private void addWarehouse (Intersection warehouse, User user) {
+        DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), warehouse.getLatitude(), warehouse.getLongitude());
+        for (Long key : user.getListCourier().keySet()) {
+            Courier c = user.getListCourier().get(key);
+            dpWarehouse.chooseCourier(c);
+            c.addDeliveryPoint(dpWarehouse);
+            
+            c.addPositionIntersection(warehouse.getId());
+            HashMap<Long, Double> nestedMap = new HashMap<>();
+            nestedMap.put(warehouse.getId(), Double.valueOf("0.0"));
+            c.getShortestPathBetweenDPs().put(warehouse.getId(), nestedMap);
+            user.getListCourier().replace(key, c);
+        }
     }
 }

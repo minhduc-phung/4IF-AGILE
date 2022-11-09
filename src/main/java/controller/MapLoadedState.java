@@ -24,6 +24,7 @@ import model.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import xml.ExceptionXML;
 
 /**
  *
@@ -38,10 +39,11 @@ public class MapLoadedState implements State {
     
     @Override
     public List<DeliveryPoint> restoreDeliveryPointFromXML(Controller controller, String XMLPathMap, String XMLPathDeliveryPoint, Date planDate) 
-                                                    throws ParserConfigurationException, IOException, 
+                                                    throws ExceptionXML, ParserConfigurationException, IOException, 
                                                     SAXException, XPathExpressionException {
         //precondition : Map is loaded and XMLfile of deliveryPoints exists
-        Map map = this.loadMapFromXML(controller, XMLPathMap);
+        this.loadMapFromXML(controller);
+        Map map = controller.map;
         File XMLFileDP = new File(XMLPathDeliveryPoint);
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
         DocumentBuilder dBuilder = dbf.newDocumentBuilder();

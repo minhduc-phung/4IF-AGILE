@@ -18,6 +18,7 @@ public class XMLfileOpener extends FileFilter {// Singleton
  		JFileChooser jFileChooserXML = new JFileChooser();
         jFileChooserXML.setFileFilter(this);
         jFileChooserXML.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jFileChooserXML.setCurrentDirectory(new File("."));
         if (read)
          	returnVal = jFileChooserXML.showOpenDialog(null);
         else

@@ -26,12 +26,12 @@ public class DijsktraTest {
     private HashMap<Long, Long> precedentNode = new HashMap<>();
     public DijsktraTest() {
     }
-    
+    /*
     @Before
     public void setUp() throws ParserConfigurationException, IOException, SAXException {
         map = this.controller.loadMapFromXML("maps/mediumMap.xml");
     }
-    
+    */
     @After
     public void tearDown() {
     }
