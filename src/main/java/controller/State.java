@@ -16,6 +16,7 @@ import model.Courier;
 import model.DeliveryPoint;
 import model.Map;
 import org.xml.sax.SAXException;
+import view.Window;
 import xml.ExceptionXML;
 
 /**
@@ -23,7 +24,7 @@ import xml.ExceptionXML;
  * @author bbbbb
  */
 public interface State {
-    public default void loadMapFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, IOException, SAXException {
+    public default void loadMapFromXML(Controller controller, Window window) throws ExceptionXML, ParserConfigurationException, IOException, SAXException {
 
     };
     
@@ -54,4 +55,9 @@ public interface State {
     public default void generatedDeliveryPlanForCourier(Controller controller, Courier c) {
         
     };
+
+    public default void mouseMovedOnMap(Controller controller, Window window, double mousePosX, double mousePosY){}
+
+    public default void mouseClickedOnMap(Controller controller, Window window){}
+
 }

@@ -5,33 +5,15 @@
  */
 package controller;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 import model.Courier;
 import model.DeliveryPoint;
 import model.Intersection;
 import model.User;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+import view.Window;
 import xml.ExceptionXML;
 import xml.XMLmapDeserializer;
 
@@ -41,15 +23,14 @@ import xml.XMLmapDeserializer;
  */
 public class PlanGeneratedState implements State {
     @Override
-    public void loadMapFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {       
+    public void loadMapFromXML(Controller controller, Window window) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
         controller.map = XMLmapDeserializer.load(controller.map);
-        
         controller.user = new User();
         Intersection warehouse = controller.getMap().getWarehouse();
-        
         addWarehouse(warehouse, controller.user);
-        
-        controller.setCurrentState(controller.mapLoadedState);       
+        controller.setCurrentState(controller.mapLoadedState);
+        window.drawMap(controller.getMap());
+        window.setMessage("Map loaded!");
     }
     
     private void addWarehouse (Intersection warehouse, User user) {

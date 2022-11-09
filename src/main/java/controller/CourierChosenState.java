@@ -5,27 +5,19 @@
  */
 package controller;
 
-import java.io.File;
+
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
+
+import javafx.scene.paint.Color;
 import model.Courier;
 import model.DeliveryPoint;
 import model.Intersection;
 import model.Map;
 import model.User;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import view.Window;
 import xml.ExceptionXML;
 import xml.XMLmapDeserializer;
 
@@ -55,17 +47,14 @@ public class CourierChosenState implements State {
     }
     
     @Override
-    public void loadMapFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
-        
+    public void loadMapFromXML(Controller controller, Window window) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
         controller.map = XMLmapDeserializer.load(controller.map);
-        
         controller.user = new User();
         Intersection warehouse = controller.getMap().getWarehouse();
-        
         addWarehouse(warehouse, controller.user);
-        
         controller.setCurrentState(controller.mapLoadedState);
-        
+        window.drawMap(controller.getMap());
+        window.setMessage("Map loaded!");
     }
     
     private void addWarehouse (Intersection warehouse, User user) {
@@ -80,6 +69,30 @@ public class CourierChosenState implements State {
             nestedMap.put(warehouse.getId(), Double.valueOf("0.0"));
             c.getShortestPathBetweenDPs().put(warehouse.getId(), nestedMap);
             user.getListCourier().replace(key, c);
+        }
+    }
+
+    @Override
+    public void mouseMovedOnMap(Controller controller, Window window, double mousePosX, double mousePosY) {
+        Double minDistance = Double.MAX_VALUE;
+        Intersection nearestIntersection = null;
+        for (Intersection i : controller.getMap().getListIntersection().values()) {
+            Double distance = Math.sqrt(Math.pow(mousePosX - i.getLongitude(), 2) + Math.pow(mousePosY - i.getLatitude(), 2));
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestIntersection = i;
+            }
+        }
+        controller.setHoveredIntersection(nearestIntersection);
+        window.getGraphicalView().paintIntersection(nearestIntersection, Color.ORANGE, controller.getMap());
+    }
+
+    @Override
+    public void mouseClickedOnMap(Controller controller, Window window) {
+        if (controller.getHoveredIntersection() != null) {
+            controller.setSelectedIntersection(controller.getHoveredIntersection());
+            controller.setHoveredIntersection(null);
+            window.getGraphicalView().paintIntersection(controller.getSelectedIntersection(), Color.YELLOW, controller.getMap());
         }
     }
 }

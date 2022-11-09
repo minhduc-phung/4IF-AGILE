@@ -1,13 +1,13 @@
 package view;
 
 import controller.Controller;
+import javafx.collections.FXCollections;
 import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Border;
-import javafx.scene.paint.Paint;
-import javafx.stage.Stage;
+import model.User;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,54 +24,69 @@ public class Window extends Group {
     protected static final String CALCULATE_ID = "CALCULATE_TOUR";
     protected static final String LOAD_MAP_ID = "LOAD_MAP";
 
-    // Titles of window buttons
-    // Probably useless, but kept for now
-    protected final static String REMOVE_DP = "Remove";
-    protected static final String VALIDATE_DP = "Validate";
-    protected static final String SAVE_DP = "Save the delivery points";
-    protected static final String RESTORE_DP = "Restore delivery points";
-    protected static final String MODIFY_DP = "Modify";
-    protected static final String GENERATE = "Generate delivery plan";
-    protected static final String CALCULATE = "Calculate tour";
-    protected static final String LOAD_MAP = "Load a map";
-
     // Combo box and date picker IDs
     protected static final String DATE_PICKER_ID = "DATE_PICKER";
-    protected static final String COMBO_BOX_ID = "COMBO_BOX";
-
-    private Group root;
+    protected static final String COURIER_BOX_ID = "COMBO_BOX";
+    protected static final String TW_BOX_ID = "TW_BOX";
     private Label messageFrame;
     private Label lateDeliveriesNumber;
     private GraphicalView graphicalView;
     // Not to be confused with "model.Map"
     private Map<String, Button> buttons = new HashMap<String, Button>();
     private ButtonListener buttonListener;
-    //private MouseListener mouseListener;
+    private MouseListener mouseListener;
     private final int WINDOW_WIDTH = 1500;
     private final int WINDOW_HEIGHT = 900;
 
 
-    public Window(Controller controller) {
+    public Window(User user, Controller controller) {
         super();
-        root = new Group();
-//        this.setWidth(WINDOW_WIDTH);
-//        this.setHeight(WINDOW_HEIGHT);
-//        this.setTitle("Delivery Planner");
-//        this.setResizable(false);
-//        this.setOnCloseRequest(e -> System.exit(0));
         messageFrame = new Label();
-        //messageFrame.setBorder(Border.stroke(Paint.valueOf("black")));
-        messageFrame.setStyle("ffx-border-color: black; -fx-border-width: 5");
+        messageFrame.setStyle("-fx-border-color: black; -fx-border-width: 5");
         messageFrame.setText("Messages will be shown here.");
-        messageFrame.setPrefSize(WINDOW_WIDTH, 50);
+        messageFrame.setPrefSize(WINDOW_WIDTH - 450, 50);
         messageFrame.setLayoutY(WINDOW_HEIGHT - 50);
+        messageFrame.setLayoutX(25);
+        messageFrame.setLayoutY(775);
+        this.getChildren().add(messageFrame);
 
         lateDeliveriesNumber = new Label();
-        lateDeliveriesNumber.setStyle("ffx-border-color: black; -fx-border-width: 5");
+        lateDeliveriesNumber.setVisible(false);
+        lateDeliveriesNumber.setStyle("-fx-border-color: black; -fx-border-width: 5");
         lateDeliveriesNumber.setText("No late deliveries. Great!");
-        lateDeliveriesNumber.setPrefSize(WINDOW_WIDTH, 50);
+        lateDeliveriesNumber.setPrefSize(WINDOW_WIDTH - 450, 50);
         lateDeliveriesNumber.setLayoutY(WINDOW_HEIGHT - 100);
+        lateDeliveriesNumber.setLayoutX(25);
+        lateDeliveriesNumber.setLayoutY(825);
+        this.getChildren().add(lateDeliveriesNumber);
         graphicalView = new GraphicalView(this);
+
+        // Combo box and date picker
+        DatePicker datePicker = new DatePicker();
+        datePicker.setId(DATE_PICKER_ID);
+        datePicker.setLayoutX(1110);
+        datePicker.setLayoutY(10);
+        datePicker.setPrefSize(200, 30);
+        //datePicker.setOnAction(e -> controller.datePickerChanged(e));
+        this.getChildren().add(datePicker);
+
+        // Combo box
+        ComboBox courierBox = new ComboBox(FXCollections.observableArrayList(user.getListCourierName()));
+        courierBox.setId(COURIER_BOX_ID);
+        courierBox.setLayoutX(1110);
+        courierBox.setLayoutY(50);
+        courierBox.setPrefSize(200, 30);
+        //courierBox.setOnAction(e -> controller.courierBoxChanged(e));
+        this.getChildren().add(courierBox);
+
+        // Combo box
+        ComboBox twBox = new ComboBox(FXCollections.observableArrayList(user.getTimeWindows().values()));
+        twBox.setId(TW_BOX_ID);
+        twBox.setLayoutX(1110);
+        twBox.setLayoutY(90);
+        twBox.setPrefSize(200, 30);
+        //twBox.setOnAction(e -> controller.twBoxChanged(e));
+        this.getChildren().add(twBox);
 
         createButtons(controller);
     }
@@ -83,7 +98,7 @@ public class Window extends Group {
         Button removeButton = new Button("Remove");
         removeButton.setId(REMOVE_DP_ID);
         removeButton.setOnAction(buttonListener);
-        removeButton.setLayoutX(75);
+        removeButton.setLayoutX(1125);
         removeButton.setLayoutY(350);
         removeButton.setPrefWidth(100);
         removeButton.setStyle("-fx-background-color: #ff9aa2; ");
@@ -94,7 +109,7 @@ public class Window extends Group {
         Button validateButton = new Button("Validate");
         validateButton.setId(VALIDATE_DP_ID);
         validateButton.setOnAction(buttonListener);
-        validateButton.setLayoutX(275);
+        validateButton.setLayoutX(1325);
         validateButton.setLayoutY(350);
         validateButton.setPrefWidth(100);
         validateButton.setStyle("-fx-background-color: #ff9aa2; ");
@@ -105,9 +120,9 @@ public class Window extends Group {
         Button saveButton = new Button("Save delivery points");
         saveButton.setId(SAVE_DP_ID);
         saveButton.setOnAction(buttonListener);
-        saveButton.setLayoutX(75);
-        saveButton.setLayoutY(450);
-        saveButton.setPrefWidth(100);
+        validateButton.setLayoutX(1325);
+        validateButton.setLayoutY(350);
+        validateButton.setPrefWidth(100);
         saveButton.setStyle("-fx-background-color: #ff9aa2; ");
         saveButton.setDisable(true);
         buttons.put(SAVE_DP_ID, saveButton);
@@ -116,9 +131,9 @@ public class Window extends Group {
         Button restoreButton = new Button("Restore delivery points");
         restoreButton.setId(RESTORE_DP_ID);
         restoreButton.setOnAction(buttonListener);
-        restoreButton.setLayoutX(75);
+        restoreButton.setLayoutX(1125);
         restoreButton.setLayoutY(500);
-        restoreButton.setPrefWidth(100);
+        restoreButton.setPrefWidth(150);
         restoreButton.setStyle("-fx-background-color: #ff9aa2; ");
         restoreButton.setDisable(true);
         buttons.put(RESTORE_DP_ID, restoreButton);
@@ -127,7 +142,7 @@ public class Window extends Group {
         Button modifyButton = new Button("Modify");
         modifyButton.setId(MODIFY_DP_ID);
         modifyButton.setOnAction(buttonListener);
-        modifyButton.setLayoutX(75);
+        modifyButton.setLayoutX(1125);
         modifyButton.setLayoutY(550);
         modifyButton.setPrefWidth(100);
         modifyButton.setStyle("-fx-background-color: #ff9aa2; ");
@@ -138,9 +153,9 @@ public class Window extends Group {
         Button generateButton = new Button("Generate delivery plan");
         generateButton.setId(GENERATE_ID);
         generateButton.setOnAction(buttonListener);
-        generateButton.setLayoutX(75);
+        generateButton.setLayoutX(1125);
         generateButton.setLayoutY(600);
-        generateButton.setPrefWidth(100);
+        generateButton.setPrefWidth(150);
         generateButton.setStyle("-fx-background-color: #ff9aa2; ");
         generateButton.setDisable(true);
         buttons.put(GENERATE_ID, generateButton);
@@ -149,7 +164,7 @@ public class Window extends Group {
         Button calculateButton = new Button("Calculate tour");
         calculateButton.setId(CALCULATE_ID);
         calculateButton.setOnAction(buttonListener);
-        calculateButton.setLayoutX(75);
+        calculateButton.setLayoutX(1125);
         calculateButton.setLayoutY(650);
         calculateButton.setPrefWidth(100);
         calculateButton.setStyle("-fx-background-color: #ff9aa2; ");
@@ -160,11 +175,11 @@ public class Window extends Group {
         Button loadMapButton = new Button("Load a map");
         loadMapButton.setId(LOAD_MAP_ID);
         loadMapButton.setOnAction(buttonListener);
-        loadMapButton.setLayoutX(75);
-        loadMapButton.setLayoutY(700);
+        loadMapButton.setLayoutX(1125);
+        loadMapButton.setLayoutY(200);
         loadMapButton.setPrefWidth(100);
         loadMapButton.setStyle("-fx-background-color: #ff9aa2; ");
-        loadMapButton.setDisable(true);
+        loadMapButton.setDisable(false);
         buttons.put(LOAD_MAP_ID, loadMapButton);
 
         // Add buttons to the window
@@ -185,7 +200,12 @@ public class Window extends Group {
         messageFrame.setText(message);
     }
 
-    public Group getRoot() {
-        return root;
+    public GraphicalView getGraphicalView() {
+        return graphicalView;
     }
+    public void drawMap(model.Map map) {
+        graphicalView.drawMap(map);
+        graphicalView.debug();
+    }
+
 }

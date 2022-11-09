@@ -4,6 +4,11 @@ import controller.Controller;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import org.xml.sax.SAXException;
+import xml.ExceptionXML;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 
 public class ButtonListener implements EventHandler<ActionEvent> {
 
@@ -15,15 +20,17 @@ public class ButtonListener implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent e) {
-        /*
-        switch (((Node) e.getSource()).getId()){
-            case "REMOVE_DP": controller.removeDeliveryPoint(); break;
-            case "VALIDATE_DP": controller.validateDeliveryPoint(); break;
-            case "SAVE_DP": controller.saveDeliveryPoint(); break;
-            case "LOAD_DP": controller.loadDeliveryPoint(); break;
 
+        switch (((Node) e.getSource()).getId()){
+            case "LOAD_MAP":
+                try {
+                    controller.loadMapFromXML();
+                } catch (ParserConfigurationException | IOException | SAXException | ExceptionXML ex) {
+                    throw new RuntimeException(ex);
+                }
+                break;
         }
 
-         */
+
     }
 }

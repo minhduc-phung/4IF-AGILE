@@ -4,11 +4,13 @@ import controller.Controller;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import model.User;
 import view.Window;
 
 public class Main extends Application {
     Controller controller = new Controller();
-    private Window window = new Window(controller);
+    User user = new User();
+    private Window window = new Window(user, controller);
     private final int WINDOW_WIDTH = 1500;
     private final int WINDOW_HEIGHT = 900;
     private final String TITLE = "Delivery Planner";

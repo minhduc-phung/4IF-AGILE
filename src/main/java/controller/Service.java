@@ -60,7 +60,7 @@ public class Service {
     }
     
     //done
-    /*
+
     public Map loadMapFromXML(String XMLPath) throws ParserConfigurationException, IOException, SAXException {
         File XMLFile = new File(XMLPath);
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -128,10 +128,10 @@ public class Service {
             listSegment.add(segment);
         }
 
-        Map map = new Map(listIntersection, listSegment, warehouse);
+        Map map = new Map(XMLPath, listIntersection, listSegment, warehouse);
         return map;
     }
-    */
+
 
     public void addShortestPathBetweenDP(Map aMap, Courier c, DeliveryPoint aDP) {
         List<DeliveryPoint> listDP = c.getCurrentDeliveryPoints();

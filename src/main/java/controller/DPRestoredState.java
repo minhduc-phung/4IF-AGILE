@@ -18,6 +18,7 @@ import model.TSP;
 import model.TSP1;
 import model.User;
 import org.xml.sax.SAXException;
+import view.Window;
 import xml.ExceptionXML;
 import xml.XMLmapDeserializer;
 
@@ -28,15 +29,14 @@ import xml.XMLmapDeserializer;
 public class DPRestoredState implements State {
         
     @Override
-    public void loadMapFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {       
+    public void loadMapFromXML(Controller controller, Window window) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
         controller.map = XMLmapDeserializer.load(controller.map);
-        
         controller.user = new User();
         Intersection warehouse = controller.getMap().getWarehouse();
-        
         addWarehouse(warehouse, controller.user);
-        
-        controller.setCurrentState(controller.mapLoadedState);       
+        controller.setCurrentState(controller.mapLoadedState);
+        window.drawMap(controller.getMap());
+        window.setMessage("Map loaded!");
     }
     
     private void addWarehouse (Intersection warehouse, User user) {

@@ -25,6 +25,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import view.Window;
 import xml.ExceptionXML;
 import xml.XMLmapDeserializer;
 
@@ -45,17 +46,14 @@ public class InitialState implements State {
      * @throws SAXException
      */
     @Override
-    public void loadMapFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
-        
+    public void loadMapFromXML(Controller controller, Window window) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
         controller.map = XMLmapDeserializer.load(controller.map);
-        
         controller.user = new User();
         Intersection warehouse = controller.getMap().getWarehouse();
-        
         addWarehouse(warehouse, controller.user);
-        
         controller.setCurrentState(controller.mapLoadedState);
-        
+        window.drawMap(controller.getMap());
+        window.setMessage("Map loaded!");
     }
     
     private void addWarehouse (Intersection warehouse, User user) {

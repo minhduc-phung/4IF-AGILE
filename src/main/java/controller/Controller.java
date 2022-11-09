@@ -23,6 +23,7 @@ import model.Tour;
 import model.User;
 import org.xml.sax.SAXException;
 //import view.Window;
+import view.Window;
 import xml.ExceptionXML;
 
 /**
@@ -33,7 +34,9 @@ public class Controller {
     protected User user = new User();
     protected Map map = new Map();
     private State currentState;
-    //private Window window;
+    private Window window;
+    private Intersection selectedIntersection;
+    private Intersection hoveredIntersection;
     
     protected final InitialState initialState = new InitialState();
     protected final MapLoadedState mapLoadedState = new MapLoadedState();
@@ -47,6 +50,7 @@ public class Controller {
 
     public Controller() {
         this.currentState = initialState;
+        this.window = new Window(user, this);
     }
 
     public void setCurrentState(State currentState) {
@@ -54,7 +58,7 @@ public class Controller {
     }
     
     public void loadMapFromXML() throws ParserConfigurationException, IOException, SAXException, ExceptionXML {
-        this.currentState.loadMapFromXML(this);
+        this.currentState.loadMapFromXML(this, window);
     }
     
     public void addShortestPathBetweenDP(Map aMap, Courier c, DeliveryPoint aDP) {
@@ -188,6 +192,13 @@ public class Controller {
         this.currentState.selectCourier(this, idCourier);
     }
 
+    public void mouseClickedOnMap() {
+        currentState.mouseClickedOnMap(this, window);
+    }
+
+    public void mouseMovedOnMap(double mousePosX, double mousePosY) {
+        currentState.mouseMovedOnMap(this, window, mousePosX, mousePosY);
+    }
     public Map getMap() {
         return map;
     }
@@ -196,4 +207,23 @@ public class Controller {
         return user;
     }
 
+    public Intersection getSelectedIntersection() {
+        return selectedIntersection;
+    }
+
+    public Intersection getHoveredIntersection() {
+        return hoveredIntersection;
+    }
+
+    public void setHoveredIntersection(Intersection hoveredIntersection) {
+        this.hoveredIntersection = hoveredIntersection;
+    }
+
+    public void setSelectedIntersection(Intersection selectedIntersection) {
+        this.selectedIntersection = selectedIntersection;
+    }
+
+    public Window getWindow() {
+        return window;
+    }
 }
