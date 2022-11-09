@@ -8,6 +8,7 @@ package controller;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,16 +26,47 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import model.Courier;
 import model.DeliveryPoint;
+import model.Intersection;
+import model.User;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+import xml.ExceptionXML;
+import xml.XMLmapDeserializer;
 
 /**
  *
  * @author bbbbb
  */
 public class PlanGeneratedState implements State {
+    @Override
+    public void loadMapFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {       
+        controller.map = XMLmapDeserializer.load(controller.map);
+        
+        controller.user = new User();
+        Intersection warehouse = controller.getMap().getWarehouse();
+        
+        addWarehouse(warehouse, controller.user);
+        
+        controller.setCurrentState(controller.mapLoadedState);       
+    }
+    
+    private void addWarehouse (Intersection warehouse, User user) {
+        DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), warehouse.getLatitude(), warehouse.getLongitude());
+        for (Long key : user.getListCourier().keySet()) {
+            Courier c = user.getListCourier().get(key);
+            dpWarehouse.chooseCourier(c);
+            c.addDeliveryPoint(dpWarehouse);
+            
+            c.addPositionIntersection(warehouse.getId());
+            HashMap<Long, Double> nestedMap = new HashMap<>();
+            nestedMap.put(warehouse.getId(), Double.valueOf("0.0"));
+            c.getShortestPathBetweenDPs().put(warehouse.getId(), nestedMap);
+            user.getListCourier().replace(key, c);
+        }
+    }
+    
     /*@Override
     public void saveDeliveryPointToFile(Controller controller, List<DeliveryPoint> listDP) throws ParserConfigurationException, SAXException, 
                                         IOException, TransformerConfigurationException, TransformerException, XPathExpressionException {

@@ -36,7 +36,7 @@ public class XMLmapDeserializer {
        
         Element root = document.getDocumentElement();
         if (root.getNodeName().equals("map")) {
-            buildFromDOMXML(root, map, xml.getName());
+            map = buildFromDOMXML(root, map, xml.getName());
         } else {
             throw new ExceptionXML("Wrong format");
         }

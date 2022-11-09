@@ -28,17 +28,15 @@ import xml.XMLmapDeserializer;
 public class DPRestoredState implements State {
         
     @Override
-    public void loadMapFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
-        
-        XMLmapDeserializer.load(controller.map);
+    public void loadMapFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {       
+        controller.map = XMLmapDeserializer.load(controller.map);
         
         controller.user = new User();
-        Intersection warehouse = controller.map.getWarehouse();
+        Intersection warehouse = controller.getMap().getWarehouse();
         
         addWarehouse(warehouse, controller.user);
         
-        controller.setCurrentState(controller.mapLoadedState);
-        
+        controller.setCurrentState(controller.mapLoadedState);       
     }
     
     private void addWarehouse (Intersection warehouse, User user) {

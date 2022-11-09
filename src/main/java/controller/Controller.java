@@ -38,7 +38,7 @@ public class Controller {
     protected final InitialState initialState = new InitialState();
     protected final MapLoadedState mapLoadedState = new MapLoadedState();
     protected final CourierChosenState courierChosenState = new CourierChosenState();
-    protected final DPEnteredState dpEnteredState = new DPEnteredState();
+    public final DPEnteredState dpEnteredState = new DPEnteredState();
     protected final DPRestoredState dpRestoredState = new DPRestoredState();
     protected final DPRemovedState dpRemovedState = new DPRemovedState();
     protected final TourCalculatedState tourCalculatedState = new TourCalculatedState();
@@ -49,7 +49,7 @@ public class Controller {
         this.currentState = initialState;
     }
 
-    protected void setCurrentState(State currentState) {
+    public void setCurrentState(State currentState) {
         this.currentState = currentState;
     }
     
@@ -172,8 +172,8 @@ public class Controller {
         this.currentState.calculateTour(this, c, idWarehouse);
     }
 
-    public void saveDeliveryPointToFile(List<DeliveryPoint> listDP) throws XPathExpressionException, ParserConfigurationException, IOException, TransformerException, SAXException {
-        this.currentState.saveDeliveryPointToFile(this, listDP);
+    public void saveDeliveryPointToFile() throws XPathExpressionException, ParserConfigurationException, IOException, TransformerException, SAXException, ExceptionXML {
+        this.currentState.saveDeliveryPointToFile(this);
     }
 
     public void removeDeliveryPoint(Map map, DeliveryPoint dp, Long idCourier) {
@@ -190,6 +190,10 @@ public class Controller {
 
     public Map getMap() {
         return map;
+    }
+
+    public User getUser() {
+        return user;
     }
 
 }

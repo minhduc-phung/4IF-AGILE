@@ -28,6 +28,7 @@ import model.Graph;
 import model.Segment;
 import model.TSP;
 import model.TSP1;
+import model.User;
 import org.junit.internal.TextListener;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -42,8 +43,8 @@ public class Main {
     public static void main(String[] args) throws ParserConfigurationException, IOException, 
                                 SAXException, ParseException, TransformerException, 
                                 TransformerConfigurationException, XPathExpressionException, ExceptionXML {
-        testLoadMap();
-        //testSaveDeliveryPoints();
+        //testLoadMap();
+        testSaveDeliveryPoints();
         //testRestoreDeliveryPoints();
         //testDijkstra();
         //testEnterDeliveryPoint();
@@ -67,12 +68,11 @@ public class Main {
     
     public static void testSaveDeliveryPoints() throws ParserConfigurationException, SAXException, 
                             IOException, TransformerException, ParseException, TransformerConfigurationException, 
-                            XPathExpressionException {
-        Service service = new Service();
-        Courier c = service.getUser().getListCourier().get(Long.parseLong("4"));
+                            XPathExpressionException, ExceptionXML {
+        Controller controller = new Controller();
+        User user = controller.getUser();
+        Courier c = user.getListCourier().get(Long.parseLong("4"));
     
-        // respect this format
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd hh:mm:ss z yyyy", Locale.ENGLISH);
         DeliveryPoint dp = new DeliveryPoint(Long.parseLong("1850080438"),
                                             Double.parseDouble("45.754265"), Double.parseDouble("4.886816"));
         // persist deliveryPoint and courier
@@ -80,6 +80,11 @@ public class Main {
         c.addDeliveryPoint(dp);
         // call service
         //service.saveDeliveryPointToFile(c.getCurrentDeliveryPoints());
+        
+
+        controller.setCurrentState(controller.dpEnteredState);
+        
+        controller.saveDeliveryPointToFile();
     }
     
     /*

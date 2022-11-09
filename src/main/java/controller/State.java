@@ -31,7 +31,7 @@ public interface State {
         return null;
     };
     
-    public default void saveDeliveryPointToFile(Controller controller, List<DeliveryPoint> listDP) throws ParserConfigurationException, SAXException, 
+    public default void saveDeliveryPointToFile(Controller controller) throws ParserConfigurationException, SAXException, ExceptionXML,
                                         IOException, TransformerConfigurationException, TransformerException, XPathExpressionException {    
     };
     

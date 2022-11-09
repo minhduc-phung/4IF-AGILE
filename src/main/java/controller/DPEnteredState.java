@@ -38,6 +38,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 import xml.ExceptionXML;
+import xml.XMLdpsSerializer;
 import xml.XMLmapDeserializer;
 
 /**
@@ -49,10 +50,10 @@ public class DPEnteredState implements State {
     @Override
     public void loadMapFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
         
-        XMLmapDeserializer.load(controller.map);
+        controller.map = XMLmapDeserializer.load(controller.map);
         
         controller.user = new User();
-        Intersection warehouse = controller.map.getWarehouse();
+        Intersection warehouse = controller.getMap().getWarehouse();
         
         addWarehouse(warehouse, controller.user);
         
@@ -118,50 +119,14 @@ public class DPEnteredState implements State {
         controller.setCurrentState(controller.dpRemovedState);
     }
     
-/*    @Override
-    public void saveDeliveryPointToFile(Controller controller, List<DeliveryPoint> listDP) throws ParserConfigurationException, SAXException, 
+    @Override
+    public void saveDeliveryPointToFile(Controller controller) throws ParserConfigurationException, SAXException, ExceptionXML,
                                         IOException, TransformerConfigurationException, TransformerException, XPathExpressionException {
-        File XMLFile = new File("saved_files/deliveryPoints.xml");
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
-        DocumentBuilder dBuilder = dbf.newDocumentBuilder();
-        Document doc = dBuilder.parse(XMLFile);
-        doc.getDocumentElement().normalize();
+        Map map = controller.map;
+        User user = controller.user;
         
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        FileWriter writer = new FileWriter(XMLFile);
-        StreamResult result = new StreamResult(writer);
-        DOMSource source = new DOMSource(doc);
+        XMLdpsSerializer.getInstance().save(map, user);
         
-        Node nodePlanDates = doc.getElementsByTagName("planDates").item(0);
-        XPath xPath = XPathFactory.newInstance().newXPath();
-        
-        for (DeliveryPoint dp : listDP) {
-            String expression = "/planDates/planDate[@date='" + dp.getPlanDate() + "']";
-            XPathExpression xPathExpression = xPath.compile(expression);
-            Element nodePlanDate = (Element) xPathExpression.evaluate(doc, XPathConstants.NODE);
-            
-            try {
-                nodePlanDates.appendChild(nodePlanDate);
-            } catch (NullPointerException e) {
-                nodePlanDate = doc.createElement("planDate");
-                nodePlanDate.setAttribute("date", dp.getPlanDate().toString());
-                nodePlanDates.appendChild(nodePlanDate);
-            }
-            
-            expression = "/planDates/planDate[@date='"+dp.getPlanDate()+"']/deliveryPoint[@id='"+dp.getId().toString()+"' and @courierId='"+dp.getCourier().getId().toString()+"']";
-            Element nodeDeliveryPoint = (Element) xPath.compile(expression).evaluate(doc, XPathConstants.NODE);
-            try {
-                nodePlanDate.appendChild(nodeDeliveryPoint);
-            } catch (NullPointerException e) {
-                nodeDeliveryPoint = doc.createElement("deliveryPoint");
-                nodeDeliveryPoint.setAttribute("id", dp.getId().toString());
-                nodeDeliveryPoint.setAttribute("courierId", dp.getCourier().getId().toString());
-                nodePlanDate.appendChild(nodeDeliveryPoint);
-            }
-        }
-        // Export the XMLFile
-        transformer.transform(source, result);
         controller.setCurrentState(controller.dpSavedState);
-    }*/
+    }
 }

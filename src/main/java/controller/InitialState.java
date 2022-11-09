@@ -47,7 +47,7 @@ public class InitialState implements State {
     @Override
     public void loadMapFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
         
-        controller.map = XMLmapDeserializer.load(controller.getMap());
+        controller.map = XMLmapDeserializer.load(controller.map);
         
         controller.user = new User();
         Intersection warehouse = controller.getMap().getWarehouse();

@@ -57,10 +57,10 @@ public class CourierChosenState implements State {
     @Override
     public void loadMapFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
         
-        XMLmapDeserializer.load(controller.map);
+        controller.map = XMLmapDeserializer.load(controller.map);
         
         controller.user = new User();
-        Intersection warehouse = controller.map.getWarehouse();
+        Intersection warehouse = controller.getMap().getWarehouse();
         
         addWarehouse(warehouse, controller.user);
         
