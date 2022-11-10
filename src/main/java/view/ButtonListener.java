@@ -28,6 +28,7 @@ public class ButtonListener implements EventHandler<ActionEvent> {
                 } catch (ParserConfigurationException | IOException | SAXException | ExceptionXML ex) {
                     throw new RuntimeException(ex);
                 }
+
                 break;
         }
 

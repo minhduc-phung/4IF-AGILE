@@ -62,9 +62,10 @@ public class MapLoadedState implements State {
     }
     
     @Override
-    public Courier selectCourier(Controller controller, Long idCourier) {
+    public void selectCourier(Controller controller, Long idCourier) {
+        controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
         controller.setCurrentState(controller.courierChosenState);
-        return controller.user.getCourierById(idCourier);
+        controller.user.getCourierById(idCourier);
     }
     
     @Override

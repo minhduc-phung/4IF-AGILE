@@ -27,7 +27,7 @@ public class InteractivePane extends Pane {
 
     // Combo box and date picker IDs
     protected static final String DATE_PICKER_ID = "DATE_PICKER";
-    protected static final String COURIER_BOX_ID = "COMBO_BOX";
+    protected static final String COURIER_BOX_ID = "COURIER_BOX";
     protected static final String TW_BOX_ID = "TW_BOX";
 
     private GraphicalView graphicalView;
@@ -35,11 +35,15 @@ public class InteractivePane extends Pane {
     private Map<String, Button> buttons = new HashMap<String, Button>();
     private ButtonListener buttonListener;
     private MouseListener mouseListener;
+    private BoxListener boxListener;
+    private Integer selectedTimeWindow;
+    private Long selectedCourierId;
 
     public InteractivePane(User user, Window window, Controller controller) {
         super();
         buttonListener = new ButtonListener(controller);
         mouseListener = new MouseListener(controller);
+        boxListener = new BoxListener(controller);
         this.setLayoutX(1050);
         this.setLayoutY(25);
         // Board size and background
@@ -79,19 +83,21 @@ public class InteractivePane extends Pane {
 
         ComboBox courierBox = new ComboBox(FXCollections.observableArrayList(user.getListCourierName()));
         courierBox.setId(COURIER_BOX_ID);
+        courierBox.setDisable(true);
         courierBox.setPlaceholder(new Label("Select a courier..."));
         courierBox.setLayoutX(100);
         courierBox.setLayoutY(100);
         courierBox.setPrefSize(200, 30);
-        //courierBox.setOnAction(e -> controller.courierBoxChanged(e));
+        courierBox.setOnAction(boxListener);
 
-        ComboBox twBox = new ComboBox(FXCollections.observableArrayList(user.getTimeWindows().values()));
+        ComboBox twBox = new ComboBox(FXCollections.observableArrayList(user.getTimeWindows().keySet()));
         twBox.setId(TW_BOX_ID);
+        twBox.setDisable(true);
         twBox.setPlaceholder(new Label("Select a time-window..."));
         twBox.setLayoutX(100);
         twBox.setLayoutY(150);
         twBox.setPrefSize(200, 30);
-        //twBox.setOnAction(e -> controller.twBoxChanged(e));
+        twBox.setOnAction(boxListener);
 
         // Buttons
         Button removeButton = new Button("Remove");
@@ -186,5 +192,21 @@ public class InteractivePane extends Pane {
         }
 
         window.getChildren().add(this);
+    }
+
+    public void setSelectedCourierId(Long selectedCourierId) {
+        this.selectedCourierId = selectedCourierId;
+    }
+
+    public Long getSelectedCourierId() {
+        return selectedCourierId;
+    }
+
+    public Integer getSelectedTimeWindow() {
+        return selectedTimeWindow;
+    }
+
+    public void setSelectedTimeWindow(Integer selectedTimeWindow) {
+        this.selectedTimeWindow = selectedTimeWindow;
     }
 }

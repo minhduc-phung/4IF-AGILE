@@ -14,10 +14,13 @@ public class BoxListener implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent e) {
-        switch (((ComboBox) e.getSource()).getId()){
-            case "COURIER_BOX_ID":
-                Long courierId = controller.getUser().getCourierByName((((ComboBox) e.getSource()).getValue().toString())).getId();
+        switch (((ComboBox<?>) e.getSource()).getId()){
+            case "COURIER_BOX":
+                Long courierId = controller.getUser().getCourierByName((((ComboBox<?>) e.getSource()).getValue().toString())).getId();
                 controller.selectCourier(courierId);
+                break;
+            case "TW_BOX":
+                // Put the chosen time window in the controller
                 break;
         }
     }

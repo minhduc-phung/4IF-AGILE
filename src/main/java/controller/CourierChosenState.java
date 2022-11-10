@@ -74,25 +74,43 @@ public class CourierChosenState implements State {
 
     @Override
     public void mouseMovedOnMap(Controller controller, double mousePosX, double mousePosY) {
+        Double scale = controller.getWindow().getGraphicalView().getScale();
+        Double minLongitude = controller.getWindow().getGraphicalView().getMinLongitude();
+        Double minLatitude = controller.getWindow().getGraphicalView().getMinLatitude();
+        Integer viewHeight = controller.getWindow().getGraphicalView().getViewHeight();
+        // map mouse position to latitude and longitude
+        Double mouseLongtitude = mousePosX / scale + minLongitude;
+        Double mouseLatitude = (viewHeight - mousePosY) / scale + minLatitude;
         Double minDistance = Double.MAX_VALUE;
         Intersection nearestIntersection = null;
         for (Intersection i : controller.getMap().getListIntersection().values()) {
-            Double distance = Math.sqrt(Math.pow(mousePosX - i.getLongitude(), 2) + Math.pow(mousePosY - i.getLatitude(), 2));
+            Double distance = Math.sqrt(Math.pow(mouseLongtitude - i.getLongitude(), 2) + Math.pow(mouseLatitude - i.getLatitude(), 2));
             if (distance < minDistance) {
                 minDistance = distance;
                 nearestIntersection = i;
             }
         }
-        controller.setHoveredIntersection(nearestIntersection);
+        Intersection oldHoveredIntersection = controller.getWindow().getGraphicalView().getHoveredIntersection();
+        if (oldHoveredIntersection != null) {
+            if (oldHoveredIntersection.equals(controller.getWindow().getGraphicalView().getSelectedIntersection())) {
+                controller.getWindow().getGraphicalView().paintIntersection(oldHoveredIntersection, Color.YELLOW, controller.getMap());
+            } else {
+                controller.getWindow().getGraphicalView().paintIntersection(oldHoveredIntersection, Color.WHITE, controller.getMap());
+            }
+        }
+        controller.getWindow().getGraphicalView().setHoveredIntersection(nearestIntersection);
         controller.getWindow().getGraphicalView().paintIntersection(nearestIntersection, Color.ORANGE, controller.getMap());
     }
 
     @Override
     public void mouseClickedOnMap(Controller controller) {
-        if (controller.getHoveredIntersection() != null) {
-            controller.setSelectedIntersection(controller.getHoveredIntersection());
-            controller.setHoveredIntersection(null);
-            controller.getWindow().getGraphicalView().paintIntersection(controller.getSelectedIntersection(), Color.YELLOW, controller.getMap());
+        if (controller.getWindow().getGraphicalView().getHoveredIntersection() != null) {
+            if (controller.getWindow().getGraphicalView().getSelectedIntersection() != null) {
+                controller.getWindow().getGraphicalView().paintIntersection(controller.getWindow().getGraphicalView().getSelectedIntersection(), Color.WHITE, controller.getMap());
+            }
+            controller.getWindow().getGraphicalView().setSelectedIntersection(controller.getWindow().getGraphicalView().getHoveredIntersection());
+            controller.getWindow().getGraphicalView().setHoveredIntersection(null);
+            controller.getWindow().getGraphicalView().paintIntersection(controller.getWindow().getGraphicalView().getSelectedIntersection(), Color.YELLOW, controller.getMap());
         }
     }
 }

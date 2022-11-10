@@ -87,5 +87,44 @@ public class Map extends Observable {
         return minMax;
     }
 
+    public Double getMinLatitude() {
+        Double minLat = Double.MAX_VALUE;
+        for (Intersection i : listIntersection.values()) {
+            if(i.getLatitude() < minLat) {
+                minLat = i.getLatitude();
+            }
+        }
+        return minLat;
+    }
+
+    public Double getMinLongitude() {
+        Double minLong = Double.MAX_VALUE;
+        for (Intersection i : listIntersection.values()) {
+            if(i.getLongitude() < minLong) {
+                minLong = i.getLongitude();
+            }
+        }
+        return minLong;
+    }
+
+    public Double getMaxLatitude() {
+        Double maxLat = Double.MIN_VALUE;
+        for (Intersection i : listIntersection.values()) {
+            if(i.getLatitude() > maxLat) {
+                maxLat = i.getLatitude();
+            }
+        }
+        return maxLat;
+    }
+
+    public Double getMaxLongitude() {
+        Double maxLong = Double.MIN_VALUE;
+        for (Intersection i : listIntersection.values()) {
+            if(i.getLongitude() > maxLong) {
+                maxLong = i.getLongitude();
+            }
+        }
+        return maxLong;
+    }
 
 }

@@ -63,4 +63,7 @@ public class Window extends Group {
         return graphicalView;
     }
 
+    public InteractivePane getInteractivePane() {
+        return interactivePane;
+    }
 }

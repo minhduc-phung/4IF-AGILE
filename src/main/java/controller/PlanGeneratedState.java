@@ -96,9 +96,8 @@ public class PlanGeneratedState implements State {
     }*/
     
     @Override
-    public Courier selectCourier(Controller controller, Long idCourier) {
-        Courier c = controller.user.getCourierById(idCourier);
+    public void selectCourier(Controller controller, Long idCourier) {
+        controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
         controller.setCurrentState(controller.courierChosenState);
-        return c;
     }
 }

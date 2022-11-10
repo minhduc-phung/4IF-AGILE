@@ -35,8 +35,8 @@ public class Controller {
     protected Map map = new Map();
     private State currentState;
     private Window window;
-    private Intersection selectedIntersection;
-    private Intersection hoveredIntersection;
+
+
     
     protected final InitialState initialState = new InitialState();
     protected final MapLoadedState mapLoadedState = new MapLoadedState();
@@ -59,6 +59,8 @@ public class Controller {
     
     public void loadMapFromXML() throws ParserConfigurationException, IOException, SAXException, ExceptionXML {
         this.currentState.loadMapFromXML(this, window);
+        // print current state type
+        System.out.println(currentState.getClass().getSimpleName());
     }
     
     public void addShortestPathBetweenDP(Map aMap, Courier c, DeliveryPoint aDP) {
@@ -205,22 +207,6 @@ public class Controller {
 
     public User getUser() {
         return user;
-    }
-
-    public Intersection getSelectedIntersection() {
-        return selectedIntersection;
-    }
-
-    public Intersection getHoveredIntersection() {
-        return hoveredIntersection;
-    }
-
-    public void setHoveredIntersection(Intersection hoveredIntersection) {
-        this.hoveredIntersection = hoveredIntersection;
-    }
-
-    public void setSelectedIntersection(Intersection selectedIntersection) {
-        this.selectedIntersection = selectedIntersection;
     }
 
     public Window getWindow() {

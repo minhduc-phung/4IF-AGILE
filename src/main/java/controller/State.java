@@ -41,8 +41,7 @@ public interface State {
         return null;
     };
     
-    public default Courier selectCourier(Controller controller, Long idCourier) {
-        return null;
+    public default void selectCourier(Controller controller, Long idCourier) {
     };
     
     public default void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Long idCourier, Integer timeWindow) {
