@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><planDates>
-<planDate date="Thu Oct 20 00:00:00 CEST 2022"> </planDate>
-<planDate date="Fri Oct 21 00:00:00 CEST 2022"> </planDate>
-
-<planDate date="Tue Oct 25 00:00:00 CEST 2022"> <deliveryPoint courierId="3" id="1850080438"/></planDate>
-<planDate date="Sun Oct 23 00:00:00 CEST 2022"><deliveryPoint courierId="1" id="1850080438"/>
-<deliveryPoint courierId="4" id="1850080438"/></planDate>
-<planDate date="Mon Oct 24 00:00:00 CEST 2022">
-<deliveryPoint courierId="3" id="1850080438"/>
-</planDate>
-</planDates>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><maps>
+<map src="maps/mediumMap.xml">
+<courier id="1"/>
+<courier id="2"/>
+<courier id="3"/>
+<courier id="4">
+<deliveryPoint id="1850080438" timeWindow="5"/>
+</courier>
+<courier id="5"/>
+</map>
+<map src="smallMap.xml"><Courier id="1"/><Courier id="2"/><Courier id="3"/><Courier id="4"><deliveryPoint id="1850080438" timeWindow="9"/></Courier><Courier id="5"/></map></maps>
