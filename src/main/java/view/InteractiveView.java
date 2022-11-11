@@ -2,9 +2,9 @@ package view;
 
 import controller.Controller;
 import javafx.collections.FXCollections;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -13,8 +13,9 @@ import model.User;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-public class InteractivePane extends Pane {
+public class InteractiveView extends Pane {
     // IDs of the window buttons
     protected static final String REMOVE_DP_ID = "REMOVE_DP";
     protected static final String VALIDATE_DP_ID = "VALIDATE_DP";
@@ -25,21 +26,21 @@ public class InteractivePane extends Pane {
     protected static final String CALCULATE_ID = "CALCULATE_TOUR";
     protected static final String LOAD_MAP_ID = "LOAD_MAP";
 
-    // Combo box and date picker IDs
-    protected static final String DATE_PICKER_ID = "DATE_PICKER";
+    // Combo box IDs
     protected static final String COURIER_BOX_ID = "COURIER_BOX";
     protected static final String TW_BOX_ID = "TW_BOX";
 
-    private GraphicalView graphicalView;
     // Not to be confused with "model.Map"
     private Map<String, Button> buttons = new HashMap<String, Button>();
+    private ComboBox<String> courierBox;
+    private ComboBox<String> twBox;
     private ButtonListener buttonListener;
     private MouseListener mouseListener;
     private BoxListener boxListener;
     private Integer selectedTimeWindow;
     private Long selectedCourierId;
 
-    public InteractivePane(User user, Window window, Controller controller) {
+    public InteractiveView(User user, Window window, Controller controller) {
         super();
         buttonListener = new ButtonListener(controller);
         mouseListener = new MouseListener(controller);
@@ -51,7 +52,7 @@ public class InteractivePane extends Pane {
         this.setBackground(new Background(new BackgroundFill(Color.FLORALWHITE, null, null)));
 
         // The frame
-        this.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5))));
+        this.setBorder(new Border(new BorderStroke(Color.SKYBLUE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5))));
 
         // Labels
         Label label = new Label("Set up a delivery plan");
@@ -63,39 +64,33 @@ public class InteractivePane extends Pane {
 
         Label courierLabel = new Label("Courier");
         courierLabel.setLayoutX(10);
-        courierLabel.setLayoutY(100);
+        courierLabel.setLayoutY(150);
 
         Label timeWindowLabel = new Label("Time-window");
         timeWindowLabel.setLayoutX(10);
-        timeWindowLabel.setLayoutY(150);
+        timeWindowLabel.setLayoutY(200);
 
-        Label dateLabel = new Label("Date");
-        dateLabel.setLayoutX(10);
-        dateLabel.setLayoutY(300);
+        Label deliveryPointLabel = new Label("Delivery points");
+        deliveryPointLabel.layoutXProperty().bind(this.widthProperty().subtract(deliveryPointLabel.widthProperty()).divide(2));
+        deliveryPointLabel.setLayoutY(250);
+        deliveryPointLabel.setFont(new Font(20));
+        deliveryPointLabel.setStyle("-fx-font-weight: bold");
 
-        // Combo box and date picker
-        DatePicker datePicker = new DatePicker();
-        datePicker.setId(DATE_PICKER_ID);
-        datePicker.setLayoutX(110);
-        datePicker.setLayoutY(300);
-        datePicker.setPrefSize(200, 30);
-        //datePicker.setOnAction(e -> controller.datePickerChanged(e));
-
-        ComboBox courierBox = new ComboBox(FXCollections.observableArrayList(user.getListCourierName()));
+        courierBox = new ComboBox<>(FXCollections.observableArrayList(user.getListCourierName()));
         courierBox.setId(COURIER_BOX_ID);
-        courierBox.setDisable(true);
         courierBox.setPlaceholder(new Label("Select a courier..."));
-        courierBox.setLayoutX(100);
-        courierBox.setLayoutY(100);
+        courierBox.setDisable(true);
+        courierBox.setLayoutX(175);
+        courierBox.setLayoutY(150);
         courierBox.setPrefSize(200, 30);
         courierBox.setOnAction(boxListener);
 
-        ComboBox twBox = new ComboBox(FXCollections.observableArrayList(user.getTimeWindows().keySet()));
+        twBox = new ComboBox<>(FXCollections.observableArrayList(user.getTimeWindows().keySet()));
         twBox.setId(TW_BOX_ID);
-        twBox.setDisable(true);
         twBox.setPlaceholder(new Label("Select a time-window..."));
-        twBox.setLayoutX(100);
-        twBox.setLayoutY(150);
+        twBox.setDisable(true);
+        twBox.setLayoutX(175);
+        twBox.setLayoutY(200);
         twBox.setPrefSize(200, 30);
         twBox.setOnAction(boxListener);
 
@@ -103,21 +98,21 @@ public class InteractivePane extends Pane {
         Button removeButton = new Button("Remove");
         removeButton.setId(REMOVE_DP_ID);
         removeButton.setOnAction(buttonListener);
-        removeButton.setLayoutX(75);
-        removeButton.setLayoutY(350);
+        removeButton.setLayoutX(25);
+        removeButton.setLayoutY(300);
         removeButton.setPrefWidth(100);
         removeButton.setStyle("-fx-background-color: #ff9aa2; ");
-        removeButton.setDisable(true);
+        removeButton.setDisable(false);
         buttons.put(REMOVE_DP_ID, removeButton);
 
         Button validateButton = new Button("Validate");
         validateButton.setId(VALIDATE_DP_ID);
         validateButton.setOnAction(buttonListener);
         validateButton.setLayoutX(275);
-        validateButton.setLayoutY(350);
+        validateButton.setLayoutY(300);
         validateButton.setPrefWidth(100);
         validateButton.setStyle("-fx-background-color: #b5ead7; ");
-        validateButton.setDisable(true);
+        validateButton.setDisable(false);
         buttons.put(VALIDATE_DP_ID, validateButton);
 
         Button modifyButton = new Button("Modify");
@@ -127,7 +122,7 @@ public class InteractivePane extends Pane {
         modifyButton.layoutXProperty().bind(this.widthProperty().subtract(modifyButton.widthProperty()).divide(2));
         modifyButton.setLayoutY(700);
         modifyButton.setPrefWidth(100);
-        modifyButton.setDisable(true);
+        modifyButton.setDisable(false);
         buttons.put(MODIFY_DP_ID, modifyButton);
 
         Button generateButton = new Button("Generate delivery plan");
@@ -136,54 +131,53 @@ public class InteractivePane extends Pane {
         generateButton.setLayoutX(25);
         generateButton.setLayoutY(750);
         generateButton.setPrefWidth(150);
-        generateButton.setDisable(true);
+        generateButton.setDisable(false);
         generateButton.setStyle("-fx-background-color: #c7ceea; ");
         buttons.put(GENERATE_ID, generateButton);
 
         Button restoreButton = new Button("Restore delivery points");
         restoreButton.setId(RESTORE_DP_ID);
         restoreButton.setOnAction(buttonListener);
-        restoreButton.setLayoutX(285);
-        restoreButton.setLayoutY(300);
+        restoreButton.setLayoutX(25);
+        restoreButton.setLayoutY(650);
         restoreButton.setPrefWidth(150);
-        restoreButton.setDisable(true);
+        restoreButton.setDisable(false);
         restoreButton.setStyle("-fx-background-color: #c7ceea; ");
         buttons.put(RESTORE_DP_ID, restoreButton);
 
         Button saveButton = new Button("Save delivery points");
         saveButton.setId(SAVE_DP_ID);
         saveButton.setOnAction(buttonListener);
-        validateButton.setLayoutX(1325);
-        validateButton.setLayoutY(350);
-        validateButton.setPrefWidth(100);
-        saveButton.setStyle("-fx-background-color: #ff9aa2; ");
-        saveButton.setDisable(true);
+        saveButton.setPrefWidth(150);
+        saveButton.setLayoutX(this.getPrefWidth() - saveButton.getPrefWidth() - 25);
+        saveButton.setLayoutY(650);
+        saveButton.setStyle("-fx-background-color: #c7ceea; ");
+        saveButton.setDisable(false);
         buttons.put(SAVE_DP_ID, saveButton);
 
         Button calculateButton = new Button("Calculate tour");
         calculateButton.setId(CALCULATE_ID);
         calculateButton.setOnAction(buttonListener);
-        calculateButton.setLayoutX(225);
+        calculateButton.setPrefWidth(150);
+        calculateButton.setLayoutX(this.getPrefWidth() - calculateButton.getPrefWidth() - 25);
         calculateButton.setLayoutY(750);
-        calculateButton.setPrefWidth(200);
         calculateButton.setStyle("-fx-background-color: #c7ceea; ");
         buttons.put(CALCULATE_ID, calculateButton);
 
         Button loadMapButton = new Button("Load a map");
         loadMapButton.setId(LOAD_MAP_ID);
         loadMapButton.setOnAction(buttonListener);
-        loadMapButton.setLayoutX(125);
-        loadMapButton.setLayoutY(200);
+        loadMapButton.layoutXProperty().bind(this.widthProperty().subtract(loadMapButton.widthProperty()).divide(2));
+        loadMapButton.setLayoutY(100);
         loadMapButton.setPrefWidth(100);
-        loadMapButton.setStyle("-fx-background-color: #ff9aa2; ");
+        loadMapButton.setStyle("-fx-background-color: #c7ceea; ");
         loadMapButton.setDisable(false);
         buttons.put(LOAD_MAP_ID, loadMapButton);
 
         this.getChildren().add(label);
         this.getChildren().add(courierLabel);
         this.getChildren().add(timeWindowLabel);
-        this.getChildren().add(dateLabel);
-        this.getChildren().add(datePicker);
+        this.getChildren().add(deliveryPointLabel);
         this.getChildren().add(courierBox);
         this.getChildren().add(twBox);
         // Add buttons to the window
@@ -208,5 +202,20 @@ public class InteractivePane extends Pane {
 
     public void setSelectedTimeWindow(Integer selectedTimeWindow) {
         this.selectedTimeWindow = selectedTimeWindow;
+    }
+
+    public void resetComboBoxes() {
+        courierBox.getSelectionModel().clearSelection();
+        twBox.getSelectionModel().clearSelection();
+    }
+
+    public void allowNode(String nodeId, boolean allow){
+        if (Objects.equals(nodeId, COURIER_BOX_ID)){
+            courierBox.setDisable(!allow);
+        } else if (Objects.equals(nodeId, TW_BOX_ID)) {
+            twBox.setDisable(!allow);
+        } else {
+            buttons.get(nodeId).setDisable(!allow);
+        }
     }
 }

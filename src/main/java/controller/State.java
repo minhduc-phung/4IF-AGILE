@@ -58,4 +58,6 @@ public interface State {
 
     public default void mouseClickedOnMap(Controller controller){};
 
+    public default void mouseExitedMap(Controller controller){};
+
 }

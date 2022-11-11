@@ -201,6 +201,9 @@ public class Controller {
     public void mouseMovedOnMap(double mousePosX, double mousePosY) {
         currentState.mouseMovedOnMap(this, mousePosX, mousePosY);
     }
+    public void mouseExitedMap() {
+        currentState.mouseExitedMap(this);
+    }
     public Map getMap() {
         return map;
     }
@@ -212,4 +215,5 @@ public class Controller {
     public Window getWindow() {
         return window;
     }
+
 }

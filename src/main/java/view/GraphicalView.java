@@ -34,14 +34,15 @@ public class GraphicalView extends Pane implements Observer {
 
     public GraphicalView(Window window, Controller controller) {
         super();
-        this.setLayoutX(20);
-        this.setLayoutY(20);
+        this.setLayoutX(25);
+        this.setLayoutY(25);
         this.setBackground(new Background(new BackgroundFill(Color.GRAY, null, null)));
         this.setPrefSize(viewWidth, viewHeight);
         MouseListener mouseListener = new MouseListener(controller);
         // Events
         this.setOnMouseMoved(mouseListener);
         this.setOnMouseClicked(mouseListener);
+        this.setOnMouseExited(mouseListener);
 
         window.getChildren().add(this);
     }
@@ -81,14 +82,17 @@ public class GraphicalView extends Pane implements Observer {
         for (Intersection intersection : map.getListIntersection().values()) {
             Double posX = (intersection.getLongitude() - minLongitude) * scale;
             Double posY = viewHeight - (intersection.getLatitude() - minLatitude) * scale;
-            System.out.println("posX: " + posX + " posY: " + posY);
-            Circle point = new Circle(posX, posY, 3);
-            point.setFill(Color.WHITE);
-            if (Objects.equals(intersection.getId(), map.getWarehouse().getId())) {
-                point.setFill(Color.RED);
-                point.setRadius(4);
-            }
-            this.getChildren().add(point);
+            this.getChildren().add(new Circle(posX, posY, 3.5, Color.WHITE));
+        }
+        Intersection warehouse = map.getWarehouse();
+        Double posX = (warehouse.getLongitude() - minLongitude) * scale;
+        Double posY = viewHeight - (warehouse.getLatitude() - minLatitude) * scale;
+        this.getChildren().add(new Circle(posX, posY, 6, Color.PURPLE));
+    }
+
+    public void clearSelection(){
+        if(selectedIntersection != null){
+            selectedIntersection = null;
         }
     }
 
@@ -96,9 +100,7 @@ public class GraphicalView extends Pane implements Observer {
         Double[] coords = map.getMinMaxCoordinates();
         Double posX = (intersection.getLongitude() - coords[1]) * scale;
         Double posY = viewHeight - (intersection.getLatitude() - coords[0]) * scale;
-        Circle point = new Circle(posX, posY, 3);
-        point.setFill(color);
-        this.getChildren().add(point);
+        this.getChildren().add(new Circle(posX, posY, 3.5, color));
     }
 
     public Intersection getSelectedIntersection() {
@@ -143,5 +145,13 @@ public class GraphicalView extends Pane implements Observer {
 
     public void setSelectedIntersection(Intersection selectedIntersection) {
         this.selectedIntersection = selectedIntersection;
+    }
+
+    public void updateMap(Map map, Courier courier) {
+    	this.getChildren().clear();
+    	this.drawMap(map);
+        for (DeliveryPoint deliveryPoint : courier.getCurrentDeliveryPoints()) {
+            paintIntersection(deliveryPoint, Color.BLUE, map);
+        }
     }
 }

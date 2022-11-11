@@ -30,7 +30,11 @@ public class PlanGeneratedState implements State {
         addWarehouse(warehouse, controller.user);
         controller.setCurrentState(controller.mapLoadedState);
         window.getGraphicalView().drawMap(controller.getMap());
-        window.setMessage("Map loaded!");
+        window.allowNode("COURIER_BOX", true);
+        window.allowNode("TW_BOX", true);
+        window.getInteractivePane().resetComboBoxes();
+        window.setMessage("Please choose a courier and a time-window to start adding delivery points.");
+
     }
     
     private void addWarehouse (Intersection warehouse, User user) {
@@ -98,6 +102,7 @@ public class PlanGeneratedState implements State {
     @Override
     public void selectCourier(Controller controller, Long idCourier) {
         controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
+        controller.getWindow().getGraphicalView().updateMap(controller.getMap(), controller.user.getCourierById(idCourier));
         controller.setCurrentState(controller.courierChosenState);
     }
 }

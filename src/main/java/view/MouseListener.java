@@ -21,7 +21,9 @@ public class MouseListener implements EventHandler<MouseEvent> {
             case "MOUSE_MOVED":
                 controller.mouseMovedOnMap(mouseEvent.getX(), mouseEvent.getY());
                 break;
-            case "MOUSE_DRAGGED": break;
+            case "MOUSE_EXITED":
+                controller.mouseExitedMap();
+                break;
         }
     }
 }
