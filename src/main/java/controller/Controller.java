@@ -22,7 +22,6 @@ import model.Segment;
 import model.Tour;
 import model.User;
 import org.xml.sax.SAXException;
-//import view.Window;
 import view.Window;
 import xml.ExceptionXML;
 

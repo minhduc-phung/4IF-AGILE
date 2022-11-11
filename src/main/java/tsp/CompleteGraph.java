@@ -1,6 +1,7 @@
-package model;
+package tsp;
 
 import java.util.HashMap;
+import model.Courier;
 
 public class CompleteGraph implements Graph {
 	private static final int MAX_COST = 40;

@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package test;
+package tests;
 
+import javafx.application.Application;
+import javafx.stage.Stage;
 import org.junit.internal.TextListener;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -13,7 +15,7 @@ import org.junit.runner.Result;
  *
  * @author bbbbb
  */
-public class TestRunner {
+public class TestRunner extends Application {
     public static void main(String[] args) {
         JUnitCore junit = new JUnitCore();
         junit.addListener(new TextListener(System.out));
@@ -29,4 +31,9 @@ public class TestRunner {
             result.getRunCount() + ". Time: " +
             result.getRunTime() + "ms.");
     }    
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

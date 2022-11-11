@@ -1,7 +1,6 @@
 package view;
 
 import controller.Controller;
-import controller.Service;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;

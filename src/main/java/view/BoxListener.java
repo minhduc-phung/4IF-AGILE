@@ -3,7 +3,6 @@ package view;
 import controller.Controller;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 
 public class BoxListener implements EventHandler<ActionEvent> {

@@ -1,4 +1,4 @@
-package model;
+package tsp;
 
 import java.util.Collection;
 import java.util.Iterator;

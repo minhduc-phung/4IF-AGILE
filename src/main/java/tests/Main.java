@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package test;
+package tests;
 
 import controller.Controller;
 import controller.Service;
@@ -17,17 +17,19 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import javafx.application.Application;
+import javafx.stage.Stage;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
-import model.CompleteGraph;
+import tsp.CompleteGraph;
 import model.Courier;
 import model.DeliveryPoint;
-import model.Graph;
+import tsp.Graph;
 import model.Segment;
-import model.TSP;
-import model.TSP1;
+import tsp.TSP;
+import tsp.TSP1;
 import model.User;
 import org.junit.internal.TextListener;
 import org.junit.runner.JUnitCore;
@@ -39,12 +41,12 @@ import xml.ExceptionXML;
  *
  * @author nmngo
  */
-public class Main {
+public class Main extends Application {
     public static void main(String[] args) throws ParserConfigurationException, IOException, 
                                 SAXException, ParseException, TransformerException, 
                                 TransformerConfigurationException, XPathExpressionException, ExceptionXML {
-        //testLoadMap();
-        testSaveDeliveryPoints();
+        testLoadMap();
+        //testSaveDeliveryPoints();
         //testRestoreDeliveryPoints();
         //testDijkstra();
         //testEnterDeliveryPoint();
@@ -223,4 +225,9 @@ public class Main {
         writer.close();
         
     }*/
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

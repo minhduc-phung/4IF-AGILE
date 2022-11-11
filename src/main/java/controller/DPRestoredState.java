@@ -13,14 +13,14 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import javafx.scene.paint.Color;
 import javax.xml.xpath.XPathExpressionException;
-import model.CompleteGraph;
+import tsp.CompleteGraph;
 import model.Courier;
 import model.DeliveryPoint;
-import model.Graph;
+import tsp.Graph;
 import model.Intersection;
 import model.Map;
-import model.TSP;
-import model.TSP1;
+import tsp.TSP;
+import tsp.TSP1;
 import model.User;
 import org.xml.sax.SAXException;
 import view.Window;

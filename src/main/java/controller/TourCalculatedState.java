@@ -14,6 +14,7 @@ import model.Courier;
 public class TourCalculatedState implements State {
     @Override
     public void generatedDeliveryPlanForCourier(Controller controller, Courier c) {
+        
         controller.setCurrentState(controller.planGeneratedState);
     }
 }
