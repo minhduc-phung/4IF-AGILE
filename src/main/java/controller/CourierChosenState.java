@@ -102,11 +102,11 @@ public class CourierChosenState implements State {
             }
         }
         Intersection oldHoveredIntersection = controller.getWindow().getGraphicalView().getHoveredIntersection();
-        List<DeliveryPoint> dps = controller.user.getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId()).getCurrentDeliveryPoints();
+        List<Long> dpIds = controller.user.getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId()).getPositionIntersection();
         if (oldHoveredIntersection != null) {
             if (oldHoveredIntersection.equals(controller.getWindow().getGraphicalView().getSelectedIntersection())) {
                 controller.getWindow().getGraphicalView().paintIntersection(oldHoveredIntersection, Color.BROWN, controller.getMap());
-            } else if (dps.contains(oldHoveredIntersection)) {
+            } else if (dpIds.contains(oldHoveredIntersection.getId())) {
                 controller.getWindow().getGraphicalView().paintIntersection(oldHoveredIntersection, Color.BLUE, controller.getMap());
             } else {
                 controller.getWindow().getGraphicalView().paintIntersection(oldHoveredIntersection, Color.WHITE, controller.getMap());

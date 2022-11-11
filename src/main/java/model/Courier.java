@@ -88,5 +88,13 @@ public class Courier {
     public List<Segment> getListSegmentBetweenInters(Long idOrigin, Long idDest) {
         return listSegmentBetweenDPs.get(idOrigin).getListSegment(idDest);
     }
+
+    public List<Long> getDeliveryPointIds(){
+        List<Long> ids = new ArrayList<>();
+        for(DeliveryPoint dp : currentDeliveryPoints){
+            ids.add(dp.getId());
+        }
+        return ids;
+    }
     
 }
