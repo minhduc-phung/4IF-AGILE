@@ -43,7 +43,9 @@ public class MapLoadedState implements State {
         addWarehouse(warehouse, controller.user);
         controller.setCurrentState(controller.mapLoadedState);
         window.getGraphicalView().drawMap(controller.getMap());
-        window.setMessage("Map loaded!");
+        window.allowNode("COURIER_BOX", true);
+        window.allowNode("TW_BOX", true);
+        window.setMessage("Please choose a courier and a time-window to start adding delivery points.");
     }
     
     private void addWarehouse (Intersection warehouse, User user) {

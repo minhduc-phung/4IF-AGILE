@@ -28,8 +28,16 @@ public class ButtonListener implements EventHandler<ActionEvent> {
                 } catch (ParserConfigurationException | IOException | SAXException | ExceptionXML ex) {
                     throw new RuntimeException(ex);
                 }
-
                 break;
+            case "VALIDATE_DP":
+                controller.enterDeliveryPoint(controller.getMap(), controller.getWindow().getGraphicalView().getSelectedIntersection().getId(), controller.getWindow().getInteractivePane().getSelectedCourierId(), controller.getWindow().getInteractivePane().getSelectedTimeWindow());
+                break;
+            case "REMOVE_DP": break;
+            case "RESTORE_DP": break;
+            case "SAVE_DP": break;
+            case "MODIFY_DP": break;
+            case "GENERATE_PLAN": break;
+            case "CALCULATE_TOUR": break;
         }
 
 
