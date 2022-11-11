@@ -115,16 +115,21 @@ public class DPRemovedState implements State {
         
         controller.setCurrentState(controller.dpSavedState);
     }
+
+    public void selectCourier(Controller controller, Long idCourier) {
+        controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
+        controller.getWindow().setMessage("Courier selected.");
+        controller.getWindow().getGraphicalView().updateMap(controller.getMap(), controller.user.getCourierById(idCourier));
+    }
     
     @Override
     public void restoreDeliveryPointFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, IOException, 
                                                     SAXException, XPathExpressionException {
         //precondition : Map is loaded and XMLfile of deliveryPoints exists
         Map map = controller.map;
-        User user = controller.user;
-        
+        User user = new User();
         controller.user = XMLdpsDeserializer.loadDPList(map, user);
-        
+        controller.getWindow().setMessage("Delivery points restored successfully.");
         controller.setCurrentState(controller.dpRestoredState);
     }
 
@@ -150,7 +155,8 @@ public class DPRemovedState implements State {
             }
         }
         Intersection oldHoveredIntersection = controller.getWindow().getGraphicalView().getHoveredIntersection();
-        List<Long> dpIds = controller.user.getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId()).getPositionIntersection();
+        List<Long> dpIds = controller.user.getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId()).getDeliveryPointIds();
+        dpIds.remove(0); // remove warehouse ID
         if (oldHoveredIntersection != null) {
             if (oldHoveredIntersection.equals(controller.getWindow().getGraphicalView().getSelectedIntersection())) {
                 controller.getWindow().getGraphicalView().paintIntersection(oldHoveredIntersection, Color.BROWN, controller.getMap());

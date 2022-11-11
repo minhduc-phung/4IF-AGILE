@@ -63,7 +63,7 @@ public class XMLserializer {//implements Visitor{// Singleton
         createMapsElt(map, user);
         DOMSource source = new DOMSource(document);
         Transformer xformer = TransformerFactory.newInstance().newTransformer();
-        xformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        //xformer.setOutputProperty(OutputKeys.INDENT, "yes");
         xformer.transform(source, result);
     }
 

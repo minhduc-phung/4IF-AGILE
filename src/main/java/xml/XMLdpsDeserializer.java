@@ -39,6 +39,11 @@ public class XMLdpsDeserializer {
         DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document document = docBuilder.parse(xml);
         Element root = document.getDocumentElement();
+        DeliveryPoint dpWarehouse = new DeliveryPoint(map.getWarehouse().getId(), map.getWarehouse().getLatitude(), map.getWarehouse().getLongitude());
+        for (Long idCourier: user.getListCourier().keySet()){
+            Courier courier = user.getCourierById(idCourier);
+            courier.addDeliveryPoint(dpWarehouse);
+        }
         
         if (root.getNodeName().equals("maps")) {
             XPath xPath = XPathFactory.newInstance().newXPath();
@@ -83,6 +88,7 @@ public class XMLdpsDeserializer {
         
         Intersection inter = map.getListIntersection().get(Long.valueOf(idDP));
         DeliveryPoint dp = new DeliveryPoint(inter.getId(), inter.getLatitude(), inter.getLongitude());
+        dp.assignTimeWindow(Integer.parseInt(eltDP.getAttribute("timeWindow")));
         dp.chooseCourier(c);
         c.addDeliveryPoint(dp);
         

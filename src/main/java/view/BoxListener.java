@@ -15,10 +15,18 @@ public class BoxListener implements EventHandler<ActionEvent> {
     public void handle(ActionEvent e) {
         switch (((ComboBox<?>) e.getSource()).getId()){
             case "COURIER_BOX":
-                Long courierId = controller.getUser().getCourierByName((((ComboBox<?>) e.getSource()).getValue().toString())).getId();
-                controller.selectCourier(courierId);
+                // This method won't do anything if the combo box is reset when loading a new map
+                if (((ComboBox<?>) e.getSource()).getSelectionModel().getSelectedItem() != null) {
+                    Long courierId = controller.getUser().getCourierByName((((ComboBox<?>) e.getSource()).getValue().toString())).getId();
+                    controller.selectCourier(courierId);
+                }
+
                 break;
             case "TW_BOX":
+                if (((ComboBox<?>) e.getSource()).getSelectionModel().getSelectedItem() != null) {
+                    Integer tw = controller.getUser().getTimeWindows().get((((ComboBox<?>) e.getSource()).getValue().toString()));
+                    controller.getWindow().getInteractivePane().setSelectedTimeWindow(tw);
+                }
                 // Put the chosen time window in the controller
                 break;
         }

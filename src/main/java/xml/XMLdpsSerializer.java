@@ -34,8 +34,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class XMLdpsSerializer {//implements Visitor{// Singleton
-	
-    private Element shapeRoot;
+
     private Document document;
     private static XMLdpsSerializer instance = null;
     private XMLdpsSerializer(){}
@@ -58,11 +57,11 @@ public class XMLdpsSerializer {//implements Visitor{// Singleton
     public void save(Map map, User user) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException, ExceptionXML, XPathExpressionException, SAXException, IOException{
         File xml = XMLfileOpener.getInstance().open(false);
         StreamResult result = new StreamResult(xml);
-        document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xml);
+        document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
         createMapsElt(map, user);
         DOMSource source = new DOMSource(document);
         Transformer xformer = TransformerFactory.newInstance().newTransformer();
-        //xformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        xformer.setOutputProperty(OutputKeys.INDENT, "yes");
         xformer.transform(source, result);
     }
 
@@ -96,6 +95,7 @@ public class XMLdpsSerializer {//implements Visitor{// Singleton
 
             for (int i =1; i < c.getCurrentDeliveryPoints().size(); i++) {
                 DeliveryPoint dp = c.getCurrentDeliveryPoints().get(i);
+                System.out.println(dp);
                 Element eltDP = createDeliveryPointNode(dp);
                 eltCourier.appendChild(eltDP);
             }

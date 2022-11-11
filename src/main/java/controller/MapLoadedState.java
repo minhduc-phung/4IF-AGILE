@@ -68,7 +68,8 @@ public class MapLoadedState implements State {
     public void selectCourier(Controller controller, Long idCourier) {
         controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
         controller.setCurrentState(controller.courierChosenState);
-        controller.user.getCourierById(idCourier);
+
+        controller.getWindow().setMessage("Please choose a time-window to start adding delivery points.");
     }
     
     @Override
@@ -77,10 +78,10 @@ public class MapLoadedState implements State {
                                                     SAXException, XPathExpressionException {
         //precondition : Map is loaded and XMLfile of deliveryPoints exists
         Map map = controller.map;
-        User user = controller.user;
+        User user = new User();
         
-        XMLdpsDeserializer.loadDPList(map, user);
-        
+        controller.user = XMLdpsDeserializer.loadDPList(map, user);
+        controller.getWindow().setMessage("Delivery points restored successfully.");
         controller.setCurrentState(controller.dpRestoredState);
 
     }

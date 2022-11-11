@@ -3,8 +3,6 @@ package view;
 import controller.Controller;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -14,8 +12,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import model.User;
-
-import java.util.ArrayList;
 
 // We have no intentions to do scaling like PlaCo example.
 public class Window extends Group {
@@ -115,14 +111,6 @@ public class Window extends Group {
         latePointLabel.setLayoutX(820);
         latePointLabel.layoutYProperty().bind(legend.heightProperty().subtract(latePointLabel.heightProperty()).divide(2));
         legend.getChildren().add(latePointLabel);
-
-
-
-
-
-
-
-
 
         this.getChildren().add(legend);
         this.getChildren().add(messageFrame);

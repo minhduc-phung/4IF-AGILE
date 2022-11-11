@@ -37,7 +37,6 @@ public class PlanGeneratedState implements State {
         window.allowNode("TW_BOX", true);
         window.getInteractivePane().resetComboBoxes();
         window.setMessage("Please choose a courier and a time-window to start adding delivery points.");
-
     }
     
     private void addWarehouse (Intersection warehouse, User user) {
@@ -60,17 +59,17 @@ public class PlanGeneratedState implements State {
                                                     SAXException, XPathExpressionException {
         //precondition : Map is loaded and XMLfile of deliveryPoints exists
         Map map = controller.map;
-        User user = controller.user;
+        User user = new User();
         
         controller.user = XMLdpsDeserializer.loadDPList(map, user);
-        
+        controller.getWindow().setMessage("Delivery points restored successfully.");
         controller.setCurrentState(controller.dpRestoredState);
     }
     
     @Override
     public void selectCourier(Controller controller, Long idCourier) {
         controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
+        controller.getWindow().setMessage("Courier selected.");
         controller.getWindow().getGraphicalView().updateMap(controller.getMap(), controller.user.getCourierById(idCourier));
-        controller.setCurrentState(controller.courierChosenState);
     }
 }

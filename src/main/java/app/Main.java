@@ -4,14 +4,9 @@ import controller.Controller;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import model.User;
-import view.Window;
 
 public class Main extends Application {
     Controller controller = new Controller();
-    private final int WINDOW_WIDTH = 1500;
-    private final int WINDOW_HEIGHT = 900;
-    private final String TITLE = "Delivery Planner";
     public static void main(String[] args) {
         launch(args);
 
@@ -19,11 +14,10 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        String TITLE = "Delivery Planner";
         stage.setTitle(TITLE);
-//        this.setHeight(WINDOW_HEIGHT);
-//        this.setTitle("Delivery Planner");
-//        this.setResizable(false);
-//        this.setOnCloseRequest(e -> System.exit(0));
+        int WINDOW_HEIGHT = 900;
+        int WINDOW_WIDTH = 1500;
         stage.setScene(new Scene(controller.getWindow(), WINDOW_WIDTH, WINDOW_HEIGHT));
         stage.show();
     }
