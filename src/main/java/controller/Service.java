@@ -104,7 +104,7 @@ public class Service {
             this.getUser().getListCourier().replace(key, c);
 
             Tour tour = new Tour();
-            tour.addTour(idWarehouse, null);
+            tour.addTourRoute(idWarehouse, null);
             c.getListSegmentBetweenDPs().put(idWarehouse, tour);
         }
 
@@ -151,7 +151,7 @@ public class Service {
             Collections.reverse(listSeg);
 
             Tour tour = new Tour();
-            tour.addTour(aDP.getId(), listSeg);
+            tour.addTourRoute(aDP.getId(), listSeg);
             if (c.getShortestPathBetweenDPs().get(dp.getId()) == null) {
                 HashMap<Long, Double> nestedMap = new HashMap<Long, Double>();
                 nestedMap.put(aDP.getId(), dist);
@@ -160,7 +160,7 @@ public class Service {
                 c.getListSegmentBetweenDPs().replace(dp.getId(), tour);
             } else {
                 c.getShortestPathBetweenDPs().get(dp.getId()).put(aDP.getId(), dist);
-                c.getListSegmentBetweenDPs().get(dp.getId()).getTour().put(aDP.getId(), listSeg);
+                c.getListSegmentBetweenDPs().get(dp.getId()).getTourRoute().put(aDP.getId(), listSeg);
             }
 
             HashMap<Long, Long> precedentNode2 = new HashMap<>();
@@ -175,7 +175,7 @@ public class Service {
                 key = precedentNode2.get(key);
             }
             Collections.reverse(listSeg1);
-            tour1.getTour().put(dp.getId(), listSeg1);
+            tour1.getTourRoute().put(dp.getId(), listSeg1);
         }
         c.getShortestPathBetweenDPs().put(aDP.getId(), distanceFromADP);
         c.getListSegmentBetweenDPs().put(aDP.getId(), tour1);
@@ -186,7 +186,7 @@ public class Service {
         c.getListSegmentBetweenDPs().remove(aDP.getId());
         for (DeliveryPoint dp : c.getCurrentDeliveryPoints()) {
             c.getShortestPathBetweenDPs().get(dp.getId()).remove(aDP.getId());
-            c.getListSegmentBetweenDPs().get(dp.getId()).getTour().remove(aDP.getId());
+            c.getListSegmentBetweenDPs().get(dp.getId()).getTourRoute().remove(aDP.getId());
         }
     }
 

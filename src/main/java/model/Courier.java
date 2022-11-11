@@ -41,7 +41,7 @@ public class Courier {
     }
     
     public void addCurrentTour(Long idDeliveryPoint, List<Segment> listSeg) {
-        this.currentTour.addTour(idDeliveryPoint, listSeg);
+        this.currentTour.addTourRoute(idDeliveryPoint, listSeg);
     }
 
     public List<Segment> getListSegmentCurrentTour(Long idDeliveryPoint) {

@@ -83,12 +83,12 @@ public class Controller {
                 c.getShortestPathBetweenDPs().replace(dp.getId(), nestedMap);
                 
                 Tour tour = new Tour();    
-                tour.addTour(aDP.getId(), listSeg);
+                tour.addTourRoute(aDP.getId(), listSeg);
                 c.getListSegmentBetweenDPs().replace(dp.getId(), tour);
             } else {
                 c.getShortestPathBetweenDPs().get(dp.getId()).put(aDP.getId(), dist);
                 Tour tour = new Tour();    
-                tour.addTour(aDP.getId(), listSeg);
+                tour.addTourRoute(aDP.getId(), listSeg);
                 c.getListSegmentBetweenDPs().put(aDP.getId(), tour);
             }
             HashMap<Long, Long> precedentNode2 = new HashMap<>();
@@ -100,7 +100,7 @@ public class Controller {
                     segmentFromADP.add(seg);
                 }
             }
-            tour1.addTour(dp.getId(), listSeg);
+            tour1.addTourRoute(dp.getId(), listSeg);
         }
         c.getShortestPathBetweenDPs().put(aDP.getId(), distanceFromADP);
         c.getListSegmentBetweenDPs().put(aDP.getId(), tour1);
