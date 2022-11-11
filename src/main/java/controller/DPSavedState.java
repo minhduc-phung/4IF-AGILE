@@ -14,6 +14,8 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -28,6 +30,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import view.Window;
 import xml.ExceptionXML;
+import xml.XMLdpsDeserializer;
+import xml.XMLdpsSerializer;
 import xml.XMLmapDeserializer;
 
 /**
@@ -66,32 +70,14 @@ public class DPSavedState implements State {
     }       
     
     @Override
-    public List<DeliveryPoint> restoreDeliveryPointFromXML(Controller controller, String XMLPathMap, String XMLPathDeliveryPoint, Date planDate) 
-                                                    throws ParserConfigurationException, IOException, 
-                                                    SAXException, XPathExpressionException, ExceptionXML {
+    public void restoreDeliveryPointFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, IOException, 
+                                                    SAXException, XPathExpressionException {
         //precondition : Map is loaded and XMLfile of deliveryPoints exists
-        this.loadMapFromXML(controller, controller.getWindow());
         Map map = controller.map;
-        File XMLFileDP = new File(XMLPathDeliveryPoint);
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
-        DocumentBuilder dBuilder = dbf.newDocumentBuilder();
-        Document doc = dBuilder.parse(XMLFileDP);
-        doc.getDocumentElement().normalize();
+        User user = controller.user;
         
-        XPath xPath = XPathFactory.newInstance().newXPath();
-        String expression = "planDates/planDate[@date='"+planDate.toString()+"']/deliveryPoint";
-        NodeList nodeListDP = (NodeList) xPath.compile(expression).evaluate(doc, XPathConstants.NODESET);
+        controller.user = XMLdpsDeserializer.loadDPList(map, user);
         
-        List<DeliveryPoint> listDP = new ArrayList<>();
-        for (int i = 0 ; i < nodeListDP.getLength() ; i++) {
-            String idDP = nodeListDP.item(i).getAttributes().getNamedItem("id").getNodeValue();
-            String courierId = nodeListDP.item(i).getAttributes().getNamedItem("courierId").getNodeValue();
-            Intersection inter = map.getListIntersection().get(Long.parseLong(idDP));
-            DeliveryPoint dp = new DeliveryPoint(inter.getId(), inter.getLatitude(), inter.getLongitude());
-            dp.chooseCourier( controller.user.getListCourier().get(Long.parseLong(courierId)) );
-            listDP.add(dp);
-        }
         controller.setCurrentState(controller.dpRestoredState);
-        return listDP;
     }
 }

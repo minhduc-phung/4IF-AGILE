@@ -168,18 +168,18 @@ public class Controller {
         this.currentState.enterDeliveryPoint(this, map, idIntersection, idCourier, timeWindow);
     }
 
-    public List<DeliveryPoint> restoreDeliveryPointFromXML(String XMLPathMap, String XMLPathDeliveryPoint, Date planDate)
-                                                    throws ParserConfigurationException, IOException,
-                                                    SAXException, XPathExpressionException, ExceptionXML {
-        return this.currentState.restoreDeliveryPointFromXML(this, XMLPathMap, XMLPathDeliveryPoint, planDate);
-    }
-
     public void calculateTour(Courier c, Long idWarehouse) {
         this.currentState.calculateTour(this, c, idWarehouse);
     }
 
     public void saveDeliveryPointToFile() throws XPathExpressionException, ParserConfigurationException, IOException, TransformerException, SAXException, ExceptionXML {
         this.currentState.saveDeliveryPointToFile(this);
+    }
+    
+    
+    public void restoreDeliveryPointFromXML() throws ParserConfigurationException, IOException,
+                                                    SAXException, XPathExpressionException, ExceptionXML {
+        this.currentState.restoreDeliveryPointFromXML(this);
     }
 
     public void removeDeliveryPoint(Map map, DeliveryPoint dp, Long idCourier) {

@@ -2,6 +2,7 @@ package xml;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -33,7 +34,7 @@ public class XMLdpsDeserializer {
 	 * @throws ExceptionXML
          * @throws javax.xml.xpath.XPathExpressionException
 	 */
-    public static void load(Map map, User user) throws ParserConfigurationException, SAXException, IOException, ExceptionXML, XPathExpressionException {
+    public static User loadDPList(Map map, User user) throws ParserConfigurationException, SAXException, IOException, ExceptionXML, XPathExpressionException {
         File xml = XMLfileOpener.getInstance().open(true);
         DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document document = docBuilder.parse(xml);
@@ -45,35 +46,47 @@ public class XMLdpsDeserializer {
             NodeList nodeListCourier = (NodeList) xPath.compile(expression).evaluate(document, XPathConstants.NODESET);
             
             if (nodeListCourier.getLength() >0) {
-                buildFromDOMXML(nodeListCourier, map, user);
+                user = buildFromDOMXML(nodeListCourier, map, user, document);
             }else{
                 throw new ExceptionXML("No couriers found");
             }
         } else {
             throw new ExceptionXML("Wrong format");
         }
+        
+        return user;
     }
 
-    private static void buildFromDOMXML(NodeList nodeListCourier, Map map, User user) throws ExceptionXML, NumberFormatException{            
+    private static User buildFromDOMXML(NodeList nodeListCourier, Map map, User user, Document document) throws ExceptionXML, NumberFormatException, XPathExpressionException{            
         for (int i = 0 ; i < nodeListCourier.getLength() ; i++) {
             Element eltCourier = (Element) nodeListCourier.item(i);
-            Long idCourier = Long.valueOf(eltCourier.getAttribute("id"));            
-            Courier c = user.getCourierById(idCourier);            
-            NodeList nodeListDP = nodeListCourier.item(i).getChildNodes();
-            for (int j =0; j < nodeListDP.getLength(); j++) {
-                Element eltDP = (Element) nodeListDP.item(j);               
-                addDeliveryPointToCourier (c,eltDP,map);
-            }
+            Long idCourier = Long.valueOf(eltCourier.getAttribute("id")); 
             
-        }
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            String expression = "maps/map[@src='"+map.getMapName()+"']/courier[@id='"+idCourier.toString()+"']/deliveryPoint";
+            NodeList nodeListDP = (NodeList) xPath.compile(expression).evaluate(document, XPathConstants.NODESET);
+            
+            Courier c = user.getCourierById(idCourier);            
+            for (int j =0; j < nodeListDP.getLength(); j++) {
+                Element eltDP = (Element) nodeListDP.item(j); 
+                
+                c = addDeliveryPointToCourier (c,eltDP,map);
+                user.getListCourier().replace(idCourier, c);
+            }           
+        }        
+        return user;
     }
     
-    private static void addDeliveryPointToCourier (Courier c, Element eltDP, Map map) {
+    private static Courier addDeliveryPointToCourier (Courier c, Element eltDP, Map map) {
         String idDP = eltDP.getAttribute("id");
+        
+        
         Intersection inter = map.getListIntersection().get(Long.valueOf(idDP));
         DeliveryPoint dp = new DeliveryPoint(inter.getId(), inter.getLatitude(), inter.getLongitude());
         dp.chooseCourier(c);
         c.addDeliveryPoint(dp);
+        
+        return c;
     }
 
 }

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import model.Courier;
@@ -32,13 +33,12 @@ public interface State {
     };
     
     public default void saveDeliveryPointToFile(Controller controller) throws ParserConfigurationException, SAXException, ExceptionXML,
-                                        IOException, TransformerException, XPathExpressionException {
+                                        IOException, TransformerConfigurationException, TransformerException, XPathExpressionException {    
     };
     
-    public default List<DeliveryPoint> restoreDeliveryPointFromXML(Controller controller, String XMLPathMap, String XMLPathDeliveryPoint, Date planDate) 
+    public default void restoreDeliveryPointFromXML(Controller controller) 
                                                     throws ExceptionXML, ParserConfigurationException, IOException, 
                                                     SAXException, XPathExpressionException {
-        return null;
     };
     
     public default void selectCourier(Controller controller, Long idCourier) {

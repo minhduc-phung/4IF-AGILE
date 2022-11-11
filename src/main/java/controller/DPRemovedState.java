@@ -7,6 +7,9 @@ import java.util.Objects;
 import javax.xml.parsers.ParserConfigurationException;
 
 import javafx.scene.paint.Color;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.xpath.XPathExpressionException;
 import model.CompleteGraph;
 import model.Courier;
 import model.DeliveryPoint;
@@ -19,6 +22,8 @@ import model.User;
 import org.xml.sax.SAXException;
 import view.Window;
 import xml.ExceptionXML;
+import xml.XMLdpsDeserializer;
+import xml.XMLdpsSerializer;
 import xml.XMLmapDeserializer;
 
 /**
@@ -99,6 +104,29 @@ public class DPRemovedState implements State {
         controller.removeShortestPathBetweenDP(c, dp);
         controller.setCurrentState(controller.dpRemovedState);
     }
+    
+    @Override
+    public void saveDeliveryPointToFile(Controller controller) throws ParserConfigurationException, SAXException, ExceptionXML,
+                                        IOException, TransformerConfigurationException, TransformerException, XPathExpressionException {
+        Map map = controller.map;
+        User user = controller.user;
+        
+        XMLdpsSerializer.getInstance().save(map, user);
+        
+        controller.setCurrentState(controller.dpSavedState);
+    }
+    
+    @Override
+    public void restoreDeliveryPointFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, IOException, 
+                                                    SAXException, XPathExpressionException {
+        //precondition : Map is loaded and XMLfile of deliveryPoints exists
+        Map map = controller.map;
+        User user = controller.user;
+        
+        controller.user = XMLdpsDeserializer.loadDPList(map, user);
+        
+        controller.setCurrentState(controller.dpRestoredState);
+    }
 
     @Override
     public void mouseMovedOnMap(Controller controller, double mousePosX, double mousePosY) {
@@ -166,51 +194,4 @@ public class DPRemovedState implements State {
             controller.getWindow().getGraphicalView().setHoveredIntersection(null);
         }
     }
-    
-/*    @Override
-    public void saveDeliveryPointToFile(Controller controller, List<DeliveryPoint> listDP) throws ParserConfigurationException, SAXException, 
-                                        IOException, TransformerConfigurationException, TransformerException, XPathExpressionException {
-        File XMLFile = new File("saved_files/deliveryPoints.xml");
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
-        DocumentBuilder dBuilder = dbf.newDocumentBuilder();
-        Document doc = dBuilder.parse(XMLFile);
-        doc.getDocumentElement().normalize();
-        
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        FileWriter writer = new FileWriter(XMLFile);
-        StreamResult result = new StreamResult(writer);
-        DOMSource source = new DOMSource(doc);
-        
-        Node nodePlanDates = doc.getElementsByTagName("planDates").item(0);
-        XPath xPath = XPathFactory.newInstance().newXPath();
-        
-        for (DeliveryPoint dp : listDP) {
-            String expression = "/planDates/planDate[@date='" + dp.getPlanDate() + "']";
-            XPathExpression xPathExpression = xPath.compile(expression);
-            Element nodePlanDate = (Element) xPathExpression.evaluate(doc, XPathConstants.NODE);
-            
-            try {
-                nodePlanDates.appendChild(nodePlanDate);
-            } catch (NullPointerException e) {
-                nodePlanDate = doc.createElement("planDate");
-                nodePlanDate.setAttribute("date", dp.getPlanDate().toString());
-                nodePlanDates.appendChild(nodePlanDate);
-            }
-            
-            expression = "/planDates/planDate[@date='"+dp.getPlanDate()+"']/deliveryPoint[@id='"+dp.getId().toString()+"' and @courierId='"+dp.getCourier().getId().toString()+"']";
-            Element nodeDeliveryPoint = (Element) xPath.compile(expression).evaluate(doc, XPathConstants.NODE);
-            try {
-                nodePlanDate.appendChild(nodeDeliveryPoint);
-            } catch (NullPointerException e) {
-                nodeDeliveryPoint = doc.createElement("deliveryPoint");
-                nodeDeliveryPoint.setAttribute("id", dp.getId().toString());
-                nodeDeliveryPoint.setAttribute("courierId", dp.getCourier().getId().toString());
-                nodePlanDate.appendChild(nodeDeliveryPoint);
-            }
-        }
-        // Export the XMLFile
-        transformer.transform(source, result);
-        controller.setCurrentState(controller.dpSavedState);
-    }*/
 }

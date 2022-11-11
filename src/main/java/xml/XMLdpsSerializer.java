@@ -59,11 +59,10 @@ public class XMLdpsSerializer {//implements Visitor{// Singleton
         File xml = XMLfileOpener.getInstance().open(false);
         StreamResult result = new StreamResult(xml);
         document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xml);
-        document.getDocumentElement().normalize();
         createMapsElt(map, user);
         DOMSource source = new DOMSource(document);
         Transformer xformer = TransformerFactory.newInstance().newTransformer();
-        xformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        //xformer.setOutputProperty(OutputKeys.INDENT, "yes");
         xformer.transform(source, result);
     }
 
@@ -76,19 +75,17 @@ public class XMLdpsSerializer {//implements Visitor{// Singleton
         }else{
             maps = (Element) mapsList.item(0);
         }
+        
+        String expression = "/maps/map[@src='" + map.getMapName() + "']";
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPathExpression xPathExpression = xPath.compile(expression);
+        Element eltMap = (Element) xPathExpression.evaluate(document, XPathConstants.NODE);
 
-        NodeList mapList = maps.getChildNodes();
-        Element eltMap = document.createElement("map");
-        boolean mapExists = false;
-        for (int i =0; i < mapList.getLength(); i++) {
-            String mapSrc =  ((Element) mapList.item(i)).getAttribute("src");
-            if (mapSrc.equals(map.getMapName())) {
-                removeChildren(mapList.item(i));
-                eltMap = (Element) mapList.item(i);
-                mapExists = true;
-            }
+        if (eltMap != null) {
+            removeChildren(eltMap);            
         }
-        if (!mapExists) {
+        
+        else {
             eltMap = document.createElement("map");
             createAttribute(eltMap, "src", map.getMapName());
         }
@@ -97,7 +94,8 @@ public class XMLdpsSerializer {//implements Visitor{// Singleton
             Courier c = user.getCourierById(idCourier);
             Element eltCourier = createCourierNode(c);
 
-            for (DeliveryPoint dp : c.getCurrentDeliveryPoints()) {
+            for (int i =1; i < c.getCurrentDeliveryPoints().size(); i++) {
+                DeliveryPoint dp = c.getCurrentDeliveryPoints().get(i);
                 Element eltDP = createDeliveryPointNode(dp);
                 eltCourier.appendChild(eltDP);
             }
@@ -114,7 +112,7 @@ public class XMLdpsSerializer {//implements Visitor{// Singleton
     }
     
     private Element createCourierNode(Courier c) {
-        Element eltCourier = document.createElement("Courier");
+        Element eltCourier = document.createElement("courier");
         createAttribute(eltCourier, "id", c.getId().toString());
         return eltCourier;
     }

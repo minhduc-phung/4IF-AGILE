@@ -52,16 +52,15 @@ public class XMLmapDeserializer {
             createIntersection((Element) nodeList.item(itr), listIntersection);
         }
 
-        Intersection warehouse;
+        Intersection warehouse = new Intersection(0L, 0.0, 0.0);
         NodeList nodeListWarehouse = noeudDOMRacine.getElementsByTagName("warehouse");        
-        warehouse = addWarehouse((Element) nodeListWarehouse.item(0), listIntersection);
+        warehouse = addWarehouse(warehouse, (Element) nodeListWarehouse.item(0), listIntersection);
         
         List<Segment> listSegment = new ArrayList<>();
         NodeList nodeListSeg = noeudDOMRacine.getElementsByTagName("segment");
         for (int itr = 0; itr < nodeListSeg.getLength(); itr++) {            
             createSegment((Element) nodeListSeg.item(itr),listSegment, listIntersection);
         }
-
         map = new Map(mapName, listIntersection, listSegment, warehouse);
         return map;
     }
@@ -92,16 +91,18 @@ public class XMLmapDeserializer {
         listSegment.add(segment);
     }
     
-    public static Intersection addWarehouse (Element eltWarehouse,
+    public static Intersection addWarehouse (Intersection warehouse, Element eltWarehouse, 
             HashMap<Long, Intersection> listIntersection) {
         
         Long idWarehouse = Long.parseLong(eltWarehouse.getAttribute("address"));
         for (Intersection intersection : listIntersection.values()) {
             if (Objects.equals(intersection.getId(), idWarehouse)) {
-                return intersection;
+                warehouse = intersection;
             }
         }
-        return null;
+        
+        return warehouse;
+
     }
 }
 

@@ -28,6 +28,7 @@ import model.User;
 import org.xml.sax.SAXException;
 import view.Window;
 import xml.ExceptionXML;
+import xml.XMLdpsDeserializer;
 import xml.XMLdpsSerializer;
 import xml.XMLmapDeserializer;
 
@@ -121,6 +122,18 @@ public class DPEnteredState implements State {
         XMLdpsSerializer.getInstance().save(map, user);
         
         controller.setCurrentState(controller.dpSavedState);
+    }
+    
+    @Override
+    public void restoreDeliveryPointFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, IOException, 
+                                                    SAXException, XPathExpressionException {
+        //precondition : Map is loaded and XMLfile of deliveryPoints exists
+        Map map = controller.map;
+        User user = controller.user;
+        
+        controller.user = XMLdpsDeserializer.loadDPList(map, user);
+        
+        controller.setCurrentState(controller.dpRestoredState);
     }
 
     @Override
