@@ -2,12 +2,9 @@ package xml;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -61,7 +58,7 @@ public class XMLdpsSerializer {//implements Visitor{// Singleton
         createMapsElt(map, user);
         DOMSource source = new DOMSource(document);
         Transformer xformer = TransformerFactory.newInstance().newTransformer();
-        xformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        //xformer.setOutputProperty(OutputKeys.INDENT, "yes");
         xformer.transform(source, result);
     }
 
@@ -95,7 +92,6 @@ public class XMLdpsSerializer {//implements Visitor{// Singleton
 
             for (int i =1; i < c.getCurrentDeliveryPoints().size(); i++) {
                 DeliveryPoint dp = c.getCurrentDeliveryPoints().get(i);
-                System.out.println(dp);
                 Element eltDP = createDeliveryPointNode(dp);
                 eltCourier.appendChild(eltDP);
             }

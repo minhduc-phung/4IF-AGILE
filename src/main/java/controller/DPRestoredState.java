@@ -93,6 +93,8 @@ public class DPRestoredState implements State {
         controller.getWindow().getGraphicalView().paintIntersection(dp, Color.BLUE, map);
         controller.getWindow().setMessage("Delivery point added.");
         controller.setCurrentState(controller.dpEnteredState);
+        controller.getWindow().allowNode("VALIDATE_DP", false);
+        controller.getWindow().allowNode("SAVE_DP", true);
     }
 
 
@@ -120,6 +122,7 @@ public class DPRestoredState implements State {
         controller.user = XMLdpsDeserializer.loadDPList(map, user);
         controller.getWindow().setMessage("Delivery points restored successfully.");
         controller.setCurrentState(controller.dpRestoredState);
+        controller.getWindow().allowNode("SAVE_DP", true);
     }
 
     public void selectCourier(Controller controller, Long idCourier) {
@@ -180,6 +183,7 @@ public class DPRestoredState implements State {
             controller.getWindow().getGraphicalView().setSelectedIntersection(controller.getWindow().getGraphicalView().getHoveredIntersection());
             controller.getWindow().getGraphicalView().setHoveredIntersection(null);
             controller.getWindow().getGraphicalView().paintIntersection(controller.getWindow().getGraphicalView().getSelectedIntersection(), Color.BROWN, controller.getMap());
+            controller.getWindow().allowNode("VALIDATE_DP", true);
         }
     }
 

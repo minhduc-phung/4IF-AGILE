@@ -7,7 +7,6 @@ package controller;
 
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -55,11 +54,13 @@ public class CourierChosenState implements State {
         controller.getWindow().getGraphicalView().paintIntersection(dp, Color.BLUE, map);
         controller.getWindow().setMessage("Delivery point added.");
         controller.setCurrentState(controller.dpEnteredState);
+        controller.getWindow().allowNode("VALIDATE_DP", false);
+        controller.getWindow().allowNode("SAVE_DP", true);
     }
 
     public void selectCourier(Controller controller, Long idCourier) {
         controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
-        controller.getWindow().setMessage("Courier selected.");
+        controller.getWindow().setMessage("Courier " + controller.user.getCourierById(idCourier).getName() + " selected.");
         controller.getWindow().getGraphicalView().updateMap(controller.getMap(), controller.user.getCourierById(idCourier));
     }
     
@@ -96,9 +97,8 @@ public class CourierChosenState implements State {
                                         IOException, TransformerConfigurationException, TransformerException, XPathExpressionException {
         Map map = controller.map;
         User user = controller.user;
-        
         XMLdpsSerializer.getInstance().save(map, user);
-        controller.getWindow().setMessage("Delivery points saved successfully.");
+        controller.getWindow().setMessage("Delivery points saved.");
         controller.setCurrentState(controller.dpSavedState);
     }
     
@@ -112,7 +112,7 @@ public class CourierChosenState implements State {
         controller.user = XMLdpsDeserializer.loadDPList(map, user);
         controller.getWindow().setMessage("Delivery points restored successfully.");
         controller.setCurrentState(controller.dpRestoredState);
-
+        controller.getWindow().allowNode("SAVE_DP", true);
     }
 
     @Override
@@ -167,6 +167,7 @@ public class CourierChosenState implements State {
             controller.getWindow().getGraphicalView().setSelectedIntersection(controller.getWindow().getGraphicalView().getHoveredIntersection());
             controller.getWindow().getGraphicalView().setHoveredIntersection(null);
             controller.getWindow().getGraphicalView().paintIntersection(controller.getWindow().getGraphicalView().getSelectedIntersection(), Color.BROWN, controller.getMap());
+            controller.getWindow().allowNode("VALIDATE_DP", true);
         }
     }
 

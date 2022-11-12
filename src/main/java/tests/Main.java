@@ -57,7 +57,6 @@ public class Main extends Application {
     public static void testLoadMap() throws ParserConfigurationException, IOException, SAXException, ExceptionXML {
         Controller controller = new Controller();
         controller.loadMapFromXML();
-        System.out.println(controller.getMap().getListIntersection());
     }
     
     public static void resultReport(Result result) {

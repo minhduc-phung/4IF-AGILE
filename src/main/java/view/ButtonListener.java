@@ -37,13 +37,14 @@ public class ButtonListener implements EventHandler<ActionEvent> {
             case "REMOVE_DP": break;
             case "RESTORE_DP":
                 // For ergonomy
-                ((ComboBox<String>) controller.getWindow().lookup("#COURIER_BOX")).setValue(controller.getUser().getListCourierName()[0]);
+
                 try {
                     controller.restoreDeliveryPointFromXML();
                 } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException |
                          ExceptionXML ex) {
                     throw new RuntimeException(ex);
                 }
+                ((ComboBox<String>) controller.getWindow().lookup("#COURIER_BOX")).setValue(controller.getUser().getListCourierName()[0]);
                 break;
             case "SAVE_DP":
                 try {

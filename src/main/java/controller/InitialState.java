@@ -5,25 +5,13 @@
  */
 package controller;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import model.Courier;
 import model.DeliveryPoint;
 import model.Intersection;
-import model.Map;
-import model.Segment;
 import model.User;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import view.Window;
 import xml.ExceptionXML;
@@ -54,7 +42,8 @@ public class InitialState implements State {
         window.getGraphicalView().drawMap(controller.getMap());
         window.allowNode("COURIER_BOX", true);
         window.allowNode("TW_BOX", true);
-        window.setMessage("Please choose a courier and a time-window to start adding delivery points.");
+        window.allowNode("RESTORE_DP", true);
+        window.setMessage("Please choose a courier and a time-window to start adding delivery points, or restore them from a file.");
     }
     
     private void addWarehouse (Intersection warehouse, User user) {

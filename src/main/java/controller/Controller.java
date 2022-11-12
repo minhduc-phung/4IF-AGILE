@@ -7,7 +7,6 @@ package controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
@@ -35,8 +34,6 @@ public class Controller {
     private State currentState;
     private Window window;
 
-
-    
     protected final InitialState initialState = new InitialState();
     protected final MapLoadedState mapLoadedState = new MapLoadedState();
     protected final CourierChosenState courierChosenState = new CourierChosenState();
@@ -58,8 +55,6 @@ public class Controller {
     
     public void loadMapFromXML() throws ParserConfigurationException, IOException, SAXException, ExceptionXML {
         this.currentState.loadMapFromXML(this, window);
-        // print current state type
-        System.out.println(currentState.getClass().getSimpleName());
     }
     
     public void addShortestPathBetweenDP(Map aMap, Courier c, DeliveryPoint aDP) {

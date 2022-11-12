@@ -7,14 +7,10 @@ package tests;
  */
 
 import controller.Controller;
-import java.io.IOException;
 import java.util.HashMap;
-import javax.xml.parsers.ParserConfigurationException;
 import model.Map;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
 /**
  *

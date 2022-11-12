@@ -1,8 +1,6 @@
 package view;
 
 import controller.Controller;
-import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
@@ -12,11 +10,6 @@ import javafx.scene.shape.Line;
 import model.*;
 import observer.Observable;
 import observer.Observer;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class GraphicalView extends Pane implements Observer {
@@ -49,7 +42,6 @@ public class GraphicalView extends Pane implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         // TODO Auto-generated method stub
-
     }
 
     public void drawMap(Map map){
@@ -150,7 +142,7 @@ public class GraphicalView extends Pane implements Observer {
     	this.getChildren().clear();
     	this.drawMap(map);
         for (DeliveryPoint deliveryPoint : courier.getCurrentDeliveryPoints()) {
-            paintIntersection(deliveryPoint, Color.BLUE, map);
+            if (!Objects.equals(deliveryPoint.getId(), map.getWarehouse().getId())) paintIntersection(deliveryPoint, Color.BLUE, map);
         }
     }
 }

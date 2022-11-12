@@ -5,26 +5,15 @@
  */
 package controller;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 import model.Courier;
 import model.DeliveryPoint;
 import model.Intersection;
 import model.Map;
 import model.User;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import view.Window;
 import xml.ExceptionXML;
@@ -68,7 +57,6 @@ public class MapLoadedState implements State {
     public void selectCourier(Controller controller, Long idCourier) {
         controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
         controller.setCurrentState(controller.courierChosenState);
-
         controller.getWindow().setMessage("Please choose a time-window to start adding delivery points.");
     }
     
@@ -81,8 +69,8 @@ public class MapLoadedState implements State {
         User user = new User();
         
         controller.user = XMLdpsDeserializer.loadDPList(map, user);
-        controller.getWindow().setMessage("Delivery points restored successfully.");
+        controller.getWindow().setMessage("Delivery points restored.");
         controller.setCurrentState(controller.dpRestoredState);
-
+        controller.getWindow().allowNode("SAVE_DP", true);
     }
 }

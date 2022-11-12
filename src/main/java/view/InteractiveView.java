@@ -2,7 +2,6 @@ package view;
 
 import controller.Controller;
 import javafx.collections.FXCollections;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -102,7 +101,7 @@ public class InteractiveView extends Pane {
         removeButton.setLayoutY(300);
         removeButton.setPrefWidth(100);
         removeButton.setStyle("-fx-background-color: #ff9aa2; ");
-        removeButton.setDisable(false);
+        removeButton.setDisable(true);
         buttons.put(REMOVE_DP_ID, removeButton);
 
         Button validateButton = new Button("Validate");
@@ -112,7 +111,7 @@ public class InteractiveView extends Pane {
         validateButton.setLayoutY(300);
         validateButton.setPrefWidth(100);
         validateButton.setStyle("-fx-background-color: #b5ead7; ");
-        validateButton.setDisable(false);
+        validateButton.setDisable(true);
         buttons.put(VALIDATE_DP_ID, validateButton);
 
         Button modifyButton = new Button("Modify");
@@ -122,7 +121,7 @@ public class InteractiveView extends Pane {
         modifyButton.layoutXProperty().bind(this.widthProperty().subtract(modifyButton.widthProperty()).divide(2));
         modifyButton.setLayoutY(700);
         modifyButton.setPrefWidth(100);
-        modifyButton.setDisable(false);
+        modifyButton.setDisable(true);
         buttons.put(MODIFY_DP_ID, modifyButton);
 
         Button generateButton = new Button("Generate delivery plan");
@@ -131,7 +130,7 @@ public class InteractiveView extends Pane {
         generateButton.setLayoutX(25);
         generateButton.setLayoutY(750);
         generateButton.setPrefWidth(150);
-        generateButton.setDisable(false);
+        generateButton.setDisable(true);
         generateButton.setStyle("-fx-background-color: #c7ceea; ");
         buttons.put(GENERATE_ID, generateButton);
 
@@ -141,7 +140,7 @@ public class InteractiveView extends Pane {
         restoreButton.setLayoutX(25);
         restoreButton.setLayoutY(650);
         restoreButton.setPrefWidth(150);
-        restoreButton.setDisable(false);
+        restoreButton.setDisable(true);
         restoreButton.setStyle("-fx-background-color: #c7ceea; ");
         buttons.put(RESTORE_DP_ID, restoreButton);
 
@@ -152,7 +151,7 @@ public class InteractiveView extends Pane {
         saveButton.setLayoutX(this.getPrefWidth() - saveButton.getPrefWidth() - 25);
         saveButton.setLayoutY(650);
         saveButton.setStyle("-fx-background-color: #c7ceea; ");
-        saveButton.setDisable(false);
+        saveButton.setDisable(true);
         buttons.put(SAVE_DP_ID, saveButton);
 
         Button calculateButton = new Button("Calculate tour");
@@ -162,6 +161,7 @@ public class InteractiveView extends Pane {
         calculateButton.setLayoutX(this.getPrefWidth() - calculateButton.getPrefWidth() - 25);
         calculateButton.setLayoutY(750);
         calculateButton.setStyle("-fx-background-color: #c7ceea; ");
+        calculateButton.setDisable(true);
         buttons.put(CALCULATE_ID, calculateButton);
 
         Button loadMapButton = new Button("Load a map");

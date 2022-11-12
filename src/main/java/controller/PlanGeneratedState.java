@@ -64,12 +64,13 @@ public class PlanGeneratedState implements State {
         controller.user = XMLdpsDeserializer.loadDPList(map, user);
         controller.getWindow().setMessage("Delivery points restored successfully.");
         controller.setCurrentState(controller.dpRestoredState);
+        controller.getWindow().allowNode("SAVE_DP", true);
     }
     
     @Override
     public void selectCourier(Controller controller, Long idCourier) {
         controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
-        controller.getWindow().setMessage("Courier selected.");
+        controller.getWindow().setMessage("Courier " + controller.user.getCourierById(idCourier).getName() + " selected.");
         controller.getWindow().getGraphicalView().updateMap(controller.getMap(), controller.user.getCourierById(idCourier));
     }
 }

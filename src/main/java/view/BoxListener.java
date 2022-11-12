@@ -26,6 +26,7 @@ public class BoxListener implements EventHandler<ActionEvent> {
                 if (((ComboBox<?>) e.getSource()).getSelectionModel().getSelectedItem() != null) {
                     Integer tw = controller.getUser().getTimeWindows().get((((ComboBox<?>) e.getSource()).getValue().toString()));
                     controller.getWindow().getInteractivePane().setSelectedTimeWindow(tw);
+                    controller.getWindow().setMessage("Select an intersection to add a delivery point to the selected courier and time-window.");
                 }
                 // Put the chosen time window in the controller
                 break;
