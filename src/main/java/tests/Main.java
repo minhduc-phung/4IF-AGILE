@@ -176,18 +176,18 @@ public class Main extends Application {
         //DeliveryPoint aDP = new DeliveryPoint(21703589L, 0.0, 0.0);
         //controller.removeDeliveryPoint(map, aDP, 1L);
         
-//        FileWriter writer = new FileWriter("text.txt");
-//        
-//
-//        for (Long key1 : c.getListSegmentBetweenDPs().keySet()) {
-//            writer.write("key:"+key1 +"\n");
-//            for (Long key2 : c.getListSegmentBetweenDPs().get(key1).getTourRoute().keySet())
-//                writer.write(key2+":"+ c.getListSegmentBetweenInters(key1, key2) +"\n");
-//            writer.write("\n");
-//        }
-//        
-//        writer.close();
+        FileWriter writer = new FileWriter("text2.txt");
         Courier c = controller.getUser().getCourierById(1L);
+/*
+        for (Long key1 : c.getListSegmentBetweenDPs().keySet()) {
+            writer.write("key:"+key1 +"\n");
+            for (Long key2 : c.getListSegmentBetweenDPs().get(25303831L).getTourRoute().keySet())
+                writer.write(key2+":"+ c.getListSegmentBetweenInters(25303831L, key2) +"\n");
+            writer.write("\n");
+        }
+        //writer.write("Size:"+c.getListSegmentBetweenDPs().get(25303831L).getTourRoute().size());
+        writer.close();*/
+        
         controller.calculateTour(c, idWarehouse);
         for (DeliveryPoint dp : c.getCurrentDeliveryPoints())
             System.out.println(dp);
