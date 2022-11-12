@@ -6,6 +6,10 @@
 package controller;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +23,8 @@ import model.DeliveryPoint;
 import tsp.Graph;
 import model.Intersection;
 import model.Map;
+import model.Segment;
+import model.Tour;
 import tsp.TSP;
 import tsp.TSP1;
 import model.User;
@@ -64,10 +70,69 @@ public class DPRestoredState implements State {
     }
     
     @Override
-    public Double calculateTour(Controller controller, Courier c, Long idWarehouse) {
+    public Double calculateTour(Controller controller, Courier c, Long idWarehouse) throws ParseException {
+        System.out.println(DPRemovedState.class.toString());
+        int i;
+        int nbVertices = c.getCurrentDeliveryPoints().size();
         Graph g = new CompleteGraph(c, idWarehouse);
         TSP tsp = new TSP1();
         tsp.searchSolution(20000, g);
+
+        // take the earliest time window in ListCurrentDPs
+        Integer earliestTW = Integer.MAX_VALUE;
+        for (i = 1 ; i < c.getCurrentDeliveryPoints().size() ; i++) {
+            if ( c.getCurrentDeliveryPoints().get(i).getTimeWindow().compareTo(earliestTW) < 0 ) {
+                earliestTW = c.getCurrentDeliveryPoints().get(i).getTimeWindow();
+            } 
+        }
+        
+        Date now = new Date();
+        SimpleDateFormat sd = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+        Date timeStamp = new Date();
+        if (earliestTW < 10) {
+            timeStamp = sdf.parse(sd.format(now).toString() + " " + earliestTW.toString() + "0:00:00");
+        } else {
+            timeStamp = sdf.parse(sd.format(now).toString() + " " + earliestTW.toString() + ":00:00");
+        }
+        System.out.println(timeStamp);
+        
+        List<Integer> tspSolutions = new ArrayList<>();
+	for (i=0; i<nbVertices; i++) {
+            tspSolutions.add( tsp.getSolution(i) );    
+        }
+
+        DeliveryPoint dp = c.getCurrentDeliveryPoints().get(0);
+        long sum = timeStamp.getTime();
+        dp.assignTimestamp(timeStamp);
+        dp.chooseCourier(c);
+        for (i = 0 ; i < tspSolutions.size()-1 ; i++) {
+            long timeInMinute = (long) Math.ceil( g.getCost(tspSolutions.get(i), tspSolutions.get(i+1))*60*1000 );
+            sum += timeInMinute;
+            dp = c.getCurrentDeliveryPoints().get(tspSolutions.get(i+1));
+            Date aTimeStamp = new Date();
+            aTimeStamp.setTime(sum);
+            dp.assignTimestamp(aTimeStamp);
+            System.out.println(aTimeStamp);
+        }
+        long timeInMinute = (long) Math.ceil( g.getCost(tspSolutions.get(i), tspSolutions.get(0))*60*1000 );
+        sum += timeInMinute;
+        Date aTimeStamp = new Date();
+        aTimeStamp.setTime(sum);
+        System.out.println(aTimeStamp);
+        
+        // set currentTour
+        for (i=0 ; i < c.getCurrentDeliveryPoints().size()-1 ; i++) {
+            Long idCurrentInter = c.getCurrentDeliveryPoints().get(tspSolutions.get(i)).getId();
+            Long idNextInter = c.getCurrentDeliveryPoints().get(tspSolutions.get(i+1)).getId();
+            List<Segment> listSeg = c.getListSegmentBetweenInters(idCurrentInter, idNextInter);
+            c.addCurrentTour(idCurrentInter, listSeg);
+        }
+        Long idCurrentInter = c.getCurrentDeliveryPoints().get(tspSolutions.get(i)).getId();
+        Long idNextInter = c.getCurrentDeliveryPoints().get(tspSolutions.get(0)).getId();
+        List<Segment> listSeg = c.getListSegmentBetweenInters(idCurrentInter, idNextInter);
+        c.addCurrentTour(idCurrentInter, listSeg);
+        
         controller.setCurrentState(controller.tourCalculatedState);
         return tsp.getSolutionCost();
     }
@@ -78,8 +143,8 @@ public class DPRestoredState implements State {
         if (idIntersection.equals(map.getWarehouse().getId())) {
             return;
         }
-        DeliveryPoint dp = new DeliveryPoint(idIntersection,i.getLatitude(),i.getLongitude());
-        Courier c = controller.user.getCourierById(idCourier);        
+        DeliveryPoint dp = new DeliveryPoint(idIntersection, i.getLatitude(), i.getLongitude());
+        Courier c = controller.user.getCourierById(idCourier);
         dp.assignTimeWindow(timeWindow);
         dp.chooseCourier(c);
         c.addDeliveryPoint(dp);
@@ -88,24 +153,25 @@ public class DPRestoredState implements State {
             controller.addShortestPathBetweenDP(map, c, dp);
         } else {
             c.getShortestPathBetweenDPs().put(dp.getId(), new HashMap<>());
+            c.getListSegmentBetweenDPs().put(dp.getId(), new Tour());
         }
+        controller.addShortestPathBetweenDP(map, c, dp);
+        
         controller.getWindow().getGraphicalView().clearSelection();
         controller.getWindow().getGraphicalView().paintIntersection(dp, Color.BLUE, map);
         controller.getWindow().setMessage("Delivery point added.");
-        controller.setCurrentState(controller.dpEnteredState);
         controller.getWindow().allowNode("VALIDATE_DP", false);
         controller.getWindow().allowNode("SAVE_DP", true);
+        controller.setCurrentState(controller.dpEnteredState);
     }
-
-
     
     @Override
     public void removeDeliveryPoint(Controller controller, Map map, DeliveryPoint dp, Long idCourier){
         if (dp.getId().equals(map.getWarehouse().getId())) {
             return;
-        }       
-        Courier c = controller.user.getCourierById(idCourier);
+        }
         dp.chooseCourier(null);
+        Courier c = controller.user.getCourierById(idCourier);
         c.removeDeliveryPoint(dp);
         c.getPositionIntersection().remove(dp.getId());
         controller.removeShortestPathBetweenDP(c, dp);

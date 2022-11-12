@@ -7,6 +7,7 @@ package controller;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -20,6 +21,7 @@ import model.Courier;
 import model.DeliveryPoint;
 import model.Intersection;
 import model.Map;
+import model.Tour;
 import model.User;
 import org.xml.sax.SAXException;
 import view.Window;
@@ -39,8 +41,8 @@ public class CourierChosenState implements State {
         if (idIntersection.equals(map.getWarehouse().getId())) {
             return;
         }
-        DeliveryPoint dp = new DeliveryPoint(idIntersection,i.getLatitude(),i.getLongitude());
-        Courier c = controller.user.getCourierById(idCourier);        
+        DeliveryPoint dp = new DeliveryPoint(idIntersection, i.getLatitude(), i.getLongitude());
+        Courier c = controller.user.getCourierById(idCourier);
         dp.assignTimeWindow(timeWindow);
         dp.chooseCourier(c);
         c.addDeliveryPoint(dp);
@@ -49,15 +51,19 @@ public class CourierChosenState implements State {
             controller.addShortestPathBetweenDP(map, c, dp);
         } else {
             c.getShortestPathBetweenDPs().put(dp.getId(), new HashMap<>());
+            c.getListSegmentBetweenDPs().put(dp.getId(), new Tour());
         }
+        controller.addShortestPathBetweenDP(map, c, dp);
+        
         controller.getWindow().getGraphicalView().clearSelection();
         controller.getWindow().getGraphicalView().paintIntersection(dp, Color.BLUE, map);
         controller.getWindow().setMessage("Delivery point added.");
-        controller.setCurrentState(controller.dpEnteredState);
         controller.getWindow().allowNode("VALIDATE_DP", false);
         controller.getWindow().allowNode("SAVE_DP", true);
+        controller.setCurrentState(controller.dpEnteredState);
     }
-
+    
+    @Override
     public void selectCourier(Controller controller, Long idCourier) {
         controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
         controller.getWindow().setMessage("Courier " + controller.user.getCourierById(idCourier).getName() + " selected.");
@@ -89,6 +95,10 @@ public class CourierChosenState implements State {
             nestedMap.put(warehouse.getId(), Double.valueOf("0.0"));
             c.getShortestPathBetweenDPs().put(warehouse.getId(), nestedMap);
             user.getListCourier().replace(key, c);
+            
+            Tour tour = new Tour();
+            tour.addTourRoute(warehouse.getId(), null);
+            c.getListSegmentBetweenDPs().put(warehouse.getId(), tour);
         }
     }
     

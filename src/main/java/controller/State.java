@@ -12,6 +12,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import model.Courier;
 import model.DeliveryPoint;
+import java.text.ParseException;
 import model.Map;
 import org.xml.sax.SAXException;
 import view.Window;
@@ -26,7 +27,7 @@ public interface State {
 
     };
     
-    public default Double calculateTour(Controller controller, Courier c, Long idWarehouse) {
+    public default Double calculateTour(Controller controller, Courier c, Long idWarehouse) throws ParseException {
         return null;
     };
     

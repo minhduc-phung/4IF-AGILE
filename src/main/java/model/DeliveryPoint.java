@@ -5,13 +5,15 @@
  */
 package model;
 
+import java.util.Date;
+
 /**
  *
  * @author bbbbb
  */
 public class DeliveryPoint extends Intersection {
     private Integer timeWindow;
-    private double timestamp;
+    private Date timestamp;
     private Courier courier;
 
     public DeliveryPoint(Long id, Double latitude, Double longitude) {
@@ -34,11 +36,11 @@ public class DeliveryPoint extends Intersection {
         this.timeWindow = t;
     }
     
-    public void assignTimestamp(double t) {
+    public void assignTimestamp(Date t) {
         this.timestamp = t;
     }
 
-    public double getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
 

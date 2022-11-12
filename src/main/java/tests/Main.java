@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
@@ -45,18 +45,21 @@ public class Main extends Application {
     public static void main(String[] args) throws ParserConfigurationException, IOException, 
                                 SAXException, ParseException, TransformerException, 
                                 TransformerConfigurationException, XPathExpressionException, ExceptionXML {
-        testLoadMap();
+        //testLoadMap();
         //testSaveDeliveryPoints();
         //testRestoreDeliveryPoints();
         //testDijkstra();
         //testEnterDeliveryPoint();
         //testRemoveDeliveryPoint();
-        //testCalculateTour();
+        testCalculateTour();
+        //testCalculateTour1();
+        Platform.exit();
     }
     
     public static void testLoadMap() throws ParserConfigurationException, IOException, SAXException, ExceptionXML {
         Controller controller = new Controller();
         controller.loadMapFromXML();
+        System.out.println(controller.getMap().getListIntersection());
     }
     
     public static void resultReport(Result result) {
@@ -152,8 +155,38 @@ public class Main extends Application {
             System.out.println(key.toString() + c.getShortestPathBetweenDPs().get(key));
         }
     }
+    */
+    public static void testCalculateTour() throws ParserConfigurationException, IOException, 
+                        SAXException, ExceptionXML, ParseException {
+        Controller controller = new Controller();
+        controller.loadMapFromXML();
+        controller.selectCourier(1L);
+        Map map = controller.getMap();
+        Long idWarehouse = map.getWarehouse().getId();
+        controller.enterDeliveryPoint(map, 2129259178L, 1L, 9);
+        controller.enterDeliveryPoint(map, 2129259180L, 1L, 9);
+        controller.enterDeliveryPoint(map, 239601996L, 1L, 9);
+        controller.enterDeliveryPoint(map, 21703589L, 1L, 9);
+        controller.enterDeliveryPoint(map, 60901982L, 1L, 9);
+        
+        DeliveryPoint aDP = new DeliveryPoint(21703589L, 0.0, 0.0);
+        controller.removeDeliveryPoint(map, aDP, 1L);
+        
+        FileWriter writer = new FileWriter("text.txt");
+        Courier c = controller.getUser().getCourierById(1L);
+
+        for (Long key1 : c.getListSegmentBetweenDPs().keySet()) {
+            writer.write("key:"+key1 +"\n");
+            for (Long key2 : c.getListSegmentBetweenDPs().get(key1).getTourRoute().keySet())
+                writer.write(key2+":"+ c.getListSegmentBetweenInters(key1, key2) +"\n");
+            writer.write("\n");
+        }
+        
+        writer.close();
+        controller.calculateTour(c, idWarehouse);
+    }
     
-    public static void testCalculateTour() throws ParserConfigurationException, IOException, SAXException {
+    public static void testCalculateTour1() throws ParserConfigurationException, IOException, SAXException, ParseException {
         Service service = new Service();
         Courier c = service.getUser().getCourierById(1L);
         Map map = service.loadMapFromXML("maps/mediumMap.xml");
@@ -163,6 +196,8 @@ public class Main extends Application {
         for (Long idInter : listIdInter) {
             service.enterDeliveryPoint(map, idInter, c.getId(), Integer.parseInt("9"));
         }  
+        DeliveryPoint aDP = new DeliveryPoint(21703589L, 0.0, 0.0);
+        service.removeDeliveryPoint(map, aDP, c);
         
         // shortest path of courier 1
         HashMap<Long, HashMap<Long, Double>> completeMap = c.getShortestPathBetweenDPs();
@@ -184,23 +219,32 @@ public class Main extends Application {
             
         }
 	System.out.println("0");
-        
+    
+        Date now = new Date();
+        SimpleDateFormat sd = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+        Date timeStamp = sdf.parse(sd.format(now) + " 08:00:00");
         // Show timestamp
-        double sum = 0.0;
+        long sum = timeStamp.getTime();
         int i;
-        System.out.println(0.0);
+        
         DeliveryPoint dp = c.getCurrentDeliveryPoints().get(0);
-        dp.assignTimestamp(0.0);
+        dp.assignTimestamp(timeStamp);
+        System.out.println(timeStamp);
         for (i = 0 ; i < tspSolutions.size()-1 ; i++) {
-            double distance = g.getCost(tspSolutions.get(i), tspSolutions.get(i+1));
-            sum += distance;
+            long timeInMinute = (long) Math.ceil( g.getCost(tspSolutions.get(i), tspSolutions.get(i+1)) * 60 * 1000);
+            sum += timeInMinute;
             dp = c.getCurrentDeliveryPoints().get(tspSolutions.get(i+1));
-            dp.assignTimestamp(sum);
-            System.out.println(sum);
+            Date aTimeStamp = new Date();
+            aTimeStamp.setTime(sum);
+            dp.assignTimestamp(aTimeStamp);
+            System.out.println(aTimeStamp);
         }
-        double distance = g.getCost(tspSolutions.get(i), tspSolutions.get(0));
-        sum += distance;
-        System.out.println(sum);
+        long timeInMinute = (long) Math.ceil( g.getCost(tspSolutions.get(i), tspSolutions.get(0)) * 60 * 1000);
+        sum += timeInMinute;
+        Date aTimeStamp = new Date();
+        aTimeStamp.setTime(sum);
+        System.out.println(aTimeStamp);
         
         // set currentTour
         for (i=0 ; i < c.getCurrentDeliveryPoints().size()-1 ; i++) {
@@ -223,8 +267,8 @@ public class Main extends Application {
         }
         writer.close();
         
-    }*/
-
+    }
+    
     @Override
     public void start(Stage stage) throws Exception {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

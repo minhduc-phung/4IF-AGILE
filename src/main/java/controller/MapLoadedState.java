@@ -13,6 +13,7 @@ import model.Courier;
 import model.DeliveryPoint;
 import model.Intersection;
 import model.Map;
+import model.Tour;
 import model.User;
 import org.xml.sax.SAXException;
 import view.Window;
@@ -50,6 +51,10 @@ public class MapLoadedState implements State {
             nestedMap.put(warehouse.getId(), Double.valueOf("0.0"));
             c.getShortestPathBetweenDPs().put(warehouse.getId(), nestedMap);
             user.getListCourier().replace(key, c);
+            
+            Tour tour = new Tour();
+            tour.addTourRoute(warehouse.getId(), null);
+            c.getListSegmentBetweenDPs().put(warehouse.getId(), tour);
         }
     }
     
