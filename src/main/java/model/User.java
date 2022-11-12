@@ -71,5 +71,4 @@ public class User {
     public LinkedHashMap<String, Integer> getTimeWindows() {
         return timeWindows;
     }
-
 }

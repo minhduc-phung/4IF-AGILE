@@ -4,6 +4,7 @@ import controller.Controller;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
@@ -13,6 +14,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import model.User;
 
+import java.util.Map;
+
 // We have no intentions to do scaling like PlaCo example.
 public class Window extends Group {
     private Label messageFrame;
@@ -20,7 +23,7 @@ public class Window extends Group {
     private Label aboutFrame;
     private GraphicalView graphicalView;
     private TextualView textualView;
-    private InteractiveView interactiveVIew;
+    private InteractiveView interactiveView;
     private final int WINDOW_WIDTH = 1500;
     private final int WINDOW_HEIGHT = 900;
 
@@ -117,7 +120,8 @@ public class Window extends Group {
         this.getChildren().add(aboutFrame);
         this.getChildren().add(lateDeliveriesNumber);
         graphicalView = new GraphicalView(this, controller);
-        interactiveVIew = new InteractiveView(user, this, controller);
+        interactiveView = new InteractiveView(user, this, controller);
+        textualView = new TextualView(this, controller);
     }
 
     public void setLateDeliveriesNumber(int number) {
@@ -137,10 +141,14 @@ public class Window extends Group {
     }
 
     public InteractiveView getInteractivePane() {
-        return interactiveVIew;
+        return interactiveView;
+    }
+
+    public TextualView getTextualView() {
+        return textualView;
     }
 
     public void allowNode (String nodeId, boolean allow) {
-        interactiveVIew.allowNode(nodeId, allow);
+        interactiveView.allowNode(nodeId, allow);
     }
 }

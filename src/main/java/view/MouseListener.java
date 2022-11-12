@@ -2,9 +2,11 @@ package view;
 
 import controller.Controller;
 import javafx.event.EventHandler;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 
-// This class is the listener for the mouse events on the graphical view
+// This class is the listener for the mouse events on the graphical view and the textual view
 public class MouseListener implements EventHandler<MouseEvent> {
     private Controller controller;
 
@@ -16,7 +18,11 @@ public class MouseListener implements EventHandler<MouseEvent> {
     public void handle(MouseEvent mouseEvent) {
         switch (mouseEvent.getEventType().getName()){
             case "MOUSE_CLICKED":
-                controller.mouseClickedOnMap();
+                if (mouseEvent.getSource() instanceof GraphicalView){
+                    controller.mouseClickedOnMap();
+                } else {
+                    controller.mouseClickedOnTable(((TableRow) mouseEvent.getSource()).getIndex()+1);
+                }
                 break;
             case "MOUSE_MOVED":
                 controller.mouseMovedOnMap(mouseEvent.getX(), mouseEvent.getY());

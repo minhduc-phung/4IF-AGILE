@@ -56,15 +56,19 @@ public class CourierChosenState implements State {
         
         controller.getWindow().getGraphicalView().clearSelection();
         controller.getWindow().getGraphicalView().paintIntersection(dp, Color.BLUE, map);
+        controller.getWindow().getTextualView().updateData(controller.getUser(), idCourier);
         controller.getWindow().setMessage("Delivery point added.");
         controller.getWindow().allowNode("VALIDATE_DP", false);
         controller.getWindow().allowNode("SAVE_DP", true);
+        controller.getWindow().allowNode("CALCULATE_TOUR", true);
         controller.setCurrentState(controller.dpEnteredState);
     }
     
     @Override
     public void selectCourier(Controller controller, Long idCourier) {
         controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
+        controller.getWindow().getTextualView().updateData(controller.getUser(), idCourier);
+        controller.getWindow().getTextualView().clearSelection();
         controller.getWindow().setMessage("Courier " + controller.user.getCourierById(idCourier).getName() + " selected.");
         controller.getWindow().getGraphicalView().updateMap(controller.getMap(), controller.user.getCourierById(idCourier));
     }
@@ -119,9 +123,10 @@ public class CourierChosenState implements State {
         Map map = controller.map;
         User user = new User();
         controller.user = XMLdpsDeserializer.loadDPList(map, user);
-        controller.getWindow().setMessage("Delivery points restored successfully.");
+        controller.getWindow().setMessage("Delivery points restored.");
         controller.setCurrentState(controller.dpRestoredState);
         controller.getWindow().allowNode("SAVE_DP", true);
+        controller.getWindow().allowNode("CALCULATE_TOUR", true);
     }
 
     @Override
@@ -169,14 +174,23 @@ public class CourierChosenState implements State {
 
     @Override
     public void mouseClickedOnMap(Controller controller) {
+
         if (controller.getWindow().getGraphicalView().getHoveredIntersection() != null) {
-            if (controller.getWindow().getGraphicalView().getSelectedIntersection() != null) {
-                controller.getWindow().getGraphicalView().paintIntersection(controller.getWindow().getGraphicalView().getSelectedIntersection(), Color.WHITE, controller.getMap());
+            List<Long> dpIds = controller.user.getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId()).getDeliveryPointIds();
+            Intersection oldSelectedIntersection = controller.getWindow().getGraphicalView().getSelectedIntersection();
+            if (oldSelectedIntersection != null) {
+                if (dpIds.contains(oldSelectedIntersection.getId())) {
+                    controller.getWindow().getGraphicalView().paintIntersection(oldSelectedIntersection, Color.BLUE, controller.getMap());
+                } else {
+                    controller.getWindow().getGraphicalView().paintIntersection(oldSelectedIntersection, Color.WHITE, controller.getMap());
+                }
             }
             controller.getWindow().getGraphicalView().setSelectedIntersection(controller.getWindow().getGraphicalView().getHoveredIntersection());
             controller.getWindow().getGraphicalView().setHoveredIntersection(null);
+            controller.getWindow().getTextualView().clearSelection();
             controller.getWindow().getGraphicalView().paintIntersection(controller.getWindow().getGraphicalView().getSelectedIntersection(), Color.BROWN, controller.getMap());
             controller.getWindow().allowNode("VALIDATE_DP", true);
+            controller.getWindow().allowNode("REMOVE_DP", false);
         }
     }
 
@@ -190,6 +204,26 @@ public class CourierChosenState implements State {
                 controller.getWindow().getGraphicalView().paintIntersection(hoveredIntersection, Color.WHITE, controller.getMap());
             }
             controller.getWindow().getGraphicalView().setHoveredIntersection(null);
+        }
+    }
+
+    @Override
+    public void mouseClickedOnTable(Controller controller, int indexDP){
+        Map map = controller.map;
+        User user = controller.user;
+        Courier courier = user.getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId());
+        if (courier.getCurrentDeliveryPoints().size() > indexDP) {
+            DeliveryPoint oldSelectedDP = controller.getWindow().getTextualView().getSelectedDeliveryPoint();
+            if (oldSelectedDP != null){
+                controller.getWindow().getGraphicalView().paintIntersection(oldSelectedDP, Color.BLUE, map);
+            }
+            DeliveryPoint dp = courier.getCurrentDeliveryPoints().get(indexDP);
+            controller.getWindow().getTextualView().setSelectedDeliveryPoint(dp);
+            System.out.println(dp);
+            controller.getWindow().getGraphicalView().setSelectedIntersection(map.getIntersection(dp.getId()));
+            controller.getWindow().getGraphicalView().paintIntersection(map.getIntersection(dp.getId()), Color.BROWN, map);
+            controller.getWindow().allowNode("VALIDATE_DP", true);
+            controller.getWindow().allowNode("REMOVE_DP", true);
         }
     }
 }

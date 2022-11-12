@@ -12,6 +12,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
+import java.text.ParseException;
 
 public class ButtonListener implements EventHandler<ActionEvent> {
 
@@ -32,9 +33,13 @@ public class ButtonListener implements EventHandler<ActionEvent> {
                 }
                 break;
             case "VALIDATE_DP":
-                controller.enterDeliveryPoint(controller.getMap(), controller.getWindow().getGraphicalView().getSelectedIntersection().getId(), controller.getWindow().getInteractivePane().getSelectedCourierId(), controller.getWindow().getInteractivePane().getSelectedTimeWindow());
+                if (controller.getWindow().getTextualView().getSelectedDeliveryPoint() == null) {
+                    controller.enterDeliveryPoint(controller.getMap(), controller.getWindow().getGraphicalView().getSelectedIntersection().getId(), controller.getWindow().getInteractivePane().getSelectedCourierId(), controller.getWindow().getInteractivePane().getSelectedTimeWindow());
+                }
                 break;
-            case "REMOVE_DP": break;
+            case "REMOVE_DP":
+                controller.removeDeliveryPoint(controller.getMap(), controller.getWindow().getTextualView().getSelectedDeliveryPoint(), controller.getWindow().getInteractivePane().getSelectedCourierId());
+                break;
             case "RESTORE_DP":
                 // For ergonomy
 
@@ -56,7 +61,13 @@ public class ButtonListener implements EventHandler<ActionEvent> {
                 break;
             case "MODIFY_DP": break;
             case "GENERATE_PLAN": break;
-            case "CALCULATE_TOUR": break;
+            case "CALCULATE_TOUR":
+                try {
+                    controller.calculateTour(controller.getUser().getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId()), controller.getMap().getWarehouse().getId());
+                } catch (ParseException ex) {
+                    throw new RuntimeException(ex);
+                }
+                break;
         }
 
 

@@ -5,6 +5,8 @@
  */
 package model;
 
+import javafx.beans.property.SimpleStringProperty;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -96,5 +98,4 @@ public class Courier {
         }
         return ids;
     }
-    
 }

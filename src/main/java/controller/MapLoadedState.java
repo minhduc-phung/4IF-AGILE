@@ -62,6 +62,7 @@ public class MapLoadedState implements State {
     public void selectCourier(Controller controller, Long idCourier) {
         controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
         controller.setCurrentState(controller.courierChosenState);
+        controller.getWindow().getTextualView().updateData(controller.getUser(), idCourier);
         controller.getWindow().setMessage("Please choose a time-window to start adding delivery points.");
     }
     
@@ -77,5 +78,6 @@ public class MapLoadedState implements State {
         controller.getWindow().setMessage("Delivery points restored.");
         controller.setCurrentState(controller.dpRestoredState);
         controller.getWindow().allowNode("SAVE_DP", true);
+        controller.getWindow().allowNode("CALCULATE_TOUR", true);
     }
 }

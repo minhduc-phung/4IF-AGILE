@@ -5,6 +5,7 @@
  */
 package model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -48,6 +49,25 @@ public class DeliveryPoint extends Intersection {
     public String toString() {
         return "DeliveryPoint{" + "id="+id+ ", timeWindow=" + timeWindow + ", timestamp=" + timestamp + 
                 ", courier=" + courier + '}';
+    }
+
+    public String getTimeWindowString() {
+        // format the time window to be "HH:00 - HH:00"
+        String timeWindowString = "";
+        if (timeWindow < 9) {
+            timeWindowString = "0" + timeWindow + ":00 - 0" + (timeWindow + 1) + ":00";
+        } else if (timeWindow == 9){
+            timeWindowString = "09:00 - 10:00";
+        }
+        else {
+            timeWindowString = timeWindow + ":00 - " + (timeWindow + 1) + ":00";
+        }
+        return timeWindowString;
+    }
+
+    public String getTimestampString() {
+        return new SimpleDateFormat("HH:mm:ss").format(timestamp);
+
     }
 
 

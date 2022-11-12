@@ -291,4 +291,7 @@ public class Controller {
         return window;
     }
 
+    public void mouseClickedOnTable(int indexDP) {
+        currentState.mouseClickedOnTable(this, indexDP);
+    }
 }

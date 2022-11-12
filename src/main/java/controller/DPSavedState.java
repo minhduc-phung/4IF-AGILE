@@ -43,6 +43,7 @@ public class DPSavedState implements State {
     @Override
     public void selectCourier(Controller controller, Long idCourier) {
         controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
+        controller.getWindow().getTextualView().updateData(controller.getUser(), idCourier);
         controller.getWindow().setMessage("Courier " + controller.user.getCourierById(idCourier).getName() + " selected.");
         controller.getWindow().getGraphicalView().updateMap(controller.getMap(), controller.user.getCourierById(idCourier));
     }
@@ -69,8 +70,9 @@ public class DPSavedState implements State {
         Map map = controller.map;
         User user = new User();
         controller.user = XMLdpsDeserializer.loadDPList(map, user);
-        controller.getWindow().setMessage("Delivery points restored successfully.");
+        controller.getWindow().setMessage("Delivery points restored.");
         controller.setCurrentState(controller.dpRestoredState);
         controller.getWindow().allowNode("SAVE_DP", true);
+        controller.getWindow().allowNode("CALCULATE_TOUR", true);
     }
 }

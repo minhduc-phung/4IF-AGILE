@@ -59,4 +59,6 @@ public interface State {
 
     public default void mouseExitedMap(Controller controller){};
 
+    public default void mouseClickedOnTable(Controller controller, int indexDP){};
+
 }

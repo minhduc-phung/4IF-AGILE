@@ -94,6 +94,19 @@ public class GraphicalView extends Pane implements Observer {
         this.getChildren().add(new Circle(posX, posY, 3.5, color));
     }
 
+    public void paintSegment(Segment segment, Color color, Map map) {
+        Double[] coords = map.getMinMaxCoordinates();
+        Double posX1 = (segment.getOrigin().getLongitude() - coords[1]) * scale;
+        Double posY1 = viewHeight - (segment.getOrigin().getLatitude() - coords[0]) * scale;
+        Double posX2 = (segment.getDestination().getLongitude() - coords[1]) * scale;
+        Double posY2 = viewHeight - (segment.getDestination().getLatitude() - coords[0]) * scale;
+
+        Line line = new Line(posX1, posY1, posX2, posY2);
+        line.setStrokeWidth(2);
+        line.setStroke(color);
+        this.getChildren().add(line);
+    }
+
     public Intersection getSelectedIntersection() {
         return selectedIntersection;
     }
