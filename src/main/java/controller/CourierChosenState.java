@@ -53,7 +53,6 @@ public class CourierChosenState implements State {
             c.getShortestPathBetweenDPs().put(dp.getId(), new HashMap<>());
             c.getListSegmentBetweenDPs().put(dp.getId(), new Tour());
         }
-        controller.addShortestPathBetweenDP(map, c, dp);
         
         controller.getWindow().getGraphicalView().clearSelection();
         controller.getWindow().getGraphicalView().paintIntersection(dp, Color.BLUE, map);

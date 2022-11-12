@@ -65,7 +65,7 @@ public class LoadMapTest {
         assert(updateCalled);
         assert(map.getListIntersection().size() > 0);
     }
-    /*
+    
     @Test
     public void TestContain1() throws ParserConfigurationException, IOException, SAXException, ExceptionXML {
         this.controller.loadMapFromXML();
@@ -75,15 +75,6 @@ public class LoadMapTest {
         assert(map.getIntersection(Long.parseLong("1"))==null || map.getIntersection(Long.parseLong("2"))==null);        
     }
     
-    @Test
-    public void TestContain2() throws ParserConfigurationException, IOException, SAXException {
-        Map map = this.controller.loadMapFromXML("maps/mediumMap.xml");
-        map.addObserver(observer);
-        assert(updateCalled);        
-        assert(map.getIntersection(Long.parseLong("2129259178")) != null && 
-                    map.getIntersection(Long.parseLong("25610684")) != null);          
-    }
-    */
     @After
     public void tearDown() {
     }

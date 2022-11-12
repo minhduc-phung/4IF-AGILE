@@ -78,6 +78,7 @@ public class DPEnteredState implements State {
     
     @Override
     public Double calculateTour(Controller controller, Courier c, Long idWarehouse) throws ParseException {
+        System.out.println(DPEnteredState.class.toGenericString());
         int i;
         int nbVertices = c.getCurrentDeliveryPoints().size();
         Graph g = new CompleteGraph(c, idWarehouse);
@@ -85,23 +86,17 @@ public class DPEnteredState implements State {
         tsp.searchSolution(20000, g);
 
         // take the earliest time window in ListCurrentDPs
-        Integer earliestTW = Integer.MAX_VALUE;
-        for (i = 1 ; i < c.getCurrentDeliveryPoints().size() ; i++) {
-            if ( c.getCurrentDeliveryPoints().get(i).getTimeWindow().compareTo(earliestTW) < 0 ) {
-                earliestTW = c.getCurrentDeliveryPoints().get(i).getTimeWindow();
-            } 
-        }
+        Integer earliestTW = c.getCurrentDeliveryPoints().get(0).getTimeWindow();
         
         Date now = new Date();
         SimpleDateFormat sd = new SimpleDateFormat("dd-MM-yyyy");
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
         Date timeStamp = new Date();
         if (earliestTW < 10) {
-            timeStamp = sdf.parse(sd.format(now) + " " + earliestTW + "0:00:00");
+            timeStamp = sdf.parse(sd.format(now) + " 0" + earliestTW + ":00:00");
         } else {
             timeStamp = sdf.parse(sd.format(now) + " " + earliestTW + ":00:00");
         }
-        System.out.println(timeStamp);
         
         List<Integer> tspSolutions = new ArrayList<>();
 	for (i=0; i<nbVertices; i++) {
@@ -111,7 +106,6 @@ public class DPEnteredState implements State {
         DeliveryPoint dp = c.getCurrentDeliveryPoints().get(0);
         long sum = timeStamp.getTime();
         dp.assignTimestamp(timeStamp);
-        dp.chooseCourier(c);
         for (i = 0 ; i < tspSolutions.size()-1 ; i++) {
             long timeInMinute = (long) Math.ceil( g.getCost(tspSolutions.get(i), tspSolutions.get(i+1))*60*1000 );
             sum += timeInMinute;
@@ -119,13 +113,11 @@ public class DPEnteredState implements State {
             Date aTimeStamp = new Date();
             aTimeStamp.setTime(sum);
             dp.assignTimestamp(aTimeStamp);
-            System.out.println(aTimeStamp);
         }
         long timeInMinute = (long) Math.ceil( g.getCost(tspSolutions.get(i), tspSolutions.get(0))*60*1000 );
         sum += timeInMinute;
         Date aTimeStamp = new Date();
         aTimeStamp.setTime(sum);
-        System.out.println(aTimeStamp);
         
         // set currentTour
         for (i=0 ; i < c.getCurrentDeliveryPoints().size()-1 ; i++) {
@@ -155,14 +147,13 @@ public class DPEnteredState implements State {
         dp.chooseCourier(c);
         c.addDeliveryPoint(dp);
         c.addPositionIntersection(idIntersection);
+
         if (!c.getShortestPathBetweenDPs().isEmpty()) {
             controller.addShortestPathBetweenDP(map, c, dp);
         } else {
             c.getShortestPathBetweenDPs().put(dp.getId(), new HashMap<>());
             c.getListSegmentBetweenDPs().put(dp.getId(), new Tour());
         }
-        controller.addShortestPathBetweenDP(map, c, dp);
-        
         controller.getWindow().getGraphicalView().clearSelection();
         controller.getWindow().getGraphicalView().paintIntersection(dp, Color.BLUE, map);
         controller.getWindow().setMessage("Delivery point added.");

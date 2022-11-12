@@ -6,6 +6,7 @@
 package tests;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.junit.internal.TextListener;
 import org.junit.runner.JUnitCore;
@@ -22,6 +23,7 @@ public class TestRunner extends Application {
         Result result = junit.run(
                 LoadMapTest.class);
         resultReport(result);
+        Platform.exit();
     }
     
     public static void resultReport(Result result) {

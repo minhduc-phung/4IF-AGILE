@@ -85,9 +85,6 @@ public class Main extends Application {
         // call service
         //service.saveDeliveryPointToFile(c.getCurrentDeliveryPoints());
         
-
-        controller.setCurrentState(controller.dpEnteredState);
-        
         controller.saveDeliveryPointToFile();
     }
     
@@ -163,27 +160,37 @@ public class Main extends Application {
         controller.selectCourier(1L);
         Map map = controller.getMap();
         Long idWarehouse = map.getWarehouse().getId();
-        controller.enterDeliveryPoint(map, 2129259178L, 1L, 9);
-        controller.enterDeliveryPoint(map, 2129259180L, 1L, 9);
-        controller.enterDeliveryPoint(map, 239601996L, 1L, 9);
-        controller.enterDeliveryPoint(map, 21703589L, 1L, 9);
-        controller.enterDeliveryPoint(map, 60901982L, 1L, 9);
-        
-        DeliveryPoint aDP = new DeliveryPoint(21703589L, 0.0, 0.0);
-        controller.removeDeliveryPoint(map, aDP, 1L);
-        
-        FileWriter writer = new FileWriter("text.txt");
-        Courier c = controller.getUser().getCourierById(1L);
-
-        for (Long key1 : c.getListSegmentBetweenDPs().keySet()) {
-            writer.write("key:"+key1 +"\n");
-            for (Long key2 : c.getListSegmentBetweenDPs().get(key1).getTourRoute().keySet())
-                writer.write(key2+":"+ c.getListSegmentBetweenInters(key1, key2) +"\n");
-            writer.write("\n");
+        Long[] listIdInter = {1850080438L, 2959901670L, 270298921L,
+                                21703589L, 26317207L, 1440845047L, 
+                                459797866L, 1957527553L, 1957527548L,
+                                1957527541L, 21703591L, 21703594L, 
+                                1682387628L, 382011406L, 382011401L };
+        for (int i = 0 ; i < listIdInter.length ; i++) {
+            if (i < 8) {
+                controller.enterDeliveryPoint(map, listIdInter[i], 1L, 9);
+            } else {
+                controller.enterDeliveryPoint(map, listIdInter[i], 1L, 10);
+            }
         }
         
-        writer.close();
+        //DeliveryPoint aDP = new DeliveryPoint(21703589L, 0.0, 0.0);
+        //controller.removeDeliveryPoint(map, aDP, 1L);
+        
+//        FileWriter writer = new FileWriter("text.txt");
+//        
+//
+//        for (Long key1 : c.getListSegmentBetweenDPs().keySet()) {
+//            writer.write("key:"+key1 +"\n");
+//            for (Long key2 : c.getListSegmentBetweenDPs().get(key1).getTourRoute().keySet())
+//                writer.write(key2+":"+ c.getListSegmentBetweenInters(key1, key2) +"\n");
+//            writer.write("\n");
+//        }
+//        
+//        writer.close();
+        Courier c = controller.getUser().getCourierById(1L);
         controller.calculateTour(c, idWarehouse);
+        for (DeliveryPoint dp : c.getCurrentDeliveryPoints())
+            System.out.println(dp);
     }
     
     public static void testCalculateTour1() throws ParserConfigurationException, IOException, SAXException, ParseException {

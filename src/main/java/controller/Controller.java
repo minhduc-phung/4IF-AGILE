@@ -40,7 +40,7 @@ public class Controller {
     protected final InitialState initialState = new InitialState();
     protected final MapLoadedState mapLoadedState = new MapLoadedState();
     protected final CourierChosenState courierChosenState = new CourierChosenState();
-    public final DPEnteredState dpEnteredState = new DPEnteredState();
+    protected final DPEnteredState dpEnteredState = new DPEnteredState();
     protected final DPRestoredState dpRestoredState = new DPRestoredState();
     protected final DPRemovedState dpRemovedState = new DPRemovedState();
     protected final TourCalculatedState tourCalculatedState = new TourCalculatedState();
@@ -52,7 +52,7 @@ public class Controller {
         this.window = new Window(user, this);
     }
 
-    public void setCurrentState(State currentState) {
+    protected void setCurrentState(State currentState) {
         this.currentState = currentState;
     }
 
@@ -61,13 +61,42 @@ public class Controller {
     }
 
     public void addShortestPathBetweenDP(Map aMap, Courier c, DeliveryPoint aDP) {
+        // handle time-window
+        Integer earliestTW = Integer.MAX_VALUE;
+        Integer latestTW = Integer.MIN_VALUE;
+        for (int k = 1; k < c.getCurrentDeliveryPoints().size(); k++) {
+            DeliveryPoint aD = c.getCurrentDeliveryPoints().get(k);
+            if (aD.getTimeWindow().compareTo(earliestTW) < 0) {
+                earliestTW = aD.getTimeWindow();
+            }
+            if (aD.getTimeWindow().compareTo(latestTW) > 0) {
+                latestTW = aD.getTimeWindow();
+            }
+        }
+
         List<DeliveryPoint> listDP = c.getCurrentDeliveryPoints();
+        DeliveryPoint warehouse = listDP.get(0);
+        warehouse.chooseCourier(c);
+        if (earliestTW.equals(latestTW)) {
+            warehouse.assignTimeWindow(earliestTW);
+        } else {
+            warehouse.assignTimeWindow(earliestTW - 1);
+        }
+
         HashMap<Long, Double> distanceFromADP = new HashMap<>();
         Tour tour1 = new Tour();
 
         for (DeliveryPoint dp : listDP) {
             HashMap<Long, Long> precedentNode1 = new HashMap<>();
-            Double dist = dijkstra(aMap, dp.getId(), aDP.getId(), precedentNode1);
+            Double dist = null;
+            if (dp.getTimeWindow().equals(aDP.getTimeWindow())) {
+                dist = dijkstra(aMap, dp.getId(), aDP.getId(), precedentNode1);
+            } else if (dp.getTimeWindow().equals(aDP.getTimeWindow() - 1)) {
+                dist = dijkstra(aMap, dp.getId(), aDP.getId(), precedentNode1);
+            } else {
+                dist = Double.MAX_VALUE;
+            }
+
             List<Segment> listSeg = new ArrayList<>();
             Long key = aDP.getId();
             while (precedentNode1.get(key) != null) {
@@ -91,7 +120,14 @@ public class Controller {
             }
 
             HashMap<Long, Long> precedentNode2 = new HashMap<>();
-            Double invertedDist = this.dijkstra(aMap, aDP.getId(), dp.getId(), precedentNode2);
+            Double invertedDist = null;
+            if (aDP.getTimeWindow().equals(dp.getTimeWindow())) {
+                invertedDist = this.dijkstra(aMap, aDP.getId(), dp.getId(), precedentNode2);
+            } else if (aDP.getTimeWindow().equals(dp.getTimeWindow() - 1)) {
+                invertedDist = this.dijkstra(aMap, aDP.getId(), dp.getId(), precedentNode2);
+            } else {
+                invertedDist = Double.MAX_VALUE;
+            }
             distanceFromADP.put(dp.getId(), invertedDist);
 
             List<Segment> listSeg1 = new ArrayList<>();
@@ -106,6 +142,42 @@ public class Controller {
         }
         c.getShortestPathBetweenDPs().put(aDP.getId(), distanceFromADP);
         c.getListSegmentBetweenDPs().put(aDP.getId(), tour1);
+
+        // add arc (latestNodes, warehouse)
+        if (!earliestTW.equals(latestTW)) {
+            for (DeliveryPoint dp : c.getCurrentDeliveryPoints()) {
+                if (dp.getTimeWindow().equals(latestTW)) {
+                    HashMap<Long, Long> precedentNode = new HashMap<>();
+                    Double dist = this.dijkstra(aMap, dp.getId(), warehouse.getId(), precedentNode);
+
+                    List<Segment> listSeg = new ArrayList<>();
+                    Long key = aDP.getId();
+                    while (precedentNode.get(key) != null) {
+                        Segment seg = aMap.getSegment(precedentNode.get(key), key);
+                        listSeg.add(seg);
+                        key = precedentNode.get(key);
+                    }
+                    Collections.reverse(listSeg);
+                    if (c.getShortestPathBetweenDPs().get(dp.getId()).get(warehouse.getId()) == null) {
+                        c.getShortestPathBetweenDPs().get(dp.getId()).put(warehouse.getId(), dist);
+                        c.getListSegmentBetweenDPs().get(dp.getId()).getTourRoute().put(warehouse.getId(), listSeg);
+                    } else {
+                        c.getShortestPathBetweenDPs().get(dp.getId()).replace(warehouse.getId(), dist);
+                        c.getListSegmentBetweenDPs().get(dp.getId()).getTourRoute().replace(warehouse.getId(), listSeg);
+                    }
+                } else {
+                    if (c.getShortestPathBetweenDPs().get(dp.getId()).get(warehouse.getId()) == null) {
+                        c.getShortestPathBetweenDPs().get(dp.getId()).put(warehouse.getId(), Double.MAX_VALUE);
+                        c.getListSegmentBetweenDPs().get(dp.getId()).getTourRoute().put(warehouse.getId(), null);
+                    } else {
+                        c.getShortestPathBetweenDPs().get(dp.getId()).replace(warehouse.getId(), Double.MAX_VALUE);
+                        c.getListSegmentBetweenDPs().get(dp.getId()).getTourRoute().replace(warehouse.getId(), null);
+                    }
+                }
+            }
+        }
+        warehouse.assignTimeWindow(earliestTW);
+        
     }
 
     public void removeShortestPathBetweenDP(Courier c, DeliveryPoint aDP) {
