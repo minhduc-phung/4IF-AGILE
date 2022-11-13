@@ -1,7 +1,9 @@
 package observer;
 
+import java.util.logging.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
 
 public class Observable {
     private Collection<Observer> obs;
@@ -17,5 +19,7 @@ public class Observable {
     }
     public void notifyObservers(){
         notifyObservers(null);
+        Logger logger = Logger.getLogger(Observable.class.getName());
+        logger.log(Level.INFO, this.getClass() + " is updated");
     }
 }

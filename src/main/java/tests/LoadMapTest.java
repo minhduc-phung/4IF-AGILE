@@ -72,7 +72,7 @@ public class LoadMapTest {
         Map map = controller.getMap();
         map.addObserver(observer);
         assert(updateCalled);
-        assert(map.getIntersection(Long.parseLong("1"))==null || map.getIntersection(Long.parseLong("2"))==null);        
+        assertNull( map.getIntersection(Long.parseLong("1")) );        
     }
     
     @After

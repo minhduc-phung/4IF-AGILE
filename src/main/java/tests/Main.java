@@ -155,17 +155,19 @@ public class Main extends Application {
     */
     public static void testCalculateTour() throws ParserConfigurationException, IOException, 
                         SAXException, ExceptionXML, ParseException {
+        int i;
         Controller controller = new Controller();
         controller.loadMapFromXML();
         controller.selectCourier(1L);
         Map map = controller.getMap();
+        Courier c = controller.getUser().getCourierById(1L);
         Long idWarehouse = map.getWarehouse().getId();
         Long[] listIdInter = {1850080438L, 2959901670L, 270298921L,
                                 21703589L, 26317207L, 1440845047L, 
                                 459797866L, 1957527553L, 1957527548L,
                                 1957527541L, 21703591L, 21703594L, 
                                 1682387628L, 382011406L, 382011401L };
-        for (int i = 0 ; i < listIdInter.length ; i++) {
+        for (i = 0 ; i < listIdInter.length ; i++) {
             if (i < 8) {
                 controller.enterDeliveryPoint(map, listIdInter[i], 1L, 9);
             } else {
@@ -175,22 +177,14 @@ public class Main extends Application {
         
         //DeliveryPoint aDP = new DeliveryPoint(21703589L, 0.0, 0.0);
         //controller.removeDeliveryPoint(map, aDP, 1L);
-        
-        FileWriter writer = new FileWriter("text2.txt");
-        Courier c = controller.getUser().getCourierById(1L);
-/*
-        for (Long key1 : c.getListSegmentBetweenDPs().keySet()) {
-            writer.write("key:"+key1 +"\n");
-            for (Long key2 : c.getListSegmentBetweenDPs().get(25303831L).getTourRoute().keySet())
-                writer.write(key2+":"+ c.getListSegmentBetweenInters(25303831L, key2) +"\n");
-            writer.write("\n");
-        }
-        //writer.write("Size:"+c.getListSegmentBetweenDPs().get(25303831L).getTourRoute().size());
-        writer.close();*/
-        
         controller.calculateTour(c, idWarehouse);
-        for (DeliveryPoint dp : c.getCurrentDeliveryPoints())
-            System.out.println(dp);
+        //FileWriter writer = new FileWriter("tour.txt");
+        //for (Long key : c.getCurrentTour().getTourRoute().keySet()) {
+        //    writer.write(key+":"+c.getCurrentTour().getListSegment(key)+"\n");
+        //}
+        
+        //writer.close();
+        for (DeliveryPoint dp : c.getCurrentDeliveryPoints()) System.out.println(dp);
     }
     
     public static void testCalculateTour1() throws ParserConfigurationException, IOException, SAXException, ParseException {

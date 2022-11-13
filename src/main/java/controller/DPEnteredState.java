@@ -6,6 +6,7 @@
 package controller;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,7 +31,6 @@ import model.User;
 import org.xml.sax.SAXException;
 import view.Window;
 import xml.ExceptionXML;
-import java.text.ParseException;
 import model.Segment;
 import xml.XMLdpsDeserializer;
 import xml.XMLdpsSerializer;
@@ -72,8 +72,8 @@ public class DPEnteredState implements State {
     }
 
     @Override
-    public Double calculateTour(Controller controller, Courier c, Long idWarehouse) throws ParseException {
-        System.out.println(DPEnteredState.class.toGenericString());
+    public void calculateTour(Controller controller, Courier c, Long idWarehouse) throws ParseException {
+//        System.out.println(DPEnteredState.class.toGenericString());
         int i;
         int nbVertices = c.getCurrentDeliveryPoints().size();
         Graph g = new CompleteGraph(c, idWarehouse);
@@ -105,20 +105,28 @@ public class DPEnteredState implements State {
             long timeInMinute = (long) Math.ceil(g.getCost(tspSolutions.get(i), tspSolutions.get(i + 1)) * 60 * 1000);
             sum += timeInMinute;
             dp = c.getCurrentDeliveryPoints().get(tspSolutions.get(i + 1));
-            Date aTimeStamp = new Date();
-            aTimeStamp.setTime(sum);
+            Date aTimeStamp = new Date(sum);
+            Date timeWin = new Date();
+            if ( dp.getTimeWindow().compareTo(10) < 0 ) {
+                timeWin = sdf.parse(sd.format(now) + " 0" + dp.getTimeWindow() + ":00:00");
+            } else {
+                timeWin = sdf.parse(sd.format(now) + " " + dp.getTimeWindow() + ":00:00");
+            }
+            if (aTimeStamp.before(timeWin)) {
+                sum = timeWin.getTime() + timeInMinute;
+                aTimeStamp.setTime(sum);
+            }
             dp.assignTimestamp(aTimeStamp);
         }
-        long timeInMinute = (long) Math.ceil(g.getCost(tspSolutions.get(i), tspSolutions.get(0)) * 60 * 1000);
-        sum += timeInMinute;
-        Date aTimeStamp = new Date();
-        aTimeStamp.setTime(sum);
 
         // set currentTour
         for (i = 0; i < c.getCurrentDeliveryPoints().size() - 1; i++) {
             Long idCurrentInter = c.getCurrentDeliveryPoints().get(tspSolutions.get(i)).getId();
             Long idNextInter = c.getCurrentDeliveryPoints().get(tspSolutions.get(i + 1)).getId();
             List<Segment> listSeg = c.getListSegmentBetweenInters(idCurrentInter, idNextInter);
+            for (Segment seg : listSeg) {
+                controller.getWindow().getGraphicalView().paintSegment(seg, Color.RED, controller.map);
+            }
             c.addCurrentTour(idCurrentInter, listSeg);
         }
         Long idCurrentInter = c.getCurrentDeliveryPoints().get(tspSolutions.get(i)).getId();
@@ -126,15 +134,13 @@ public class DPEnteredState implements State {
         List<Segment> listSeg = c.getListSegmentBetweenInters(idCurrentInter, idNextInter);
         c.addCurrentTour(idCurrentInter, listSeg);
 
-        if (listSeg != null) {
-            for (Segment seg : listSeg) {
-                controller.getWindow().getGraphicalView().paintSegment(seg, Color.RED, controller.getMap());
-            }
+        for (Segment seg : listSeg) {
+            controller.getWindow().getGraphicalView().paintSegment(seg, Color.RED, controller.map);
         }
+        
         controller.getWindow().getTextualView().updateData(controller.user, c.getId());
         controller.getWindow().setMessage("The tour has been calculated.");
         controller.setCurrentState(controller.tourCalculatedState);
-        return tsp.getSolutionCost();
     }
 
     @Override

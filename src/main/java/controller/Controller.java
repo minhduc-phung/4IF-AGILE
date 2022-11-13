@@ -5,6 +5,7 @@
  */
 package controller;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -100,18 +101,17 @@ public class Controller {
                     key = precedentNode1.get(key);
                 }
                 Collections.reverse(listSeg);
-
                 tour.addTourRoute(aDP.getId(), listSeg);
 
             } else {
                 dist = Double.MAX_VALUE;
+                tour.addTourRoute(aDP.getId(), listSeg);
             }
 
             if (c.getShortestPathBetweenDPs().get(dp.getId()) == null) {
                 HashMap<Long, Double> nestedMap = new HashMap<Long, Double>();
                 nestedMap.put(aDP.getId(), dist);
                 c.getShortestPathBetweenDPs().replace(dp.getId(), nestedMap);
-
                 c.getListSegmentBetweenDPs().replace(dp.getId(), tour);
             } else {
                 c.getShortestPathBetweenDPs().get(dp.getId()).put(aDP.getId(), dist);
@@ -133,6 +133,7 @@ public class Controller {
                 tour1.getTourRoute().put(dp.getId(), listSeg1);
             } else {
                 invertedDist = Double.MAX_VALUE;
+                tour1.getTourRoute().put(dp.getId(), listSeg1);
             }
             distanceFromADP.put(dp.getId(), invertedDist);
 
@@ -142,39 +143,32 @@ public class Controller {
 
         // add arc (latestNodes, warehouse)
         if (!earliestTW.equals(latestTW)) {
-            for (DeliveryPoint dp : c.getCurrentDeliveryPoints()) {
-                if (dp.getTimeWindow().equals(latestTW)) {
+            for (DeliveryPoint deliveryPoint : c.getCurrentDeliveryPoints()) {
+                if (deliveryPoint.getTimeWindow().equals(latestTW)) {
                     HashMap<Long, Long> precedentNode = new HashMap<>();
-                    Double dist = this.dijkstra(aMap, dp.getId(), warehouse.getId(), precedentNode);
+                    Double dist = this.dijkstra(aMap, deliveryPoint.getId(), warehouse.getId(), precedentNode);
 
                     List<Segment> listSeg = new ArrayList<>();
-                    Long key = aDP.getId();
+                    Long key = warehouse.getId();
                     while (precedentNode.get(key) != null) {
                         Segment seg = aMap.getSegment(precedentNode.get(key), key);
                         listSeg.add(seg);
                         key = precedentNode.get(key);
                     }
                     Collections.reverse(listSeg);
-                    if (c.getShortestPathBetweenDPs().get(dp.getId()).get(warehouse.getId()) == null) {
-                        c.getShortestPathBetweenDPs().get(dp.getId()).put(warehouse.getId(), dist);
-                        c.getListSegmentBetweenDPs().get(dp.getId()).getTourRoute().put(warehouse.getId(), listSeg);
-                    } else {
-                        c.getShortestPathBetweenDPs().get(dp.getId()).replace(warehouse.getId(), dist);
-                        c.getListSegmentBetweenDPs().get(dp.getId()).getTourRoute().replace(warehouse.getId(), listSeg);
-                    }
+                    /*if (dp.getId().equals(1682387628L)) {
+                        System.out.println("called");
+                        System.out.println(listSeg);
+                    }*/
+                    c.getShortestPathBetweenDPs().get(deliveryPoint.getId()).replace(warehouse.getId(), dist);
+                    c.getListSegmentBetweenDPs().get(deliveryPoint.getId()).getTourRoute().replace(warehouse.getId(), listSeg);
                 } else {
-                    if (c.getShortestPathBetweenDPs().get(dp.getId()).get(warehouse.getId()) == null) {
-                        c.getShortestPathBetweenDPs().get(dp.getId()).put(warehouse.getId(), Double.MAX_VALUE);
-                        c.getListSegmentBetweenDPs().get(dp.getId()).getTourRoute().put(warehouse.getId(), new ArrayList<>());
-                    } else {
-                        c.getShortestPathBetweenDPs().get(dp.getId()).replace(warehouse.getId(), Double.MAX_VALUE);
-                        c.getListSegmentBetweenDPs().get(dp.getId()).getTourRoute().replace(warehouse.getId(), new ArrayList<>());
-                    }
+                    c.getShortestPathBetweenDPs().get(deliveryPoint.getId()).replace(warehouse.getId(), Double.MAX_VALUE);
+                    c.getListSegmentBetweenDPs().get(deliveryPoint.getId()).getTourRoute().replace(warehouse.getId(), new ArrayList<>());
                 }
             }
         }
-        warehouse.assignTimeWindow(earliestTW);
-
+        warehouse.assignTimeWindow(8);
     }
 
     public void removeShortestPathBetweenDP(Courier c, DeliveryPoint aDP) {

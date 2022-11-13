@@ -70,8 +70,7 @@ public class DPRestoredState implements State {
     }
     
     @Override
-    public Double calculateTour(Controller controller, Courier c, Long idWarehouse) throws ParseException {
-        System.out.println(DPRemovedState.class.toString());
+    public void calculateTour(Controller controller, Courier c, Long idWarehouse) throws ParseException {
         int i;
         int nbVertices = c.getCurrentDeliveryPoints().size();
         Graph g = new CompleteGraph(c, idWarehouse);
@@ -80,7 +79,7 @@ public class DPRestoredState implements State {
 
         // take the earliest time window in ListCurrentDPs
         Integer earliestTW = c.getCurrentDeliveryPoints().get(0).getTimeWindow();
-        
+
         Date now = new Date();
         SimpleDateFormat sd = new SimpleDateFormat("dd-MM-yyyy");
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
@@ -90,34 +89,41 @@ public class DPRestoredState implements State {
         } else {
             timeStamp = sdf.parse(sd.format(now) + " " + earliestTW + ":00:00");
         }
-        
+
         List<Integer> tspSolutions = new ArrayList<>();
-	for (i=0; i<nbVertices; i++) {
-            tspSolutions.add( tsp.getSolution(i) );    
+        for (i = 0; i < nbVertices; i++) {
+            tspSolutions.add(tsp.getSolution(i));
         }
 
         DeliveryPoint dp = c.getCurrentDeliveryPoints().get(0);
         long sum = timeStamp.getTime();
         dp.assignTimestamp(timeStamp);
-        dp.chooseCourier(c);
-        for (i = 0 ; i < tspSolutions.size()-1 ; i++) {
-            long timeInMinute = (long) Math.ceil( g.getCost(tspSolutions.get(i), tspSolutions.get(i+1))*60*1000 );
+        for (i = 0; i < tspSolutions.size() - 1; i++) {
+            long timeInMinute = (long) Math.ceil(g.getCost(tspSolutions.get(i), tspSolutions.get(i + 1)) * 60 * 1000);
             sum += timeInMinute;
-            dp = c.getCurrentDeliveryPoints().get(tspSolutions.get(i+1));
-            Date aTimeStamp = new Date();
-            aTimeStamp.setTime(sum);
+            dp = c.getCurrentDeliveryPoints().get(tspSolutions.get(i + 1));
+            Date aTimeStamp = new Date(sum);
+            Date timeWin = new Date();
+            if ( dp.getTimeWindow().compareTo(10) < 0 ) {
+                timeWin = sdf.parse(sd.format(now) + " 0" + dp.getTimeWindow() + ":00:00");
+            } else {
+                timeWin = sdf.parse(sd.format(now) + " " + dp.getTimeWindow() + ":00:00");
+            }
+            if (aTimeStamp.before(timeWin)) {
+                sum = timeWin.getTime() + timeInMinute;
+                aTimeStamp.setTime(sum);
+            }
             dp.assignTimestamp(aTimeStamp);
         }
-        long timeInMinute = (long) Math.ceil( g.getCost(tspSolutions.get(i), tspSolutions.get(0))*60*1000 );
-        sum += timeInMinute;
-        Date aTimeStamp = new Date();
-        aTimeStamp.setTime(sum);
-        
+
         // set currentTour
-        for (i=0 ; i < c.getCurrentDeliveryPoints().size()-1 ; i++) {
+        for (i = 0; i < c.getCurrentDeliveryPoints().size() - 1; i++) {
             Long idCurrentInter = c.getCurrentDeliveryPoints().get(tspSolutions.get(i)).getId();
-            Long idNextInter = c.getCurrentDeliveryPoints().get(tspSolutions.get(i+1)).getId();
+            Long idNextInter = c.getCurrentDeliveryPoints().get(tspSolutions.get(i + 1)).getId();
             List<Segment> listSeg = c.getListSegmentBetweenInters(idCurrentInter, idNextInter);
+            for (Segment seg : listSeg) {
+                controller.getWindow().getGraphicalView().paintSegment(seg, Color.RED, controller.map);
+            }
             c.addCurrentTour(idCurrentInter, listSeg);
         }
         Long idCurrentInter = c.getCurrentDeliveryPoints().get(tspSolutions.get(i)).getId();
@@ -125,13 +131,13 @@ public class DPRestoredState implements State {
         List<Segment> listSeg = c.getListSegmentBetweenInters(idCurrentInter, idNextInter);
         c.addCurrentTour(idCurrentInter, listSeg);
 
-        for (Segment seg: listSeg) {
-            controller.getWindow().getGraphicalView().paintSegment(seg, Color.RED, controller.getMap());
+        for (Segment seg : listSeg) {
+            controller.getWindow().getGraphicalView().paintSegment(seg, Color.RED, controller.map);
         }
+        
         controller.getWindow().getTextualView().updateData(controller.user, c.getId());
         controller.getWindow().setMessage("The tour has been calculated.");
         controller.setCurrentState(controller.tourCalculatedState);
-        return tsp.getSolutionCost();
     }
     
     @Override

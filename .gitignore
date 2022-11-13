@@ -45,6 +45,7 @@ out/
 .sts4-cache
 
 ### NetBeans ###
+/nbproject/
 /nbproject/private/
 /nbbuild/
 /dist/

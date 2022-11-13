@@ -5,17 +5,17 @@
  */
 package model;
 
-import javafx.beans.property.SimpleStringProperty;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import observer.Observable;
 
 /**
  *
  * @author bbbbb
  */
-public class Courier {
+public class Courier extends Observable {
     private Long id;
     private String name;
     private List<DeliveryPoint> currentDeliveryPoints = new ArrayList<>();
@@ -44,6 +44,7 @@ public class Courier {
     
     public void addCurrentTour(Long idDeliveryPoint, List<Segment> listSeg) {
         this.currentTour.addTourRoute(idDeliveryPoint, listSeg);
+        this.notifyObservers();
     }
 
     public List<Segment> getListSegmentCurrentTour(Long idDeliveryPoint) {

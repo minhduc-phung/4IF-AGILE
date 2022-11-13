@@ -6,13 +6,13 @@
 package controller;
 
 import java.io.IOException;
+import java.text.ParseException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import model.Courier;
 import model.DeliveryPoint;
-import java.text.ParseException;
 import model.Map;
 import org.xml.sax.SAXException;
 import view.Window;
@@ -27,8 +27,7 @@ public interface State {
 
     };
     
-    public default Double calculateTour(Controller controller, Courier c, Long idWarehouse) throws ParseException {
-        return null;
+    public default void calculateTour(Controller controller, Courier c, Long idWarehouse) throws ParseException {
     };
     
     public default void saveDeliveryPointToFile(Controller controller) throws ParserConfigurationException, SAXException, ExceptionXML,
