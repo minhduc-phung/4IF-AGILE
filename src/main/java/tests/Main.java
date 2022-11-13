@@ -184,7 +184,7 @@ public class Main extends Application {
         //}
         
         //writer.close();
-        for (DeliveryPoint dp : c.getCurrentDeliveryPoints()) System.out.println(dp);
+        //for (DeliveryPoint dp : c.getCurrentDeliveryPoints()) System.out.println(dp);
     }
     
     public static void testCalculateTour1() throws ParserConfigurationException, IOException, SAXException, ParseException {

@@ -2,6 +2,8 @@ package xml;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,6 +22,7 @@ import model.Courier;
 import model.DeliveryPoint;
 import model.Intersection;
 import model.Map;
+import model.Tour;
 import model.User;
 
 public class XMLdpsDeserializer {
@@ -38,11 +41,8 @@ public class XMLdpsDeserializer {
         DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document document = docBuilder.parse(xml);
         Element root = document.getDocumentElement();
-        DeliveryPoint dpWarehouse = new DeliveryPoint(map.getWarehouse().getId(), map.getWarehouse().getLatitude(), map.getWarehouse().getLongitude());
-        for (Long idCourier: user.getListCourier().keySet()){
-            Courier courier = user.getCourierById(idCourier);
-            courier.addDeliveryPoint(dpWarehouse);
-        }
+        for (Long idCourier : user.getListCourier().keySet())
+            user.addWarehouse(map, idCourier);
         
         if (root.getNodeName().equals("maps")) {
             XPath xPath = XPathFactory.newInstance().newXPath();
@@ -83,14 +83,20 @@ public class XMLdpsDeserializer {
     
     private static Courier addDeliveryPointToCourier (Courier c, Element eltDP, Map map) {
         String idDP = eltDP.getAttribute("id");
-        
-        
         Intersection inter = map.getListIntersection().get(Long.valueOf(idDP));
         DeliveryPoint dp = new DeliveryPoint(inter.getId(), inter.getLatitude(), inter.getLongitude());
         dp.assignTimeWindow(Integer.parseInt(eltDP.getAttribute("timeWindow")));
         dp.chooseCourier(c);
         c.addDeliveryPoint(dp);
+        c.addPositionIntersection(dp.getId());
+        HashMap<Long, Double> nestedMap = new HashMap<>();
+        nestedMap.put(dp.getId(), 0.0);
+        c.getShortestPathBetweenDPs().put(dp.getId(), nestedMap);
+        Tour tour = new Tour();
+        tour.addTourRoute(dp.getId(), new ArrayList<>());
+        c.getListSegmentBetweenDPs().put(dp.getId(), tour);
         
+        c.addShortestPathBetweenDP(map, dp);
         return c;
     }
 

@@ -7,6 +7,7 @@ package tests;
  */
 
 import controller.Controller;
+import dijkstra.Dijkstra;
 import java.io.IOException;
 import java.util.HashMap;
 import javax.xml.parsers.ParserConfigurationException;
@@ -38,13 +39,13 @@ public class DijsktraTest {
     
     @Test
     public void TestDistance1() {
-        double distance = this.controller.dijkstra(map, 26149167L, 143386L, precedentNode);
+        double distance = Dijkstra.dijkstra(map, 26149167L, 143386L, precedentNode);
         assert(distance == Long.MAX_VALUE);
     }
     
     @Test
     public void TestDistance2() {
-        Double dist = this.controller.dijkstra(map, 26149167L, 891129809L, precedentNode);
+        Double dist = Dijkstra.dijkstra(map, 26149167L, 891129809L, precedentNode);
         assert(dist != Long.MAX_VALUE);
     }
 

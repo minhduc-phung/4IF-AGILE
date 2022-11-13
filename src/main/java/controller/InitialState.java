@@ -7,16 +7,12 @@ package controller;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Objects;
 import javax.xml.parsers.ParserConfigurationException;
 import model.Courier;
 import model.DeliveryPoint;
 import model.Intersection;
 import model.Tour;
 import model.User;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import view.Window;
 import xml.ExceptionXML;

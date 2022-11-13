@@ -36,24 +36,12 @@ import xml.XMLmapDeserializer;
  */
 public class CourierChosenState implements State {
     @Override
-    public void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Long idCourier, Integer timeWindow) {
+    public void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Long idCourier, Integer timeWindow, ListOfCommands loc) {
         Intersection i = map.getIntersection(idIntersection);
-        if (idIntersection.equals(map.getWarehouse().getId())) {
-            return;
-        }
         DeliveryPoint dp = new DeliveryPoint(idIntersection, i.getLatitude(), i.getLongitude());
-        Courier c = controller.user.getCourierById(idCourier);
-        dp.assignTimeWindow(timeWindow);
-        dp.chooseCourier(c);
-        c.addDeliveryPoint(dp);
-        c.addPositionIntersection(idIntersection);
-        if (!c.getShortestPathBetweenDPs().isEmpty()) {
-            controller.addShortestPathBetweenDP(map, c, dp);
-        } else {
-            c.getShortestPathBetweenDPs().put(dp.getId(), new HashMap<>());
-            c.getListSegmentBetweenDPs().put(dp.getId(), new Tour());
-        }
-        
+        Courier courier = controller.user.getCourierById(idCourier);
+        loc.add(new EnterCommand(controller.map, courier, i, timeWindow));
+
         controller.getWindow().getGraphicalView().clearSelection();
         controller.getWindow().getGraphicalView().paintIntersection(dp, Color.BLUE, map);
         controller.getWindow().getTextualView().updateData(controller.getUser(), idCourier);

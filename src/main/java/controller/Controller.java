@@ -37,6 +37,7 @@ public class Controller {
     protected Map map = new Map();
     private State currentState;
     private Window window;
+    private ListOfCommands listOfCommands;
 
     protected final InitialState initialState = new InitialState();
     protected final MapLoadedState mapLoadedState = new MapLoadedState();
@@ -51,6 +52,7 @@ public class Controller {
     public Controller() {
         this.currentState = initialState;
         this.window = new Window(user, this);
+        this.listOfCommands = new ListOfCommands();
     }
 
     protected void setCurrentState(State currentState) {
@@ -58,203 +60,43 @@ public class Controller {
     }
 
     public void loadMapFromXML() throws ParserConfigurationException, IOException, SAXException, ExceptionXML {
+        System.out.println(this.currentState.getClass());
         this.currentState.loadMapFromXML(this, window);
     }
 
-    public void addShortestPathBetweenDP(Map aMap, Courier c, DeliveryPoint aDP) {
-        // handle time-window
-        Integer earliestTW = Integer.MAX_VALUE;
-        Integer latestTW = Integer.MIN_VALUE;
-        for (int k = 1; k < c.getCurrentDeliveryPoints().size(); k++) {
-            DeliveryPoint aD = c.getCurrentDeliveryPoints().get(k);
-            if (aD.getTimeWindow().compareTo(earliestTW) < 0) {
-                earliestTW = aD.getTimeWindow();
-            }
-            if (aD.getTimeWindow().compareTo(latestTW) > 0) {
-                latestTW = aD.getTimeWindow();
-            }
-        }
-
-        List<DeliveryPoint> listDP = c.getCurrentDeliveryPoints();
-        DeliveryPoint warehouse = listDP.get(0);
-        warehouse.chooseCourier(c);
-        if (earliestTW.equals(latestTW)) {
-            warehouse.assignTimeWindow(earliestTW);
-        } else {
-            warehouse.assignTimeWindow(earliestTW - 1);
-        }
-
-        HashMap<Long, Double> distanceFromADP = new HashMap<>();
-        Tour tour1 = new Tour();
-
-        for (DeliveryPoint dp : listDP) {
-            HashMap<Long, Long> precedentNode1 = new HashMap<>();
-            Double dist = null;
-            Tour tour = new Tour();
-            List<Segment> listSeg = new ArrayList<>();
-            if (dp.getTimeWindow().equals(aDP.getTimeWindow()) || dp.getTimeWindow().equals(aDP.getTimeWindow() - 1)) {
-                dist = dijkstra(aMap, dp.getId(), aDP.getId(), precedentNode1);
-                Long key = aDP.getId();
-                while (precedentNode1.get(key) != null) {
-                    Segment seg = aMap.getSegment(precedentNode1.get(key), key);
-                    listSeg.add(seg);
-                    key = precedentNode1.get(key);
-                }
-                Collections.reverse(listSeg);
-                tour.addTourRoute(aDP.getId(), listSeg);
-
-            } else {
-                dist = Double.MAX_VALUE;
-                tour.addTourRoute(aDP.getId(), listSeg);
-            }
-
-            if (c.getShortestPathBetweenDPs().get(dp.getId()) == null) {
-                HashMap<Long, Double> nestedMap = new HashMap<Long, Double>();
-                nestedMap.put(aDP.getId(), dist);
-                c.getShortestPathBetweenDPs().replace(dp.getId(), nestedMap);
-                c.getListSegmentBetweenDPs().replace(dp.getId(), tour);
-            } else {
-                c.getShortestPathBetweenDPs().get(dp.getId()).put(aDP.getId(), dist);
-                c.getListSegmentBetweenDPs().get(dp.getId()).getTourRoute().put(aDP.getId(), listSeg);
-            }
-
-            HashMap<Long, Long> precedentNode2 = new HashMap<>();
-            List<Segment> listSeg1 = new ArrayList<>();
-            Double invertedDist = null;
-            if (aDP.getTimeWindow().equals(dp.getTimeWindow()) || aDP.getTimeWindow().equals(dp.getTimeWindow()-1)) {
-                invertedDist = this.dijkstra(aMap, aDP.getId(), dp.getId(), precedentNode2);
-                Long key = dp.getId();
-                while (precedentNode2.get(key) != null) {
-                    Segment seg = aMap.getSegment(precedentNode2.get(key), key);
-                    listSeg1.add(seg);
-                    key = precedentNode2.get(key);
-                }
-                Collections.reverse(listSeg1);
-                tour1.getTourRoute().put(dp.getId(), listSeg1);
-            } else {
-                invertedDist = Double.MAX_VALUE;
-                tour1.getTourRoute().put(dp.getId(), listSeg1);
-            }
-            distanceFromADP.put(dp.getId(), invertedDist);
-
-        }
-        c.getShortestPathBetweenDPs().put(aDP.getId(), distanceFromADP);
-        c.getListSegmentBetweenDPs().put(aDP.getId(), tour1);
-
-        // add arc (latestNodes, warehouse)
-        if (!earliestTW.equals(latestTW)) {
-            for (DeliveryPoint deliveryPoint : c.getCurrentDeliveryPoints()) {
-                if (deliveryPoint.getTimeWindow().equals(latestTW)) {
-                    HashMap<Long, Long> precedentNode = new HashMap<>();
-                    Double dist = this.dijkstra(aMap, deliveryPoint.getId(), warehouse.getId(), precedentNode);
-
-                    List<Segment> listSeg = new ArrayList<>();
-                    Long key = warehouse.getId();
-                    while (precedentNode.get(key) != null) {
-                        Segment seg = aMap.getSegment(precedentNode.get(key), key);
-                        listSeg.add(seg);
-                        key = precedentNode.get(key);
-                    }
-                    Collections.reverse(listSeg);
-                    /*if (dp.getId().equals(1682387628L)) {
-                        System.out.println("called");
-                        System.out.println(listSeg);
-                    }*/
-                    c.getShortestPathBetweenDPs().get(deliveryPoint.getId()).replace(warehouse.getId(), dist);
-                    c.getListSegmentBetweenDPs().get(deliveryPoint.getId()).getTourRoute().replace(warehouse.getId(), listSeg);
-                } else {
-                    c.getShortestPathBetweenDPs().get(deliveryPoint.getId()).replace(warehouse.getId(), Double.MAX_VALUE);
-                    c.getListSegmentBetweenDPs().get(deliveryPoint.getId()).getTourRoute().replace(warehouse.getId(), new ArrayList<>());
-                }
-            }
-        }
-        warehouse.assignTimeWindow(8);
-    }
-
-    public void removeShortestPathBetweenDP(Courier c, DeliveryPoint aDP) {
-        c.getShortestPathBetweenDPs().remove(aDP.getId());
-        c.getListSegmentBetweenDPs().remove(aDP.getId());
-        for (DeliveryPoint dp : c.getCurrentDeliveryPoints()) {
-            c.getShortestPathBetweenDPs().get(dp.getId()).remove(aDP.getId());
-            c.getListSegmentBetweenDPs().get(dp.getId()).getTourRoute().remove(aDP.getId());
-        }
-    }
-
-    public Double dijkstra(Map aMap, Long idOrigin, Long idDest, HashMap<Long, Long> precedentNode) {
-        List<Long> idWhiteNodes = new ArrayList<>();
-        List<Long> idGreyNodes = new ArrayList<>();
-        List<Long> idBlackNodes = new ArrayList<>();
-
-        HashMap<Long, Double> distanceFromOrigin = new HashMap<>();
-
-        for (Long id : aMap.getListIntersection().keySet()) {
-            distanceFromOrigin.put(id, Double.MAX_VALUE);
-            precedentNode.put(id, null);
-            idWhiteNodes.add(id);
-        }
-
-        distanceFromOrigin.replace(idOrigin, 0.0);
-        idGreyNodes.add(idOrigin);
-        idWhiteNodes.remove(idOrigin);
-
-        Long idGreyDistanceMin = Long.MAX_VALUE;
-        Double distanceFromGreyMin = Double.MAX_VALUE;
-
-        while (!idGreyNodes.isEmpty()) {
-            for (Long idGrey : idGreyNodes) {
-                if (distanceFromGreyMin > distanceFromOrigin.get(idGrey)) {
-                    idGreyDistanceMin = idGrey;
-                    distanceFromGreyMin = distanceFromOrigin.get(idGrey);
-                }
-            }
-            Intersection greyMin = aMap.getIntersection(idGreyDistanceMin);
-            for (Long idSucc : greyMin.getTimeToConnectedIntersection().keySet()) {
-                if (idWhiteNodes.contains(idSucc) || idGreyNodes.contains(idSucc)) {
-                    //next 5 lines: relacher()
-                    Double newDistance = distanceFromOrigin.get(idGreyDistanceMin) + greyMin.getTimeToConnectedIntersection().get(idSucc);
-                    if (distanceFromOrigin.get(idSucc) > newDistance) {
-                        distanceFromOrigin.replace(idSucc, newDistance);
-                        precedentNode.replace(idSucc, idGreyDistanceMin);
-                    }
-                    if (idWhiteNodes.contains(idSucc)) {
-                        idWhiteNodes.remove(idSucc);
-                        idGreyNodes.add(idSucc);
-                    }
-                }
-            }
-            idBlackNodes.add(idGreyDistanceMin);
-            idGreyNodes.remove(idGreyDistanceMin);
-            distanceFromGreyMin = Double.MAX_VALUE;
-        }
-        return distanceFromOrigin.get(idDest);
-    }
-
     public void enterDeliveryPoint(Map map, Long idIntersection, Long idCourier, Integer timeWindow) {
-        this.currentState.enterDeliveryPoint(this, map, idIntersection, idCourier, timeWindow);
+        System.out.println(this.currentState.getClass());
+        this.currentState.enterDeliveryPoint(this, map, idIntersection, idCourier, timeWindow, listOfCommands);
     }
 
     public void calculateTour(Courier c, Long idWarehouse) throws ParseException {
+        System.out.println(this.currentState.getClass());
         this.currentState.calculateTour(this, c, idWarehouse);
     }
 
     public void saveDeliveryPointToFile() throws XPathExpressionException, ParserConfigurationException, IOException, TransformerException, SAXException, ExceptionXML {
+        System.out.println(this.currentState.getClass());
         this.currentState.saveDeliveryPointToFile(this);
     }
 
     public void restoreDeliveryPointFromXML() throws ParserConfigurationException, IOException,
             SAXException, XPathExpressionException, ExceptionXML {
+        System.out.println(this.currentState.getClass());
         this.currentState.restoreDeliveryPointFromXML(this);
     }
 
     public void removeDeliveryPoint(Map map, DeliveryPoint dp, Long idCourier) {
+        System.out.println(this.currentState.getClass());
         this.currentState.removeDeliveryPoint(this, map, dp, idCourier);
     }
 
     public void generatePlan(Courier c) {
+        System.out.println(this.currentState.getClass());
         this.currentState.generatedDeliveryPlanForCourier(this, c);
     }
 
     public void selectCourier(Long idCourier) {
+        System.out.println(this.currentState.getClass());
         this.currentState.selectCourier(this, idCourier);
     }
 
@@ -284,5 +126,13 @@ public class Controller {
 
     public void mouseClickedOnTable(int indexDP) {
         currentState.mouseClickedOnTable(this, indexDP);
+    }
+    
+    public void undo() {
+        currentState.undo(listOfCommands);
+    }
+    
+    public void keystroke(int charCode) {
+	currentState.keystroke(charCode);
     }
 }

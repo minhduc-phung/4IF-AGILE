@@ -42,7 +42,7 @@ public interface State {
     public default void selectCourier(Controller controller, Long idCourier) {
     };
     
-    public default void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Long idCourier, Integer timeWindow) {
+    public default void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Long idCourier, Integer timeWindow, ListOfCommands loc) {
     };
     
     public default void removeDeliveryPoint(Controller controller, Map map, DeliveryPoint dp, Long idCourier){
@@ -59,4 +59,9 @@ public interface State {
     public default void mouseExitedMap(Controller controller){};
 
     public default void mouseClickedOnTable(Controller controller, int indexDP) { };
+    
+    public default void undo(ListOfCommands loc) { };
+    
+    public default void keystroke(int charCode) {System.out.println(charCode); };
+    
 }

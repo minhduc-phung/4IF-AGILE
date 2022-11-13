@@ -54,7 +54,7 @@ public class DPRestoredState implements State {
         window.setMessage("Please choose a courier and a time-window to start adding delivery points.");
     }
     
-    private void addWarehouse (Intersection warehouse, User user) {
+    private void addWarehouse(Intersection warehouse, User user) {
         DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), warehouse.getLatitude(), warehouse.getLongitude());
         for (Long key : user.getListCourier().keySet()) {
             Courier c = user.getListCourier().get(key);
@@ -141,24 +141,12 @@ public class DPRestoredState implements State {
     }
     
     @Override
-    public void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Long idCourier, Integer timeWindow) {
+    public void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Long idCourier, Integer timeWindow, ListOfCommands loc) {
         Intersection i = map.getIntersection(idIntersection);
-        if (idIntersection.equals(map.getWarehouse().getId())) {
-            return;
-        }
         DeliveryPoint dp = new DeliveryPoint(idIntersection, i.getLatitude(), i.getLongitude());
-        Courier c = controller.user.getCourierById(idCourier);
-        dp.assignTimeWindow(timeWindow);
-        dp.chooseCourier(c);
-        c.addDeliveryPoint(dp);
-        c.addPositionIntersection(idIntersection);
-        if (!c.getShortestPathBetweenDPs().isEmpty()) {
-            controller.addShortestPathBetweenDP(map, c, dp);
-        } else {
-            c.getShortestPathBetweenDPs().put(dp.getId(), new HashMap<>());
-            c.getListSegmentBetweenDPs().put(dp.getId(), new Tour());
-        }
-        
+        Courier courier = controller.user.getCourierById(idCourier);
+        loc.add(new EnterCommand(controller.map, courier, i, timeWindow));
+
         controller.getWindow().getGraphicalView().clearSelection();
         controller.getWindow().getGraphicalView().paintIntersection(dp, Color.BLUE, map);
         controller.getWindow().getTextualView().updateData(controller.getUser(), idCourier);
@@ -167,25 +155,6 @@ public class DPRestoredState implements State {
         controller.getWindow().allowNode("SAVE_DP", true);
         controller.getWindow().allowNode("CALCULATE_TOUR", true);
         controller.setCurrentState(controller.dpEnteredState);
-    }
-    
-    @Override
-    public void removeDeliveryPoint(Controller controller, Map map, DeliveryPoint dp, Long idCourier){
-        if (dp.getId().equals(map.getWarehouse().getId())) {
-            return;
-        }
-        dp.chooseCourier(null);
-        Courier c = controller.user.getCourierById(idCourier);
-        c.removeDeliveryPoint(dp);
-        c.getPositionIntersection().remove(dp.getId());
-        controller.removeShortestPathBetweenDP(c, dp);
-        controller.getWindow().setMessage("Delivery point removed.");
-        controller.getWindow().getGraphicalView().paintIntersection(dp, Color.WHITE, map);
-        controller.getWindow().getTextualView().clearSelection();
-        controller.getWindow().getGraphicalView().clearSelection();
-        controller.getWindow().allowNode("REMOVE_DP",  false);
-        controller.getWindow().allowNode("CALCULATE_TOUR", true);
-        controller.getWindow().getTextualView().updateData(controller.user, idCourier);controller.setCurrentState(controller.dpRemovedState);
     }
     
     @Override
@@ -202,6 +171,7 @@ public class DPRestoredState implements State {
         controller.getWindow().allowNode("CALCULATE_TOUR", true);
     }
 
+    @Override
     public void selectCourier(Controller controller, Long idCourier) {
         controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
         controller.getWindow().getTextualView().updateData(controller.getUser(), idCourier);

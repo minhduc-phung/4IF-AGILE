@@ -1,17 +1,1 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<maps>
-<map src="mediumMap.xml">
-<courier id="1">
-<deliveryPoint id="21604600" timeWindow="5"/>
-</courier>
-<courier id="2"/>
-<courier id="3">
-<deliveryPoint id="25321469" timeWindow="4"/>
-<deliveryPoint id="270298921" timeWindow="4"/>
-</courier>
-<courier id="4">
-<deliveryPoint id="1957527533" timeWindow="9"/>
-</courier>
-<courier id="5"/>
-</map>
-</maps>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><maps><map src="mediumMap.xml"><courier id="1"/><courier id="2"><deliveryPoint id="26149171" timeWindow="8"/><deliveryPoint id="26470092" timeWindow="8"/><deliveryPoint id="26464323" timeWindow="8"/></courier><courier id="3"/><courier id="4"/><courier id="5"/></map></maps>
