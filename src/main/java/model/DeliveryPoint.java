@@ -14,7 +14,7 @@ import java.util.Date;
  */
 public class DeliveryPoint extends Intersection {
     private Integer timeWindow;
-    private Date timestamp;
+    private Date estimatedDeliveryTime;
     private Courier courier;
 
     public DeliveryPoint(Long id, Double latitude, Double longitude) {
@@ -37,17 +37,17 @@ public class DeliveryPoint extends Intersection {
         this.timeWindow = t;
     }
     
-    public void assignTimestamp(Date t) {
-        this.timestamp = t;
+    public void setEstimatedDeliveryTime(Date t) {
+        this.estimatedDeliveryTime = t;
     }
 
-    public Date getTimestamp() {
-        return timestamp;
+    public Date getEstimatedDeliveryTime() {
+        return estimatedDeliveryTime;
     }
 
     @Override
     public String toString() {
-        return "DeliveryPoint{" + "id="+id+ ", timeWindow=" + timeWindow + ", timestamp=" + timestamp + 
+        return "DeliveryPoint{" + "id="+id+ ", timeWindow=" + timeWindow + ", estimatedDeliveryTime=" + estimatedDeliveryTime + 
                 ", courier=" + courier + '}';
     }
 
@@ -65,8 +65,8 @@ public class DeliveryPoint extends Intersection {
         return timeWindowString;
     }
 
-    public String getTimestampString() {
-        return new SimpleDateFormat("HH:mm:ss").format(timestamp);
+    public String getEstimatedDeliveryTimeString() {
+        return new SimpleDateFormat("HH:mm:ss").format(estimatedDeliveryTime);
 
     }
 

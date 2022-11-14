@@ -6,6 +6,7 @@
 package controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -13,6 +14,7 @@ import model.Courier;
 import model.DeliveryPoint;
 import model.Intersection;
 import model.Map;
+import model.Tour;
 import model.User;
 import org.xml.sax.SAXException;
 import view.Window;
@@ -48,17 +50,21 @@ public class DPSavedState implements State {
         controller.getWindow().getGraphicalView().updateMap(controller.getMap(), controller.user.getCourierById(idCourier));
     }
     
-    private void addWarehouse (Intersection warehouse, User user) {
+    private void addWarehouse(Intersection warehouse, User user) {
         DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), warehouse.getLatitude(), warehouse.getLongitude());
         for (Long key : user.getListCourier().keySet()) {
             Courier c = user.getListCourier().get(key);
             dpWarehouse.chooseCourier(c);
             c.addDeliveryPoint(dpWarehouse);
-            
+
             c.addPositionIntersection(warehouse.getId());
             HashMap<Long, Double> nestedMap = new HashMap<>();
             nestedMap.put(warehouse.getId(), Double.valueOf("0.0"));
             c.getShortestPathBetweenDPs().put(warehouse.getId(), nestedMap);
+            
+            Tour tour = new Tour();
+            tour.addTourRoute(dpWarehouse.getId(), new ArrayList<>());
+            c.getListSegmentBetweenDPs().put(dpWarehouse.getId(), tour);
             user.getListCourier().replace(key, c);
         }
     }       

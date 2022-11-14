@@ -73,8 +73,8 @@ public class TextualView extends Pane implements Observer {
             String index = Integer.toString(i);
             String timeWindow = dp.getTimeWindowString();
             String estArrival = "";
-            if (dp.getTimestamp() != null) {
-                estArrival = dp.getTimestampString();
+            if (dp.getEstimatedDeliveryTime()!= null) {
+                estArrival = dp.getEstimatedDeliveryTimeString();
             }
             dataRow.put(IndexMapKey, index);
             dataRow.put(TimeWindowMapKey, timeWindow);

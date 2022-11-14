@@ -67,6 +67,10 @@ public class DPEnteredState implements State {
             HashMap<Long, Double> nestedMap = new HashMap<>();
             nestedMap.put(warehouse.getId(), Double.valueOf("0.0"));
             c.getShortestPathBetweenDPs().put(warehouse.getId(), nestedMap);
+            
+            Tour tour = new Tour();
+            tour.addTourRoute(dpWarehouse.getId(), new ArrayList<>());
+            c.getListSegmentBetweenDPs().put(dpWarehouse.getId(), tour);
             user.getListCourier().replace(key, c);
         }
     }
@@ -98,25 +102,28 @@ public class DPEnteredState implements State {
             tspSolutions.add(tsp.getSolution(i));
         }
 
+        //timeStamp of warehouse
         DeliveryPoint dp = c.getCurrentDeliveryPoints().get(0);
         long sum = timeStamp.getTime();
-        dp.assignTimestamp(timeStamp);
+        dp.setEstimatedDeliveryTime(timeStamp);
+        
+        //timeStamp of other DPs
         for (i = 0; i < tspSolutions.size() - 1; i++) {
             long timeInMinute = (long) Math.ceil(g.getCost(tspSolutions.get(i), tspSolutions.get(i + 1)) * 60 * 1000);
             sum += timeInMinute;
             dp = c.getCurrentDeliveryPoints().get(tspSolutions.get(i + 1));
-            Date aTimeStamp = new Date(sum);
+            Date estimatedDeliveryTime = new Date(sum);
             Date timeWin = new Date();
             if ( dp.getTimeWindow().compareTo(10) < 0 ) {
                 timeWin = sdf.parse(sd.format(now) + " 0" + dp.getTimeWindow() + ":00:00");
             } else {
                 timeWin = sdf.parse(sd.format(now) + " " + dp.getTimeWindow() + ":00:00");
             }
-            if (aTimeStamp.before(timeWin)) {
-                sum = timeWin.getTime() + timeInMinute;
-                aTimeStamp.setTime(sum);
+            if (estimatedDeliveryTime.before(timeWin)) {
+                sum = timeWin.getTime() + 5*60*1000;        //5 mins for delivery
+                estimatedDeliveryTime.setTime(sum);
             }
-            dp.assignTimestamp(aTimeStamp);
+            dp.setEstimatedDeliveryTime(estimatedDeliveryTime);
         }
 
         // set currentTour

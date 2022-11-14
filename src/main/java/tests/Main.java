@@ -230,7 +230,7 @@ public class Main extends Application {
         int i;
         
         DeliveryPoint dp = c.getCurrentDeliveryPoints().get(0);
-        dp.assignTimestamp(timeStamp);
+        dp.setEstimatedDeliveryTime(timeStamp);
         System.out.println(timeStamp);
         for (i = 0 ; i < tspSolutions.size()-1 ; i++) {
             long timeInMinute = (long) Math.ceil( g.getCost(tspSolutions.get(i), tspSolutions.get(i+1)) * 60 * 1000);
@@ -238,7 +238,7 @@ public class Main extends Application {
             dp = c.getCurrentDeliveryPoints().get(tspSolutions.get(i+1));
             Date aTimeStamp = new Date();
             aTimeStamp.setTime(sum);
-            dp.assignTimestamp(aTimeStamp);
+            dp.setEstimatedDeliveryTime(aTimeStamp);
             System.out.println(aTimeStamp);
         }
         long timeInMinute = (long) Math.ceil( g.getCost(tspSolutions.get(i), tspSolutions.get(0)) * 60 * 1000);
@@ -263,7 +263,7 @@ public class Main extends Application {
         FileWriter writer = new FileWriter("text1.txt");
         for (i = 0 ; i < tspSolutions.size() ; i++) {
             DeliveryPoint deliP = c.getCurrentDeliveryPoints().get(tspSolutions.get(i));
-            writer.write("Point:" + deliP.getId() + " time:" + deliP.getTimestamp() + "\n");            
+            writer.write("Point:" + deliP.getId() + " time:" + deliP.getEstimatedDeliveryTimeString() + "\n");            
             writer.write(c.getListSegmentCurrentTour(deliP.getId()).toString() + "\n");
         }
         writer.close();

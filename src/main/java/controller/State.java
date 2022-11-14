@@ -48,7 +48,8 @@ public interface State {
     public default void removeDeliveryPoint(Controller controller, Map map, DeliveryPoint dp, Long idCourier, ListOfCommands loc){
     };
 
-    public default void generatedDeliveryPlanForCourier(Controller controller, Courier c) {
+    public default void generatedDeliveryPlanForCourier(Controller controller, Courier c) throws ParserConfigurationException, SAXException, ExceptionXML,
+                                                                                                IOException, TransformerConfigurationException, TransformerException{
         
     };
 
