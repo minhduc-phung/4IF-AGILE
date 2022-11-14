@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
@@ -90,7 +91,7 @@ public class Controller {
         this.currentState.removeDeliveryPoint(this, map, dp, idCourier, listOfCommands);
     }
 
-    public void generatePlan(Courier c) {
+    public void generatePlan(Courier c) throws ParserConfigurationException, SAXException, TransformerException, ExceptionXML, IOException, TransformerConfigurationException {
         System.out.println(this.currentState.getClass());
         this.currentState.generatedDeliveryPlanForCourier(this, c);
     }
