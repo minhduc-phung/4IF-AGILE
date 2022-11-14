@@ -46,7 +46,6 @@ out/
 
 ### NetBeans ###
 /nbproject/
-/nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/

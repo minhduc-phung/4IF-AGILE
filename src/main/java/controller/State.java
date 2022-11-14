@@ -45,7 +45,7 @@ public interface State {
     public default void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Long idCourier, Integer timeWindow, ListOfCommands loc) {
     };
     
-    public default void removeDeliveryPoint(Controller controller, Map map, DeliveryPoint dp, Long idCourier){
+    public default void removeDeliveryPoint(Controller controller, Map map, DeliveryPoint dp, Long idCourier, ListOfCommands loc){
     };
 
     public default void generatedDeliveryPlanForCourier(Controller controller, Courier c) {

@@ -87,7 +87,7 @@ public class Controller {
 
     public void removeDeliveryPoint(Map map, DeliveryPoint dp, Long idCourier) {
         System.out.println(this.currentState.getClass());
-        this.currentState.removeDeliveryPoint(this, map, dp, idCourier);
+        this.currentState.removeDeliveryPoint(this, map, dp, idCourier, listOfCommands);
     }
 
     public void generatePlan(Courier c) {
@@ -127,12 +127,15 @@ public class Controller {
     public void mouseClickedOnTable(int indexDP) {
         currentState.mouseClickedOnTable(this, indexDP);
     }
-    
+
+    /**
+     * Method called by window after a click on the button "Undo"
+     */
     public void undo() {
         currentState.undo(listOfCommands);
     }
-    
+
     public void keystroke(int charCode) {
-	currentState.keystroke(charCode);
+        currentState.keystroke(charCode);
     }
 }

@@ -24,8 +24,8 @@ public class Window extends Group {
     private GraphicalView graphicalView;
     private TextualView textualView;
     private InteractiveView interactiveView;
-    private final int WINDOW_WIDTH = 1500;
-    private final int WINDOW_HEIGHT = 900;
+    private final int WINDOW_WIDTH = 1000;
+    private final int WINDOW_HEIGHT = 600;
 
 
     public Window(User user, Controller controller) {

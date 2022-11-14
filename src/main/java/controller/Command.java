@@ -10,14 +10,14 @@ package controller;
  * @author bbbbb
  */
 public interface Command {
-
+    
     /**
      * Execute the command this
      */
-    void doCommand();
+    public void doCommand();
 
     /**
      * Execute the reverse command of this
      */
-    void undoCommand();
+    public void undoCommand();
 }

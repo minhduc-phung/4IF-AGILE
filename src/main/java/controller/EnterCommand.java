@@ -52,7 +52,11 @@ public class EnterCommand implements Command {
 
     @Override
     public void undoCommand() {
-        // TO-DO
+        DeliveryPoint dp = new DeliveryPoint(intersection.getId(), intersection.getLatitude(), intersection.getLongitude());
+        dp.chooseCourier(null);
+        courier.removeDeliveryPoint(dp);
+        courier.getPositionIntersection().remove(dp.getId());
+        courier.removeShortestPathBetweenDP(dp);
     }
 
 }

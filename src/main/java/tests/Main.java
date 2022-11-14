@@ -175,8 +175,8 @@ public class Main extends Application {
             }
         }
         
-        //DeliveryPoint aDP = new DeliveryPoint(21703589L, 0.0, 0.0);
-        //controller.removeDeliveryPoint(map, aDP, 1L);
+        DeliveryPoint aDP = new DeliveryPoint(21703589L, 0.0, 0.0);
+        controller.removeDeliveryPoint(map, aDP, 1L);
         controller.calculateTour(c, idWarehouse);
         //FileWriter writer = new FileWriter("tour.txt");
         //for (Long key : c.getCurrentTour().getTourRoute().keySet()) {
@@ -184,7 +184,7 @@ public class Main extends Application {
         //}
         
         //writer.close();
-        //for (DeliveryPoint dp : c.getCurrentDeliveryPoints()) System.out.println(dp);
+        for (DeliveryPoint dp : c.getCurrentDeliveryPoints()) System.out.println(dp);
     }
     
     public static void testCalculateTour1() throws ParserConfigurationException, IOException, SAXException, ParseException {

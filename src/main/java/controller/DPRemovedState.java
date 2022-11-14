@@ -155,22 +155,15 @@ public class DPRemovedState implements State {
     }
     
     @Override
-    public void removeDeliveryPoint(Controller controller, Map map, DeliveryPoint dp, Long idCourier){
-        if (dp.getId().equals(map.getWarehouse().getId())) {
-            return;
-        }
-        dp.chooseCourier(null);
-        Courier c = controller.user.getCourierById(idCourier);
-        c.removeDeliveryPoint(dp);
-        c.getPositionIntersection().remove(dp.getId());
-        c.removeShortestPathBetweenDP(dp);
-        
+    public void removeDeliveryPoint(Controller controller, Map map, DeliveryPoint dp, Long idCourier, ListOfCommands loc) {
+        Courier courier = controller.user.getCourierById(idCourier);
+        loc.add(new RemoveCommand(map, courier, dp));
         controller.getWindow().setMessage("Delivery point removed.");
         controller.getWindow().getGraphicalView().paintIntersection(dp, Color.WHITE, map);
         controller.getWindow().getTextualView().clearSelection();
         controller.getWindow().getGraphicalView().clearSelection();
         controller.getWindow().getTextualView().updateData(controller.user, idCourier);
-        controller.getWindow().allowNode("REMOVE_DP",  false);
+        controller.getWindow().allowNode("REMOVE_DP", false);
         controller.getWindow().allowNode("CALCULATE_TOUR", true);
         controller.setCurrentState(controller.dpRemovedState);
     }
@@ -301,5 +294,10 @@ public class DPRemovedState implements State {
             controller.getWindow().allowNode("VALIDATE_DP", true);
             controller.getWindow().allowNode("REMOVE_DP", true);
         }
+    }
+    
+    @Override
+    public void undo(ListOfCommands loc) {
+        loc.undo();
     }
 }
