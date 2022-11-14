@@ -51,6 +51,7 @@ public class TextualView extends Pane implements Observer {
         tableView.getColumns().addAll(indexColumn, timeWindowColumn, estArrivalTimeColumn);
         tableView.setEditable(true);
         tableView.setPrefSize(width, height);
+        tableView.getSortOrder().add(estArrivalTimeColumn);
         mouseListener = new MouseListener(controller);
         // get the selected row
         tableView.setRowFactory( tv -> {
@@ -99,6 +100,10 @@ public class TextualView extends Pane implements Observer {
     public void clearSelection() {
         tableView.getSelectionModel().clearSelection();
         selectedDeliveryPoint = null;
+    }
+
+    public TableView<Map> getTableView() {
+        return tableView;
     }
 
     @Override

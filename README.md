@@ -50,9 +50,3 @@ You should have something like this:
 
 10. Click `OK`.
 11. Run the project.
-## Changelog
-Feel free to put anything in here so everyone can be up-to-date with the project!
-
-### 23/10/2022
-- Finished the service of saving delivery points (Minh and Viet)
-- Added the GUI for showing the map read by the .XML file (Duc)

@@ -43,6 +43,8 @@ public class InitialState implements State {
         addWarehouse(warehouse, controller.user);
         controller.setCurrentState(controller.mapLoadedState);
         window.getGraphicalView().drawMap(controller.getMap());
+        window.getInteractivePane().resetComboBoxes();
+        window.getTextualView().updateData(controller.user, 1L);
         window.allowNode("COURIER_BOX", true);
         window.allowNode("TW_BOX", true);
         window.allowNode("RESTORE_DP", true);

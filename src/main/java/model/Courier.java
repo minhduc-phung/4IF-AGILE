@@ -203,4 +203,13 @@ public class Courier extends Observable {
         }
         return ids;
     }
+
+    public DeliveryPoint getDeliveryPointById(Long id){
+        for (DeliveryPoint dp: currentDeliveryPoints){
+            if (dp.getId() == id){
+                return dp;
+            }
+        }
+        return null;
+    }
 }

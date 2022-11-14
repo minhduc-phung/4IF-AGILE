@@ -14,6 +14,11 @@ import model.Map;
 import org.xml.sax.SAXException;
 import xml.ExceptionXML;
 import xml.XMLPlanSerializer;
+import model.DeliveryPoint;
+import model.User;
+
+import static view.GraphicalView.IntersectionType.DP;
+import static view.GraphicalView.IntersectionType.SELECTED;
 
 /**
  *
@@ -21,8 +26,8 @@ import xml.XMLPlanSerializer;
  */
 public class TourCalculatedState implements State {
     @Override
-    public void generatedDeliveryPlanForCourier(Controller controller, Courier c) throws ParserConfigurationException, SAXException, ExceptionXML, 
-                                                                                IOException, TransformerConfigurationException, TransformerException{
+    public void generatedDeliveryPlanForCourier(Controller controller, Courier c) throws ParserConfigurationException, SAXException, ExceptionXML,
+                                                                                IOException, TransformerException{
         Map map = controller.map;
         XMLPlanSerializer.getInstance().save(map, c);
         controller.getWindow().setMessage("Delivery plans saved.");
