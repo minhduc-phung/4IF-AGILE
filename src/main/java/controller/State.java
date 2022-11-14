@@ -13,6 +13,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import model.Courier;
 import model.DeliveryPoint;
+import model.Intersection;
 import model.Map;
 import org.xml.sax.SAXException;
 import view.Window;
@@ -42,14 +43,14 @@ public interface State {
     public default void selectCourier(Controller controller, Long idCourier) {
     };
     
-    public default void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Long idCourier, Integer timeWindow, ListOfCommands loc) {
+    public default void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Long idCourier, Integer timeWindow) {
     };
     
-    public default void removeDeliveryPoint(Controller controller, Map map, DeliveryPoint dp, Long idCourier, ListOfCommands loc){
+    public default void removeDeliveryPoint(Controller controller, Map map, DeliveryPoint dp, Long idCourier){
     };
 
-    public default void generatedDeliveryPlanForCourier(Controller controller, Courier c) throws ParserConfigurationException, SAXException, ExceptionXML,
-                                                                                                IOException, TransformerConfigurationException, TransformerException{
+    public default void generateDeliveryPlanForCourier(Controller controller, Courier c) throws ParserConfigurationException, SAXException, ExceptionXML,
+                                                                                                IOException, TransformerException{
         
     };
 
@@ -63,6 +64,11 @@ public interface State {
     
     public default void undo(ListOfCommands loc) { };
     
-    public default void keystroke(int charCode) {System.out.println(charCode); };
+    public default void modifyTour(Controller controller) {};
+    
+    public default void modifyTourEnterDP(Controller controller, Courier c, Intersection intersection,
+                    Integer timeWindow, ListOfCommands loc) throws ParseException {};
+    
+    public default void modifyTourRemoveDP(Controller controller, Courier c, DeliveryPoint dp, ListOfCommands loc) {};
     
 }

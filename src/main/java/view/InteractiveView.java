@@ -25,6 +25,7 @@ public class InteractiveView extends Pane {
     protected static final String GENERATE_ID = "GENERATE_PLAN";
     protected static final String CALCULATE_ID = "CALCULATE_TOUR";
     protected static final String LOAD_MAP_ID = "LOAD_MAP";
+    protected static final String MODIFY_ENTER_DP_ID = "MODIFY_ENTER_DP";
 
     // Combo box IDs
     protected static final String COURIER_BOX_ID = "COURIER_BOX";
@@ -124,6 +125,17 @@ public class InteractiveView extends Pane {
         modifyButton.setPrefWidth(100);
         modifyButton.setDisable(true);
         buttons.put(MODIFY_DP_ID, modifyButton);
+        
+        Button modifyEnterButton = new Button("Enter");
+        modifyEnterButton.setId(MODIFY_ENTER_DP_ID);
+        modifyEnterButton.setOnAction(buttonListener);
+        //center the button manually
+        modifyEnterButton.layoutXProperty().bind(this.widthProperty().subtract(modifyEnterButton.widthProperty()).divide(2));
+        modifyEnterButton.setLayoutY(700);
+        modifyEnterButton.setPrefWidth(100);
+        modifyEnterButton.setDisable(true);
+        modifyEnterButton.setVisible(false);
+        buttons.put(MODIFY_ENTER_DP_ID, modifyEnterButton);
 
         Button generateButton = new Button("Generate delivery plan");
         generateButton.setId(GENERATE_ID);
@@ -219,4 +231,15 @@ public class InteractiveView extends Pane {
             buttons.get(nodeId).setDisable(!allow);
         }
     }
+    
+    public void showButton(String nodeId){
+        this.buttons.get(nodeId).setVisible(true);
+        this.buttons.get(nodeId).setDisable(false);
+    }
+    
+    public void hideButton(String nodeId){
+        this.buttons.get(nodeId).setVisible(false);
+        this.buttons.get(nodeId).setDisable(true);
+    }    
+    
 }

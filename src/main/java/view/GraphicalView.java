@@ -38,12 +38,10 @@ public class GraphicalView extends Pane implements Observer {
         this.setBackground(new Background(new BackgroundFill(Color.GRAY, null, null)));
         this.setPrefSize(viewWidth, viewHeight);
         MouseListener mouseListener = new MouseListener(controller);
-        //KeyboardListener keyboardListener = new KeyboardListener(controller);
         // Events
         this.setOnMouseMoved(mouseListener);
         this.setOnMouseClicked(mouseListener);
         this.setOnMouseExited(mouseListener);
-
         window.getChildren().add(this);
     }
 

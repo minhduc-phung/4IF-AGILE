@@ -26,11 +26,20 @@ import static view.GraphicalView.IntersectionType.SELECTED;
  */
 public class TourCalculatedState implements State {
     @Override
-    public void generatedDeliveryPlanForCourier(Controller controller, Courier c) throws ParserConfigurationException, SAXException, ExceptionXML,
-                                                                                IOException, TransformerException{
+    public void generateDeliveryPlanForCourier(Controller controller, Courier c) throws ParserConfigurationException, SAXException, ExceptionXML,
+                                                                                                IOException, TransformerException{
         Map map = controller.map;
         XMLPlanSerializer.getInstance().save(map, c);
         controller.getWindow().setMessage("Delivery plans saved.");
         controller.setCurrentState(controller.planGeneratedState);
+    }
+    
+    @Override
+    public void modifyTour(Controller controller) {
+        controller.setCurrentState(controller.tourModifiedState);
+        controller.getWindow().getInteractivePane().showButton("MODIFY_ENTER_DP");
+        controller.getWindow().getInteractivePane().hideButton("MODIFY_DP");
+        controller.getWindow().getInteractivePane().hideButton("REMOVE_DP");
+        controller.getWindow().getInteractivePane().hideButton("VALIDATE_DP");
     }
 }

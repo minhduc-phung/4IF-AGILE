@@ -47,6 +47,7 @@ public class Controller {
     protected final DPRestoredState dpRestoredState = new DPRestoredState();
     protected final DPRemovedState dpRemovedState = new DPRemovedState();
     protected final TourCalculatedState tourCalculatedState = new TourCalculatedState();
+    protected final TourModifiedState tourModifiedState = new TourModifiedState();
     protected final PlanGeneratedState planGeneratedState = new PlanGeneratedState();
     protected final DPSavedState dpSavedState = new DPSavedState();
 
@@ -67,7 +68,7 @@ public class Controller {
 
     public void enterDeliveryPoint(Map map, Long idIntersection, Long idCourier, Integer timeWindow) {
         System.out.println(this.currentState.getClass());
-        this.currentState.enterDeliveryPoint(this, map, idIntersection, idCourier, timeWindow, listOfCommands);
+        this.currentState.enterDeliveryPoint(this, map, idIntersection, idCourier, timeWindow);
     }
 
     public void calculateTour(Courier c, Long idWarehouse) throws ParseException {
@@ -88,17 +89,30 @@ public class Controller {
 
     public void removeDeliveryPoint(Map map, DeliveryPoint dp, Long idCourier) {
         System.out.println(this.currentState.getClass());
-        this.currentState.removeDeliveryPoint(this, map, dp, idCourier, listOfCommands);
+        this.currentState.removeDeliveryPoint(this, map, dp, idCourier);
     }
 
-    public void generatePlan(Courier c) throws ParserConfigurationException, SAXException, TransformerException, ExceptionXML, IOException, TransformerConfigurationException {
+    public void generatePlan(Courier c) throws ParserConfigurationException, SAXException, TransformerException, ExceptionXML, IOException {
         System.out.println(this.currentState.getClass());
-        this.currentState.generatedDeliveryPlanForCourier(this, c);
+        this.currentState.generateDeliveryPlanForCourier(this, c);
     }
 
     public void selectCourier(Long idCourier) {
         System.out.println(this.currentState.getClass());
         this.currentState.selectCourier(this, idCourier);
+    }
+    
+    public void modifyTour() {
+        System.out.println(this.currentState.getClass());
+        this.currentState.modifyTour(this);
+    }
+    
+    public void modifyTourEnterDP(Courier c, Intersection intersection, Integer timeWindow) throws ParseException {
+        this.currentState.modifyTourEnterDP(this, c, intersection, timeWindow, listOfCommands);
+    }
+    
+    public void modifyTourRemoveDP(Courier c, DeliveryPoint dp) {
+        this.currentState.modifyTourRemoveDP(this, c, dp, listOfCommands);
     }
 
     public void mouseClickedOnMap() {
@@ -135,8 +149,5 @@ public class Controller {
     public void undo() {
         currentState.undo(listOfCommands);
     }
-
-    public void keystroke(int charCode) {
-        currentState.keystroke(charCode);
-    }
+    
 }

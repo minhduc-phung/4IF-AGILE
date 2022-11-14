@@ -41,6 +41,10 @@ public class Intersection {
         return longitude;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public HashMap<Long, Double> getTimeToConnectedIntersection() {
         return timeToConnectedIntersection;
     }

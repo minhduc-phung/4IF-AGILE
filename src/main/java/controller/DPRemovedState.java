@@ -154,15 +154,31 @@ public class DPRemovedState implements State {
         controller.getWindow().getTextualView().updateData(controller.user, c.getId());
         controller.getWindow().getTextualView().getTableView().sort();
         controller.getWindow().setMessage("The tour has been calculated.");
+        controller.getWindow().allowNode("MODIFY_DP", true);
+        controller.getWindow().allowNode("GENERATE_PLAN", true);
         controller.setCurrentState(controller.tourCalculatedState);
     }
     
     @Override
-    public void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Long idCourier, Integer timeWindow, ListOfCommands loc) {
-        Intersection i = map.getIntersection(idIntersection);
-        DeliveryPoint dp = new DeliveryPoint(idIntersection, i.getLatitude(), i.getLongitude());
+    public void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Long idCourier, Integer timeWindow) {
+        Intersection intersection = map.getIntersection(idIntersection);
+        if (intersection.getId().equals(map.getWarehouse().getId())) {
+            return;
+        }
         Courier courier = controller.user.getCourierById(idCourier);
-        loc.add(new EnterCommand(controller.map, courier, i, timeWindow));
+        DeliveryPoint dp = new DeliveryPoint(intersection.getId(), intersection.getLatitude(), intersection.getLongitude());
+        dp.assignTimeWindow(timeWindow);
+        dp.chooseCourier(courier);
+        courier.addDeliveryPoint(dp);
+        courier.addPositionIntersection(intersection.getId());
+        HashMap<Long, Double> nestedMap = new HashMap<>();
+        nestedMap.put(intersection.getId(), 0.0);
+        courier.getShortestPathBetweenDPs().put(intersection.getId(), nestedMap);
+        Tour tour = new Tour();
+        tour.addTourRoute(intersection.getId(), new ArrayList<>());
+        courier.getListSegmentBetweenDPs().put(intersection.getId(), tour);
+        
+        courier.addShortestPathBetweenDP(map, dp);
 
         controller.getWindow().getGraphicalView().clearSelection();
         controller.getWindow().getGraphicalView().paintIntersection(dp, DP);
@@ -173,11 +189,19 @@ public class DPRemovedState implements State {
         controller.getWindow().allowNode("CALCULATE_TOUR", true);
         controller.setCurrentState(controller.dpEnteredState);
     }
-    
+
     @Override
-    public void removeDeliveryPoint(Controller controller, Map map, DeliveryPoint dp, Long idCourier, ListOfCommands loc) {
+    public void removeDeliveryPoint(Controller controller, Map map, DeliveryPoint dp, Long idCourier) {
+        if (dp.getId().equals(map.getWarehouse().getId())) {
+            return;
+        }
         Courier courier = controller.user.getCourierById(idCourier);
-        loc.add(new RemoveCommand(map, courier, dp));
+        dp.chooseCourier(null);
+        dp.assignTimeWindow(null);
+        courier.removeDeliveryPoint(dp);
+        courier.getPositionIntersection().remove(dp.getId());
+        courier.removeShortestPathBetweenDP(dp);
+        
         controller.getWindow().setMessage("Delivery point removed.");
         controller.getWindow().getGraphicalView().paintIntersection(dp, UNSELECTED);
         controller.getWindow().getTextualView().clearSelection();
@@ -326,8 +350,4 @@ public class DPRemovedState implements State {
         }
     }
     
-    @Override
-    public void undo(ListOfCommands loc) {
-        loc.undo();
-    }
 }

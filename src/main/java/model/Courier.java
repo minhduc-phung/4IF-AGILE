@@ -84,26 +84,22 @@ public class Courier extends Observable {
     
     public void addShortestPathBetweenDP(Map aMap, DeliveryPoint aDP) {
         // handle time-window
-        Integer earliestTW = Integer.MAX_VALUE;
-        Integer latestTW = Integer.MIN_VALUE;
+        List<Integer> listTW = new ArrayList<>();
+        listTW.add(8);
         for (int k = 1; k < this.currentDeliveryPoints.size(); k++) {
-            DeliveryPoint aD = this.currentDeliveryPoints.get(k);
-            if (aD.getTimeWindow().compareTo(earliestTW) < 0) {
-                earliestTW = aD.getTimeWindow();
-            }
-            if (aD.getTimeWindow().compareTo(latestTW) > 0) {
-                latestTW = aD.getTimeWindow();
+            if ( !listTW.contains(this.currentDeliveryPoints.get(k).getTimeWindow()) ) {
+                listTW.add( this.currentDeliveryPoints.get(k).getTimeWindow() );
             }
         }
-
+        Collections.sort(listTW);
+        int sizeTW = listTW.size();
+        Integer earliestTW = listTW.get(0);
+        Integer latestTW = listTW.get(sizeTW-1);
+        
         List<DeliveryPoint> listDP = this.currentDeliveryPoints;
         DeliveryPoint warehouse = listDP.get(0);
         warehouse.chooseCourier(this);
-        if (earliestTW.equals(latestTW)) {
-            warehouse.assignTimeWindow(earliestTW);
-        } else {
-            warehouse.assignTimeWindow(earliestTW - 1);
-        }
+        warehouse.assignTimeWindow(8);
 
         HashMap<Long, Double> distanceFromADP = new HashMap<>();
         Tour tour1 = new Tour();
@@ -112,7 +108,9 @@ public class Courier extends Observable {
             HashMap<Long, Long> precedentNode1 = new HashMap<>();
             Double dist = null;
             List<Segment> listSeg = new ArrayList<>();
-            if (dp.getTimeWindow().equals(aDP.getTimeWindow()) || dp.getTimeWindow().equals(aDP.getTimeWindow() - 1)) {
+            int index = listTW.indexOf(dp.getTimeWindow());
+            int indexNextTW = index + 1;
+            if (  dp.getTimeWindow().equals(aDP.getTimeWindow()) || listTW.indexOf(aDP.getTimeWindow()) == indexNextTW ) {
                 dist = Dijkstra.dijkstra(aMap, dp.getId(), aDP.getId(), precedentNode1);
                 Long key = aDP.getId();
                 while (precedentNode1.get(key) != null) {
@@ -131,7 +129,9 @@ public class Courier extends Observable {
             HashMap<Long, Long> precedentNode2 = new HashMap<>();
             List<Segment> listSeg1 = new ArrayList<>();
             Double invertedDist = null;
-            if (aDP.getTimeWindow().equals(dp.getTimeWindow()) || aDP.getTimeWindow().equals(dp.getTimeWindow()-1)) {
+            index = listTW.indexOf(aDP.getTimeWindow());
+            indexNextTW = index + 1;
+            if (   aDP.getTimeWindow().equals(dp.getTimeWindow()) || listTW.indexOf(dp.getTimeWindow()) == indexNextTW  ) {
                 invertedDist = Dijkstra.dijkstra(aMap, aDP.getId(), dp.getId(), precedentNode2);
                 Long key = dp.getId();
                 while (precedentNode2.get(key) != null) {
@@ -172,7 +172,6 @@ public class Courier extends Observable {
                 }
             }
         }
-        warehouse.assignTimeWindow(8);
     }
 
     public void removeShortestPathBetweenDP(DeliveryPoint aDP) {

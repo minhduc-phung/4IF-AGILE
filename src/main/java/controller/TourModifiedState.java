@@ -5,137 +5,109 @@
  */
 package controller;
 
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.parsers.ParserConfigurationException;
-
-import javafx.scene.paint.Color;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPathExpressionException;
 import model.Courier;
 import model.DeliveryPoint;
 import model.Intersection;
 import model.Map;
-import model.Tour;
+import model.Segment;
 import model.User;
 import org.xml.sax.SAXException;
-import view.Window;
+import static view.GraphicalView.IntersectionType.DP;
+import static view.GraphicalView.IntersectionType.HOVERED;
+import static view.GraphicalView.IntersectionType.SELECTED;
+import static view.GraphicalView.IntersectionType.UNSELECTED;
 import xml.ExceptionXML;
-import xml.XMLdpsDeserializer;
-import xml.XMLdpsSerializer;
-import xml.XMLmapDeserializer;
-
-import static view.GraphicalView.IntersectionType.*;
 
 /**
  *
  * @author bbbbb
  */
-public class CourierChosenState implements State {
+public class TourModifiedState implements State {
     @Override
-    public void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Long idCourier, Integer timeWindow) {
-        Intersection intersection = map.getIntersection(idIntersection);
-        if (intersection.getId().equals(map.getWarehouse().getId())) {
-            return;
+    public void modifyTourEnterDP(Controller controller, Courier c, Intersection intersection,
+                    Integer timeWindow, ListOfCommands loc) throws ParseException {
+        loc.add(new EnterCommand(controller, controller.map, c, intersection, timeWindow));
+        int i;
+        List<DeliveryPoint> listDP = c.getCurrentDeliveryPoints();
+        Integer minDiff = Integer.MAX_VALUE;
+        DeliveryPoint headPoint = null;
+        for (i = 0 ; i < listDP.size()-1 ; i++) {
+            Integer diff = Math.abs(listDP.get(i).getTimeWindow() - timeWindow);
+            if (diff.compareTo(minDiff) <= 0 && listDP.get(i).getTimeWindow().compareTo(timeWindow) <= 0) {
+                minDiff = diff;
+                headPoint = listDP.get(i);
+            }
         }
-        Courier courier = controller.user.getCourierById(idCourier);
-        DeliveryPoint dp = new DeliveryPoint(intersection.getId(), intersection.getLatitude(), intersection.getLongitude());
-        dp.assignTimeWindow(timeWindow);
-        dp.chooseCourier(courier);
-        courier.addDeliveryPoint(dp);
-        courier.addPositionIntersection(intersection.getId());
-        HashMap<Long, Double> nestedMap = new HashMap<>();
-        nestedMap.put(intersection.getId(), 0.0);
-        courier.getShortestPathBetweenDPs().put(intersection.getId(), nestedMap);
-        Tour tour = new Tour();
-        tour.addTourRoute(intersection.getId(), new ArrayList<>());
-        courier.getListSegmentBetweenDPs().put(intersection.getId(), tour);
+        DeliveryPoint dp = listDP.get(listDP.size()-1);
+        List<Segment> listSeg = c.getListSegmentBetweenInters(headPoint.getId(), dp.getId());
+        List<Segment> listSeg2 = c.getCurrentTour().getListSegment(headPoint.getId());
+        Intersection nextPoint = listSeg2.get(listSeg2.size()-1).getDestination();
+        List<Segment> listSeg3 = c.getListSegmentBetweenInters(dp.getId(), nextPoint.getId());
         
-        courier.addShortestPathBetweenDP(map, dp);
-
+        // change currentTour
+        c.getCurrentTour().getTourRoute().replace(headPoint.getId(), listSeg);
+        c.getCurrentTour().getTourRoute().put(dp.getId(), listSeg3);
+        
+        // set estimatedDeliveryTime
+        DeliveryPoint aDP = dp;
+        System.out.println("headpoint: " + headPoint + ", aDP:" + aDP);
+        long sum = headPoint.getEstimatedDeliveryTime().getTime();
+        SimpleDateFormat sd = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+        while ( !aDP.getId().equals(listDP.get(0).getId()) ) {
+            Double dist = c.getShortestPathBetweenDPs().get(headPoint.getId()).get(aDP.getId());
+            sum += (5*60*1000 + dist);
+            Date timeWin;
+            if ( dp.getTimeWindow().compareTo(10) < 0 ) {
+                timeWin = sdf.parse(sd.format(headPoint.getEstimatedDeliveryTime()) + " 0" + dp.getTimeWindow() + ":00:00");
+            } else {
+                timeWin = sdf.parse(sd.format(headPoint.getEstimatedDeliveryTime()) + " " + dp.getTimeWindow() + ":00:00");
+            }
+            Date estimatedTime = new Date(sum);
+            if (estimatedTime.before(timeWin)) {
+                Date et = new Date(timeWin.getTime() + 5*60*1000);
+                aDP.setEstimatedDeliveryTime(et);
+            } else {
+                System.out.println("aloo");
+                aDP.setEstimatedDeliveryTime(estimatedTime);
+            }
+            listSeg2 = c.getCurrentTour().getListSegment(aDP.getId());
+            nextPoint = listSeg2.get(listSeg2.size()-1).getDestination();
+            headPoint = aDP;
+            aDP.setId(nextPoint.getId());
+        }
+        
         controller.getWindow().getGraphicalView().clearSelection();
         controller.getWindow().getGraphicalView().paintIntersection(dp, DP);
-        controller.getWindow().getTextualView().updateData(controller.getUser(), idCourier);
+        controller.getWindow().getTextualView().updateData(controller.user, c.getId());
         controller.getWindow().setMessage("Delivery point added.");
-        controller.getWindow().allowNode("VALIDATE_DP", false);
-        controller.getWindow().allowNode("SAVE_DP", true);
-        controller.getWindow().allowNode("CALCULATE_TOUR", true);
-        controller.setCurrentState(controller.dpEnteredState);
+        controller.getWindow().allowNode("CALCULATE_TOUR", false);
     }
     
     @Override
-    public void selectCourier(Controller controller, Long idCourier) {
-        controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
-        controller.getWindow().getTextualView().updateData(controller.getUser(), idCourier);
-        controller.getWindow().getTextualView().clearSelection();
-        controller.getWindow().setMessage("Courier " + controller.user.getCourierById(idCourier).getName() + " selected.");
-        controller.getWindow().getGraphicalView().updateMap(controller.getMap(), controller.user.getCourierById(idCourier));
+    public void modifyTourRemoveDP(Controller controller, Courier c, DeliveryPoint dp, ListOfCommands loc) {
+        loc.add(new RemoveCommand(controller, controller.map, c, dp));
     }
     
     @Override
-    public void loadMapFromXML(Controller controller, Window window) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
-        controller.map = XMLmapDeserializer.load(controller.map);
-        controller.user = new User();
-        Intersection warehouse = controller.getMap().getWarehouse();
-        addWarehouse(warehouse, controller.user);
-        controller.setCurrentState(controller.mapLoadedState);
-        window.getGraphicalView().drawMap(controller.getMap());
-        window.getTextualView().updateData(controller.getUser(), 1L);
-        window.getInteractivePane().resetComboBoxes();
-        window.getTextualView().updateData(controller.user, 1L);
-        window.allowNode("COURIER_BOX", true);
-        window.allowNode("TW_BOX", true);
-        window.setMessage("Please choose a courier and a time-window to start adding delivery points.");
-    }
-    
-    private void addWarehouse(Intersection warehouse, User user) {
-        DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), warehouse.getLatitude(), warehouse.getLongitude());
-        for (Long key : user.getListCourier().keySet()) {
-            Courier c = user.getListCourier().get(key);
-            dpWarehouse.chooseCourier(c);
-            c.addDeliveryPoint(dpWarehouse);
-
-            c.addPositionIntersection(warehouse.getId());
-            HashMap<Long, Double> nestedMap = new HashMap<>();
-            nestedMap.put(warehouse.getId(), Double.valueOf("0.0"));
-            c.getShortestPathBetweenDPs().put(warehouse.getId(), nestedMap);
-            
-            Tour tour = new Tour();
-            tour.addTourRoute(dpWarehouse.getId(), new ArrayList<>());
-            c.getListSegmentBetweenDPs().put(dpWarehouse.getId(), tour);
-            user.getListCourier().replace(key, c);
-        }
+    public void undo(ListOfCommands loc) {
+        loc.undo();       
     }
     
     @Override
-    public void saveDeliveryPointToFile(Controller controller) throws ParserConfigurationException, SAXException, ExceptionXML,
-                                        IOException, TransformerConfigurationException, TransformerException, XPathExpressionException {
-        Map map = controller.map;
-        User user = controller.user;
-        XMLdpsSerializer.getInstance().save(map, user);
-        controller.getWindow().setMessage("Delivery points saved.");
-        controller.setCurrentState(controller.dpSavedState);
+    public void generateDeliveryPlanForCourier(Controller controller, Courier c) throws ParserConfigurationException, SAXException, ExceptionXML,
+                                                                                                IOException, TransformerException{
+        controller.setCurrentState(controller.planGeneratedState);
     }
     
-    @Override
-    public void restoreDeliveryPointFromXML(Controller controller) 
-                                                    throws ExceptionXML, ParserConfigurationException, IOException, 
-                                                    SAXException, XPathExpressionException {
-        //precondition : Map is loaded and XMLfile of deliveryPoints exists
-        Map map = controller.map;
-        User user = new User();
-        controller.user = XMLdpsDeserializer.loadDPList(map, user);
-        controller.getWindow().setMessage("Delivery points restored.");
-        controller.setCurrentState(controller.dpRestoredState);
-        controller.getWindow().allowNode("SAVE_DP", true);
-        controller.getWindow().allowNode("CALCULATE_TOUR", true);
-    }
-
     @Override
     public void mouseMovedOnMap(Controller controller, double mousePosX, double mousePosY) {
         Double scale = controller.getWindow().getGraphicalView().getScale();
@@ -199,11 +171,11 @@ public class CourierChosenState implements State {
             if (dpIds.contains(selectedIntersection.getId())) {
                 controller.getWindow().getTextualView().setSelectedDeliveryPoint(c.getDeliveryPointById(selectedIntersection.getId()));
                 controller.getWindow().getTextualView().getTableView().getSelectionModel().select(dpIds.indexOf(selectedIntersection.getId())-1);
-                controller.getWindow().allowNode("REMOVE_DP", true);
-                controller.getWindow().allowNode("VALIDATE_DP", false);
+                //controller.getWindow().allowNode("REMOVE_DP", true);
+                controller.getWindow().allowNode("MODIFY_ENTER_DP", false);
             } else {
-                controller.getWindow().allowNode("REMOVE_DP", false);
-                controller.getWindow().allowNode("VALIDATE_DP", true);
+                //controller.getWindow().allowNode("REMOVE_DP", false);
+                controller.getWindow().allowNode("MODIFY_ENTER_DP", true);
             }
             controller.getWindow().getGraphicalView().setHoveredIntersection(null);
             controller.getWindow().getGraphicalView().paintIntersection(controller.getWindow().getGraphicalView().getSelectedIntersection(), SELECTED);
@@ -235,11 +207,9 @@ public class CourierChosenState implements State {
             }
             DeliveryPoint dp = courier.getCurrentDeliveryPoints().get(indexDP);
             controller.getWindow().getTextualView().setSelectedDeliveryPoint(dp);
-            System.out.println(dp);
             controller.getWindow().getGraphicalView().setSelectedIntersection(map.getIntersection(dp.getId()));
             controller.getWindow().getGraphicalView().paintIntersection(map.getIntersection(dp.getId()), SELECTED);
-            controller.getWindow().allowNode("VALIDATE_DP", false);
-            controller.getWindow().allowNode("REMOVE_DP", true);
+            controller.getWindow().allowNode("MODIFY_ENTER_DP", true);
         }
     }
 }

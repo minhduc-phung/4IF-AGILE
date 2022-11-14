@@ -15,6 +15,9 @@ import javafx.scene.text.TextAlignment;
 import model.User;
 
 import java.util.Map;
+import static javafx.scene.input.KeyCode.Z;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 
 // We have no intentions to do scaling like PlaCo example.
 public class Window extends Group {
@@ -122,6 +125,9 @@ public class Window extends Group {
         graphicalView = new GraphicalView(this, controller);
         interactiveView = new InteractiveView(user, this, controller);
         textualView = new TextualView(this, controller);
+        // Event
+        KeyboardListener keyboardListener = new KeyboardListener(controller);
+        this.setOnKeyPressed(keyboardListener);
     }
 
     public void setLateDeliveriesNumber(int number) {

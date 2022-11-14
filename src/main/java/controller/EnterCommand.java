@@ -12,18 +12,22 @@ import model.DeliveryPoint;
 import model.Intersection;
 import model.Map;
 import model.Tour;
+import static view.GraphicalView.IntersectionType.DP;
+import static view.GraphicalView.IntersectionType.UNSELECTED;
 
 /**
  *
  * @author bbbbb
  */
 public class EnterCommand implements Command {
+    private Controller controller;
     private Map map;
     private Courier courier;
     private Intersection intersection;
     private Integer timeWindow;
 
-    public EnterCommand(Map map, Courier courier, Intersection intersection, Integer timeWindow) {
+    public EnterCommand(Controller controller, Map map, Courier courier, Intersection intersection, Integer timeWindow) {
+        this.controller = controller;
         this.map = map;
         this.courier = courier;
         this.intersection = intersection;
@@ -48,15 +52,26 @@ public class EnterCommand implements Command {
         courier.getListSegmentBetweenDPs().put(intersection.getId(), tour);
         
         courier.addShortestPathBetweenDP(map, dp);
+     
     }
 
     @Override
     public void undoCommand() {
-        DeliveryPoint dp = new DeliveryPoint(intersection.getId(), intersection.getLatitude(), intersection.getLongitude());
+        int size = courier.getCurrentDeliveryPoints().size();
+        DeliveryPoint dp = courier.getCurrentDeliveryPoints().get(size-1);
         dp.chooseCourier(null);
+        dp.assignTimeWindow(null);
         courier.removeDeliveryPoint(dp);
         courier.getPositionIntersection().remove(dp.getId());
         courier.removeShortestPathBetweenDP(dp);
+        
+        controller.getWindow().setMessage("Delivery point removed.");
+        controller.getWindow().getGraphicalView().paintIntersection(dp, UNSELECTED);
+        controller.getWindow().getTextualView().clearSelection();
+        controller.getWindow().getGraphicalView().clearSelection();
+        controller.getWindow().getTextualView().updateData(controller.user, courier.getId());
+        controller.getWindow().allowNode("REMOVE_DP", false);
+        controller.getWindow().allowNode("CALCULATE_TOUR", true);
     }
 
 }

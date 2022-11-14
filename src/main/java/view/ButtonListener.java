@@ -13,18 +13,20 @@ import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.text.ParseException;
+import model.Courier;
+import model.Intersection;
 
 public class ButtonListener implements EventHandler<ActionEvent> {
 
     private Controller controller;
 
-    public ButtonListener(Controller controller){
-            this.controller = controller;
-        }
+    public ButtonListener(Controller controller) {
+        this.controller = controller;
+    }
 
     @Override
     public void handle(ActionEvent e) {
-        switch (((Node) e.getSource()).getId()){
+        switch (((Node) e.getSource()).getId()) {
             case "LOAD_MAP":
                 try {
                     controller.loadMapFromXML();
@@ -34,7 +36,8 @@ public class ButtonListener implements EventHandler<ActionEvent> {
                 break;
             case "VALIDATE_DP":
                 if (controller.getWindow().getTextualView().getSelectedDeliveryPoint() == null) {
-                    controller.enterDeliveryPoint(controller.getMap(), controller.getWindow().getGraphicalView().getSelectedIntersection().getId(), controller.getWindow().getInteractivePane().getSelectedCourierId(), controller.getWindow().getInteractivePane().getSelectedTimeWindow());
+                    controller.enterDeliveryPoint(controller.getMap(), controller.getWindow().getGraphicalView().getSelectedIntersection().getId(),
+                            controller.getWindow().getInteractivePane().getSelectedCourierId(), controller.getWindow().getInteractivePane().getSelectedTimeWindow());
                 }
                 break;
             case "REMOVE_DP":
@@ -45,8 +48,8 @@ public class ButtonListener implements EventHandler<ActionEvent> {
 
                 try {
                     controller.restoreDeliveryPointFromXML();
-                } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException |
-                         ExceptionXML ex) {
+                } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException
+                    | ExceptionXML ex) {
                     throw new RuntimeException(ex);
                 }
                 ((ComboBox<String>) controller.getWindow().lookup("#COURIER_BOX")).setValue(controller.getUser().getListCourierName()[0]);
@@ -54,13 +57,23 @@ public class ButtonListener implements EventHandler<ActionEvent> {
             case "SAVE_DP":
                 try {
                     controller.saveDeliveryPointToFile();
-                } catch (XPathExpressionException | ParserConfigurationException | IOException | TransformerException |
-                         SAXException | ExceptionXML ex) {
+                } catch (XPathExpressionException | ParserConfigurationException | IOException | TransformerException
+                    | SAXException | ExceptionXML ex) {
                     throw new RuntimeException(ex);
                 }
                 break;
-            case "MODIFY_DP": break;
-            case "GENERATE_PLAN": break;
+            case "MODIFY_DP":
+                controller.modifyTour();
+                break;
+            case "GENERATE_PLAN":
+                Courier c = controller.getUser().getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId());
+                try {
+                    controller.generatePlan(c);
+                } catch (ParserConfigurationException | SAXException | ExceptionXML
+                        | IOException | TransformerException ex) {
+                    throw new RuntimeException(ex);
+                }
+                break;
             case "CALCULATE_TOUR":
                 try {
                     controller.calculateTour(controller.getUser().getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId()), controller.getMap().getWarehouse().getId());
@@ -68,8 +81,18 @@ public class ButtonListener implements EventHandler<ActionEvent> {
                     throw new RuntimeException(ex);
                 }
                 break;
+            case "MODIFY_ENTER_DP":
+                c = controller.getUser().getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId());
+                Intersection intersection = controller.getMap().getIntersection(controller.getWindow().getGraphicalView().getSelectedIntersection().getId());
+                if (controller.getWindow().getTextualView().getSelectedDeliveryPoint() == null) {
+                    try {
+                        controller.modifyTourEnterDP(c, intersection, controller.getWindow().getInteractivePane().getSelectedTimeWindow());
+                    } catch (ParseException ex) {
+                        throw new RuntimeException(ex);
+
+                    }
+                }
+                break;
         }
-
-
     }
 }
