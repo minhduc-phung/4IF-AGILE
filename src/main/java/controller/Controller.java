@@ -150,4 +150,8 @@ public class Controller {
         currentState.undo(listOfCommands);
     }
     
+    public void redo() {
+        currentState.redo(listOfCommands);
+    }
+    
 }

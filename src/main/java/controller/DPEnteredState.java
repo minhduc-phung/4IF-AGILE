@@ -5,6 +5,7 @@
  */
 package controller;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -71,7 +72,7 @@ public class DPEnteredState implements State {
             HashMap<Long, Double> nestedMap = new HashMap<>();
             nestedMap.put(warehouse.getId(), Double.valueOf("0.0"));
             c.getShortestPathBetweenDPs().put(warehouse.getId(), nestedMap);
-            
+
             Tour tour = new Tour();
             tour.addTourRoute(dpWarehouse.getId(), new ArrayList<>());
             c.getListSegmentBetweenDPs().put(dpWarehouse.getId(), tour);
@@ -110,7 +111,7 @@ public class DPEnteredState implements State {
         DeliveryPoint dp = c.getCurrentDeliveryPoints().get(0);
         long sum = timeStamp.getTime();
         dp.setEstimatedDeliveryTime(timeStamp);
-        
+
         //timeStamp of other DPs
         for (i = 0; i < tspSolutions.size() - 1; i++) {
             long timeInMinute = (long) Math.ceil(g.getCost(tspSolutions.get(i), tspSolutions.get(i + 1)) * 60 * 1000);
@@ -118,16 +119,17 @@ public class DPEnteredState implements State {
             dp = c.getCurrentDeliveryPoints().get(tspSolutions.get(i + 1));
             Date estimatedDeliveryTime = new Date(sum);
             Date timeWin = new Date();
-            if ( dp.getTimeWindow().compareTo(10) < 0 ) {
+            if (dp.getTimeWindow().compareTo(10) < 0) {
                 timeWin = sdf.parse(sd.format(now) + " 0" + dp.getTimeWindow() + ":00:00");
             } else {
                 timeWin = sdf.parse(sd.format(now) + " " + dp.getTimeWindow() + ":00:00");
             }
             if (estimatedDeliveryTime.before(timeWin)) {
-                sum = timeWin.getTime() + 5*60*1000;        //5 mins for delivery
+                sum = timeWin.getTime() + 5 * 60 * 1000;        //5 mins for delivery
                 estimatedDeliveryTime.setTime(sum);
             }
             dp.setEstimatedDeliveryTime(estimatedDeliveryTime);
+            c.addTimeStampForDP(dp.getId(), dp.getEstimatedDeliveryTime());
         }
 
         // set currentTour
@@ -156,7 +158,7 @@ public class DPEnteredState implements State {
                 controller.getWindow().getGraphicalView().paintIntersection(d, ON_TIME);
             }
         }
-        
+
         controller.getWindow().getTextualView().updateData(controller.user, c.getId());
         controller.getWindow().getTextualView().getTableView().sort();
         controller.getWindow().setMessage("The tour has been calculated.");
@@ -183,7 +185,7 @@ public class DPEnteredState implements State {
         Tour tour = new Tour();
         tour.addTourRoute(intersection.getId(), new ArrayList<>());
         courier.getListSegmentBetweenDPs().put(intersection.getId(), tour);
-        
+
         courier.addShortestPathBetweenDP(map, dp);
 
         controller.getWindow().getGraphicalView().clearSelection();
@@ -206,8 +208,8 @@ public class DPEnteredState implements State {
         dp.assignTimeWindow(null);
         courier.removeDeliveryPoint(dp);
         courier.getPositionIntersection().remove(dp.getId());
-        courier.removeShortestPathBetweenDP(dp);
-        
+        courier.removeShortestPathBetweenDP(map, dp);
+
         controller.getWindow().setMessage("Delivery point removed.");
         controller.getWindow().getGraphicalView().paintIntersection(dp, UNSELECTED);
         controller.getWindow().getTextualView().clearSelection();
@@ -313,7 +315,7 @@ public class DPEnteredState implements State {
             controller.getWindow().getTextualView().clearSelection();
             if (dpIds.contains(selectedIntersection.getId())) {
                 controller.getWindow().getTextualView().setSelectedDeliveryPoint(c.getDeliveryPointById(selectedIntersection.getId()));
-                controller.getWindow().getTextualView().getTableView().getSelectionModel().select(dpIds.indexOf(selectedIntersection.getId())-1);
+                controller.getWindow().getTextualView().getTableView().getSelectionModel().select(dpIds.indexOf(selectedIntersection.getId()) - 1);
                 controller.getWindow().allowNode("REMOVE_DP", true);
                 controller.getWindow().allowNode("VALIDATE_DP", false);
             } else {

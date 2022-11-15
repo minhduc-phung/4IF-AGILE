@@ -37,9 +37,10 @@ public class RemoveCommand implements Command {
             return;
         }
         dp.chooseCourier(null);
+        dp.assignTimeWindow(null);
         courier.removeDeliveryPoint(dp);
         courier.getPositionIntersection().remove(dp.getId());
-        courier.removeShortestPathBetweenDP(dp);
+        courier.removeShortestPathBetweenDP(map, dp);
         
         controller.getWindow().setMessage("Delivery point removed.");
         controller.getWindow().getGraphicalView().paintIntersection(dp, UNSELECTED);

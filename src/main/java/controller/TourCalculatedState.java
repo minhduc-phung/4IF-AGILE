@@ -5,21 +5,14 @@
  */
 package controller;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import model.Courier;
 import model.Map;
 import org.xml.sax.SAXException;
 import xml.ExceptionXML;
 import xml.PlanTextWriter;
-import model.DeliveryPoint;
-import model.User;
-
-import static view.GraphicalView.IntersectionType.DP;
-import static view.GraphicalView.IntersectionType.SELECTED;
 
 /**
  *
@@ -33,7 +26,6 @@ public class TourCalculatedState implements State {
         PlanTextWriter.getInstance().save(map, c);
         controller.getWindow().setMessage("Delivery plans saved.");
         controller.setCurrentState(controller.planGeneratedState);
-        
     }
     
     @Override

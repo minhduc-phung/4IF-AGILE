@@ -35,10 +35,9 @@ public class ButtonListener implements EventHandler<ActionEvent> {
                 }
                 break;
             case "VALIDATE_DP":
-                if (controller.getWindow().getTextualView().getSelectedDeliveryPoint() == null) {
-                    controller.enterDeliveryPoint(controller.getMap(), controller.getWindow().getGraphicalView().getSelectedIntersection().getId(),
+                controller.enterDeliveryPoint(controller.getMap(), controller.getWindow().getGraphicalView().getSelectedIntersection().getId(),
                             controller.getWindow().getInteractivePane().getSelectedCourierId(), controller.getWindow().getInteractivePane().getSelectedTimeWindow());
-                }
+                
                 break;
             case "REMOVE_DP":
                 controller.removeDeliveryPoint(controller.getMap(), controller.getWindow().getTextualView().getSelectedDeliveryPoint(), controller.getWindow().getInteractivePane().getSelectedCourierId());
@@ -82,15 +81,16 @@ public class ButtonListener implements EventHandler<ActionEvent> {
                 }
                 break;
             case "MODIFY_ENTER_DP":
-                c = controller.getUser().getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId());
-                Intersection intersection = controller.getMap().getIntersection(controller.getWindow().getGraphicalView().getSelectedIntersection().getId());
                 if (controller.getWindow().getTextualView().getSelectedDeliveryPoint() == null) {
+                    Courier cou = controller.getUser().getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId());
+                    Intersection intersection = controller.getMap().getIntersection(controller.getWindow().getGraphicalView().getSelectedIntersection().getId());
                     try {
-                        controller.modifyTourEnterDP(c, intersection, controller.getWindow().getInteractivePane().getSelectedTimeWindow());
+                        controller.modifyTourEnterDP(cou, intersection, controller.getWindow().getInteractivePane().getSelectedTimeWindow());
                     } catch (ParseException ex) {
-                        throw new RuntimeException(ex);
-
+                        
                     }
+
+                    
                 }
                 break;
         }

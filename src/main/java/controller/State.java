@@ -46,7 +46,7 @@ public interface State {
     public default void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Long idCourier, Integer timeWindow) {
     };
     
-    public default void removeDeliveryPoint(Controller controller, Map map, DeliveryPoint dp, Long idCourier){
+    public default void removeDeliveryPoint(Controller controller, Map map, DeliveryPoint dp, Long idCourier) {
     };
 
     public default void generateDeliveryPlanForCourier(Controller controller, Courier c) throws ParserConfigurationException, SAXException, ExceptionXML,
@@ -63,6 +63,8 @@ public interface State {
     public default void mouseClickedOnTable(Controller controller, int indexDP) { };
     
     public default void undo(ListOfCommands loc) { };
+    
+    public default void redo(ListOfCommands loc) { };
     
     public default void modifyTour(Controller controller) {};
     

@@ -10,6 +10,7 @@ import java.text.ParseException;
 import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
 import static javafx.scene.input.KeyCode.CONTROL;
+import static javafx.scene.input.KeyCode.Y;
 import static javafx.scene.input.KeyCode.Z;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -33,10 +34,9 @@ public class KeyboardListener implements EventHandler<KeyEvent> {
     @Override
     public void handle(KeyEvent e) {
         if (e.isControlDown() && e.getCode() == Z) {
-            Long idCourier = controller.getWindow().getInteractivePane().getSelectedCourierId();
-            Courier c = controller.getUser().getCourierById(idCourier);
-            
             controller.undo();
+        } else if (e.isControlDown() && e.getCode() == Y) {
+            controller.redo();
         }
     }
     

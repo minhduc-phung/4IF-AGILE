@@ -5,6 +5,7 @@
  */
 package controller;
 
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import model.Courier;
@@ -36,23 +37,21 @@ public class EnterCommand implements Command {
 
     @Override
     public void doCommand() {
-        if (intersection.getId().equals(map.getWarehouse().getId())) {
-            return;
-        }
         DeliveryPoint dp = new DeliveryPoint(intersection.getId(), intersection.getLatitude(), intersection.getLongitude());
         dp.assignTimeWindow(timeWindow);
         dp.chooseCourier(courier);
         courier.addDeliveryPoint(dp);
-        courier.addPositionIntersection(intersection.getId());
+        courier.addPositionIntersection(dp.getId());
         HashMap<Long, Double> nestedMap = new HashMap<>();
-        nestedMap.put(intersection.getId(), 0.0);
-        courier.getShortestPathBetweenDPs().put(intersection.getId(), nestedMap);
+        nestedMap.put(dp.getId(), 0.0);
+        courier.getShortestPathBetweenDPs().put(dp.getId(), nestedMap);
+        
         Tour tour = new Tour();
-        tour.addTourRoute(intersection.getId(), new ArrayList<>());
-        courier.getListSegmentBetweenDPs().put(intersection.getId(), tour);
+        tour.addTourRoute(dp.getId(), new ArrayList<>());
+        courier.getListSegmentBetweenDPs().put(dp.getId(), tour);
         
         courier.addShortestPathBetweenDP(map, dp);
-     
+
     }
 
     @Override
@@ -63,15 +62,13 @@ public class EnterCommand implements Command {
         dp.assignTimeWindow(null);
         courier.removeDeliveryPoint(dp);
         courier.getPositionIntersection().remove(dp.getId());
-        courier.removeShortestPathBetweenDP(dp);
-        
+        courier.removeShortestPathBetweenDP(map, dp);
+       
         controller.getWindow().setMessage("Delivery point removed.");
         controller.getWindow().getGraphicalView().paintIntersection(dp, UNSELECTED);
         controller.getWindow().getTextualView().clearSelection();
         controller.getWindow().getGraphicalView().clearSelection();
         controller.getWindow().getTextualView().updateData(controller.user, courier.getId());
-        controller.getWindow().allowNode("REMOVE_DP", false);
-        controller.getWindow().allowNode("CALCULATE_TOUR", true);
     }
 
 }

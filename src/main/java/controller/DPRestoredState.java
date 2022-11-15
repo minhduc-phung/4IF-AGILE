@@ -122,8 +122,9 @@ public class DPRestoredState implements State {
             if (estimatedDeliveryTime.before(timeWin)) {
                 sum = timeWin.getTime() + 5*60*1000;        //5 mins for delivery
                 estimatedDeliveryTime.setTime(sum);
-            }
+            } 
             dp.setEstimatedDeliveryTime(estimatedDeliveryTime);
+            c.addTimeStampForDP(dp.getId(), dp.getEstimatedDeliveryTime());
         }
 
         // set currentTour
@@ -180,7 +181,7 @@ public class DPRestoredState implements State {
         Tour tour = new Tour();
         tour.addTourRoute(intersection.getId(), new ArrayList<>());
         courier.getListSegmentBetweenDPs().put(intersection.getId(), tour);
-        
+
         courier.addShortestPathBetweenDP(map, dp);
 
         controller.getWindow().getGraphicalView().clearSelection();
@@ -203,8 +204,8 @@ public class DPRestoredState implements State {
         dp.assignTimeWindow(null);
         courier.removeDeliveryPoint(dp);
         courier.getPositionIntersection().remove(dp.getId());
-        courier.removeShortestPathBetweenDP(dp);
         
+        courier.removeShortestPathBetweenDP(map, dp);
         controller.getWindow().setMessage("Delivery point removed.");
         controller.getWindow().getGraphicalView().paintIntersection(dp, UNSELECTED);
         controller.getWindow().getTextualView().clearSelection();

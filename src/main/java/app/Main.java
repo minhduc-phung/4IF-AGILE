@@ -18,6 +18,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle(TITLE);
+        stage.setResizable(true);
 //        this.setHeight(WINDOW_HEIGHT);
 //        this.setTitle("Delivery Planner");
 //        this.setResizable(false);

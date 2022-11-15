@@ -5,9 +5,13 @@
  */
 package controller;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -18,6 +22,7 @@ import model.DeliveryPoint;
 import model.Intersection;
 import model.Map;
 import model.Segment;
+import model.Tour;
 import model.User;
 import org.xml.sax.SAXException;
 import static view.GraphicalView.IntersectionType.DP;
@@ -25,89 +30,123 @@ import static view.GraphicalView.IntersectionType.HOVERED;
 import static view.GraphicalView.IntersectionType.SELECTED;
 import static view.GraphicalView.IntersectionType.UNSELECTED;
 import xml.ExceptionXML;
+import xml.PlanTextWriter;
 
 /**
  *
  * @author bbbbb
  */
 public class TourModifiedState implements State {
+
     @Override
     public void modifyTourEnterDP(Controller controller, Courier c, Intersection intersection,
-                    Integer timeWindow, ListOfCommands loc) throws ParseException {
+            Integer timeWindow, ListOfCommands loc) throws ParseException {
         loc.add(new EnterCommand(controller, controller.map, c, intersection, timeWindow));
-        int i;
-        List<DeliveryPoint> listDP = c.getCurrentDeliveryPoints();
-        Integer minDiff = Integer.MAX_VALUE;
-        DeliveryPoint headPoint = null;
-        for (i = 0 ; i < listDP.size()-1 ; i++) {
-            Integer diff = Math.abs(listDP.get(i).getTimeWindow() - timeWindow);
-            if (diff.compareTo(minDiff) <= 0 && listDP.get(i).getTimeWindow().compareTo(timeWindow) <= 0) {
-                minDiff = diff;
-                headPoint = listDP.get(i);
+        List<DeliveryPoint> listDPcopy = c.getCurrentDeliveryPoints();
+        Collections.sort(listDPcopy, (DeliveryPoint d1, DeliveryPoint d2) -> {
+            if (d1.getTimeWindow().equals(d2.getTimeWindow())) {
+                return 0;
+            } else if (d1.getTimeWindow().compareTo(d2.getTimeWindow()) > 0) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+        DeliveryPoint dp = c.getCurrentDeliveryPoints().get(listDPcopy.size() - 1);
+        int index = listDPcopy.indexOf(dp);
+        // change currentTour
+        DeliveryPoint headPoint = listDPcopy.get(index - 1);
+        for (DeliveryPoint d : c.getCurrentDeliveryPoints()) {
+            if (d.getId().equals(headPoint.getId())) {
+                headPoint = d;
+                System.out.println(d);
+                headPoint.setEstimatedDeliveryTime(d.getEstimatedDeliveryTime());
+                break;
             }
         }
-        DeliveryPoint dp = listDP.get(listDP.size()-1);
-        List<Segment> listSeg = c.getListSegmentBetweenInters(headPoint.getId(), dp.getId());
-        List<Segment> listSeg2 = c.getCurrentTour().getListSegment(headPoint.getId());
-        Intersection nextPoint = listSeg2.get(listSeg2.size()-1).getDestination();
-        List<Segment> listSeg3 = c.getListSegmentBetweenInters(dp.getId(), nextPoint.getId());
-        
-        // change currentTour
-        c.getCurrentTour().getTourRoute().replace(headPoint.getId(), listSeg);
-        c.getCurrentTour().getTourRoute().put(dp.getId(), listSeg3);
-        
+
+        if (index < listDPcopy.size() - 1) {
+            DeliveryPoint nextPoint = listDPcopy.get(index + 1);
+            List<Segment> listSeg1 = c.getListSegmentBetweenInters(headPoint.getId(), dp.getId());
+            c.getCurrentTour().getTourRoute().replace(headPoint.getId(), listSeg1);
+            List<Segment> listSeg2 = c.getListSegmentBetweenInters(dp.getId(), nextPoint.getId());
+            c.addCurrentTour(dp.getId(), listSeg2);
+        } else {
+            // branch to Warehouse
+            DeliveryPoint nextPoint = c.getCurrentDeliveryPoints().get(0); //warehouse
+            List<Segment> listSeg1 = c.getListSegmentBetweenInters(headPoint.getId(), dp.getId());
+            c.getCurrentTour().getTourRoute().replace(headPoint.getId(), listSeg1);
+            List<Segment> listSeg2 = c.getListSegmentBetweenInters(dp.getId(), nextPoint.getId());
+            c.addCurrentTour(dp.getId(), listSeg2);
+        }
+        /*try {
+            FileWriter writer = new FileWriter("text.txt");
+            for (Long key1 : c.getCurrentTour().getTourRoute().keySet()) {
+                writer.write(key1 + ": " + c.getCurrentTour().getTourRoute().get(key1) + "\n\n");
+            }
+            writer.close();
+        } catch (IOException ex) {
+
+        }*/
         // set estimatedDeliveryTime
         DeliveryPoint aDP = dp;
-        System.out.println("headpoint: " + headPoint + ", aDP:" + aDP);
         long sum = headPoint.getEstimatedDeliveryTime().getTime();
         SimpleDateFormat sd = new SimpleDateFormat("dd-MM-yyyy");
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
-        while ( !aDP.getId().equals(listDP.get(0).getId()) ) {
+
+        while (!aDP.getId().equals(c.getCurrentDeliveryPoints().get(0).getId())) {
             Double dist = c.getShortestPathBetweenDPs().get(headPoint.getId()).get(aDP.getId());
-            sum += (5*60*1000 + dist);
+            sum += (long) Math.ceil(5 * 60 * 1000 + dist * 60 * 1000);
             Date timeWin;
-            if ( dp.getTimeWindow().compareTo(10) < 0 ) {
-                timeWin = sdf.parse(sd.format(headPoint.getEstimatedDeliveryTime()) + " 0" + dp.getTimeWindow() + ":00:00");
+            if (aDP.getTimeWindow().compareTo(10) < 0) {
+                timeWin = sdf.parse(sd.format(headPoint.getEstimatedDeliveryTime()) + " 0" + aDP.getTimeWindow() + ":00:00");
             } else {
-                timeWin = sdf.parse(sd.format(headPoint.getEstimatedDeliveryTime()) + " " + dp.getTimeWindow() + ":00:00");
+                timeWin = sdf.parse(sd.format(headPoint.getEstimatedDeliveryTime()) + " " + aDP.getTimeWindow() + ":00:00");
             }
             Date estimatedTime = new Date(sum);
             if (estimatedTime.before(timeWin)) {
-                Date et = new Date(timeWin.getTime() + 5*60*1000);
+                Date et = new Date(timeWin.getTime() + 5 * 60 * 1000);
                 aDP.setEstimatedDeliveryTime(et);
             } else {
-                System.out.println("aloo");
                 aDP.setEstimatedDeliveryTime(estimatedTime);
             }
-            listSeg2 = c.getCurrentTour().getListSegment(aDP.getId());
-            nextPoint = listSeg2.get(listSeg2.size()-1).getDestination();
             headPoint = aDP;
-            aDP.setId(nextPoint.getId());
+            int sizeSeg = c.getCurrentTour().getListSegment(aDP.getId()).size();
+            Intersection inter = c.getCurrentTour().getListSegment(aDP.getId()).get(sizeSeg - 1).getDestination();
+            aDP.setId(inter.getId());
         }
-        
+
         controller.getWindow().getGraphicalView().clearSelection();
         controller.getWindow().getGraphicalView().paintIntersection(dp, DP);
         controller.getWindow().getTextualView().updateData(controller.user, c.getId());
         controller.getWindow().setMessage("Delivery point added.");
         controller.getWindow().allowNode("CALCULATE_TOUR", false);
     }
-    
+
     @Override
     public void modifyTourRemoveDP(Controller controller, Courier c, DeliveryPoint dp, ListOfCommands loc) {
         loc.add(new RemoveCommand(controller, controller.map, c, dp));
     }
-    
+
     @Override
     public void undo(ListOfCommands loc) {
-        loc.undo();       
+        loc.undo();
     }
     
+    @Override
+    public void redo(ListOfCommands loc) {
+        loc.redo();
+    }
+
     @Override
     public void generateDeliveryPlanForCourier(Controller controller, Courier c) throws ParserConfigurationException, SAXException, ExceptionXML,
                                                                                                 IOException, TransformerException{
+        Map map = controller.map;
+        PlanTextWriter.getInstance().save(map, c);
+        controller.getWindow().setMessage("Delivery plans saved.");
         controller.setCurrentState(controller.planGeneratedState);
     }
-    
+
     @Override
     public void mouseMovedOnMap(Controller controller, double mousePosX, double mousePosY) {
         Double scale = controller.getWindow().getGraphicalView().getScale();
@@ -139,7 +178,7 @@ public class TourModifiedState implements State {
                 controller.getWindow().getGraphicalView().paintIntersection(oldHoveredIntersection, DP);
             } else {
                 controller.getWindow().getGraphicalView().paintIntersection(oldHoveredIntersection, UNSELECTED);
-           }
+            }
         }
         // Re-paint the selected intersection in case it gets overlapped by an old hovered intersection
         if (controller.getWindow().getGraphicalView().getSelectedIntersection() != null) {
@@ -170,7 +209,7 @@ public class TourModifiedState implements State {
             controller.getWindow().getTextualView().clearSelection();
             if (dpIds.contains(selectedIntersection.getId())) {
                 controller.getWindow().getTextualView().setSelectedDeliveryPoint(c.getDeliveryPointById(selectedIntersection.getId()));
-                controller.getWindow().getTextualView().getTableView().getSelectionModel().select(dpIds.indexOf(selectedIntersection.getId())-1);
+                controller.getWindow().getTextualView().getTableView().getSelectionModel().select(dpIds.indexOf(selectedIntersection.getId()) - 1);
                 //controller.getWindow().allowNode("REMOVE_DP", true);
                 controller.getWindow().allowNode("MODIFY_ENTER_DP", false);
             } else {
@@ -183,7 +222,7 @@ public class TourModifiedState implements State {
     }
 
     @Override
-    public void mouseExitedMap(Controller controller){
+    public void mouseExitedMap(Controller controller) {
         Intersection hoveredIntersection = controller.getWindow().getGraphicalView().getHoveredIntersection();
         if (hoveredIntersection != null) {
             if (hoveredIntersection.equals(controller.getWindow().getGraphicalView().getSelectedIntersection())) {
@@ -196,13 +235,13 @@ public class TourModifiedState implements State {
     }
 
     @Override
-    public void mouseClickedOnTable(Controller controller, int indexDP){
+    public void mouseClickedOnTable(Controller controller, int indexDP) {
         Map map = controller.map;
         User user = controller.user;
         Courier courier = user.getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId());
         if (courier.getCurrentDeliveryPoints().size() > indexDP) {
             DeliveryPoint oldSelectedDP = controller.getWindow().getTextualView().getSelectedDeliveryPoint();
-            if (oldSelectedDP != null){
+            if (oldSelectedDP != null) {
                 controller.getWindow().getGraphicalView().paintIntersection(oldSelectedDP, DP);
             }
             DeliveryPoint dp = courier.getCurrentDeliveryPoints().get(indexDP);

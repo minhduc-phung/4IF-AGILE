@@ -26,7 +26,6 @@ import org.xml.sax.SAXException;
  * @author PQV
  */
 public class PlanTextWriter {
-    private Document document;
     private static PlanTextWriter instance = null;
     private PlanTextWriter(){}
     public static PlanTextWriter getInstance() {
