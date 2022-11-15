@@ -32,7 +32,7 @@ public class TestRunner extends Application {
             result.getIgnoreCount() + ". Tests run: " +
             result.getRunCount() + ". Time: " +
             result.getRunTime() + "ms.");
-    }    
+    }
 
     @Override
     public void start(Stage stage) throws Exception {

@@ -51,9 +51,10 @@ public class TourCalculatedState implements State {
     @Override
     public void modifyTour(Controller controller) {
         controller.setCurrentState(controller.tourModifiedState);
-        controller.getWindow().getInteractivePane().showButton("MODIFY_ENTER_DP");
         controller.getWindow().getInteractivePane().hideButton("MODIFY_DP");
         controller.getWindow().getInteractivePane().hideButton("REMOVE_DP");
         controller.getWindow().getInteractivePane().hideButton("VALIDATE_DP");
+        controller.getWindow().getInteractivePane().showButton("ADD_DP_TO_TOUR");
+        controller.getWindow().getInteractivePane().showButton("REMOVE_DP_FROM_TOUR");
     }
 }

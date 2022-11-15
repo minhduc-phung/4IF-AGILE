@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
+import model.DeliveryPoint;
 import org.xml.sax.SAXException;
 import xml.ExceptionXML;
 
@@ -76,15 +77,21 @@ public class ButtonListener implements EventHandler<ActionEvent> {
                     throw new RuntimeException(ex);
                 }
                 break;
-            case "MODIFY_ENTER_DP":
-                Courier courier = controller.getUser().getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId());
-                Intersection intersection = controller.getMap().getIntersection(controller.getWindow().getGraphicalView().getSelectedIntersection().getId());
+            case "ADD_DP_TO_TOUR":
+                Courier courierToAdd = controller.getUser().getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId());
+                Intersection intersectionToAdd = controller.getMap().getIntersection(controller.getWindow().getGraphicalView().getSelectedIntersection().getId());
                 try {
-                    controller.modifyTourEnterDP(courier, intersection, controller.getWindow().getInteractivePane().getSelectedTimeWindow());
+                    controller.modifyTourEnterDP(courierToAdd, intersectionToAdd, controller.getWindow().getInteractivePane().getSelectedTimeWindow());
                 } catch (ParseException ex) {
                     throw new RuntimeException(ex);
                 }
                 break;
+            case "REMOVE_DP_FROM_TOUR":
+                Courier courierToRemove = controller.getUser().getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId());
+                DeliveryPoint deliveryPointToRemove = controller.getWindow().getTextualView().getSelectedDeliveryPoint();
+                controller.modifyTourRemoveDP(courierToRemove, deliveryPointToRemove);
+                break;
+
         }
     }
 }

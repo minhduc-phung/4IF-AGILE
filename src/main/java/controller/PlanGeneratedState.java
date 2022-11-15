@@ -41,6 +41,8 @@ public class PlanGeneratedState implements State {
         window.getTextualView().updateData(controller.user, 1L);
         window.allowNode("COURIER_BOX", true);
         window.allowNode("TW_BOX", true);
+        window.getInteractivePane().hideButton("ADD_DP_TO_TOUR");
+        window.getInteractivePane().hideButton("REMOVE_DP_FROM_TOUR");
         window.resetLateDeliveryNumber();
         window.setMessage("Please choose a courier and a time-window to start adding delivery points.");
     }

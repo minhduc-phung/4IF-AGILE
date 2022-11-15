@@ -209,11 +209,11 @@ public class TourModifiedState implements State {
             if (dpIds.contains(selectedIntersection.getId())) {
                 controller.getWindow().getTextualView().setSelectedDeliveryPoint(c.getDeliveryPointById(selectedIntersection.getId()));
                 controller.getWindow().getTextualView().getTableView().getSelectionModel().select(dpIds.indexOf(selectedIntersection.getId()) - 1);
-                //controller.getWindow().allowNode("REMOVE_DP", true);
-                controller.getWindow().allowNode("MODIFY_ENTER_DP", false);
+                controller.getWindow().allowNode("REMOVE_DP_FROM_TOUR", true);
+                controller.getWindow().allowNode("ADD_DP_TO_TOUR", false);
             } else {
-                //controller.getWindow().allowNode("REMOVE_DP", false);
-                controller.getWindow().allowNode("MODIFY_ENTER_DP", true);
+                controller.getWindow().allowNode("REMOVE_DP_FROM_TOUR", false);
+                controller.getWindow().allowNode("ADD_DP_TO_TOUR", true);
             }
             controller.getWindow().getGraphicalView().setHoveredIntersection(null);
             controller.getWindow().getGraphicalView().paintIntersection(controller.getWindow().getGraphicalView().getSelectedIntersection(), SELECTED);
@@ -247,7 +247,8 @@ public class TourModifiedState implements State {
             controller.getWindow().getTextualView().setSelectedDeliveryPoint(dp);
             controller.getWindow().getGraphicalView().setSelectedIntersection(map.getIntersection(dp.getId()));
             controller.getWindow().getGraphicalView().paintIntersection(map.getIntersection(dp.getId()), SELECTED);
-            controller.getWindow().allowNode("MODIFY_ENTER_DP", true);
+            controller.getWindow().allowNode("REMOVE_DP_FROM_TOUR", true);
+            controller.getWindow().allowNode("ADD_DP_TO_TOUR", false);
         }
     }
 }
