@@ -5,20 +5,12 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
 
-/**
- * this class handle the events relative to the combobox
- */
 public class BoxListener implements EventHandler<ActionEvent> {
     private Controller controller;
     public BoxListener(Controller controller){
         this.controller = controller;
     }
 
-    /**
-     * this method handles the action to do after the incoming Event.
-     *
-     * @param e represents the incoming event after clicking on a combobox
-     */
     @Override
     public void handle(ActionEvent e) {
         switch (((ComboBox<?>) e.getSource()).getId()){
