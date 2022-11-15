@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.xml.parsers.ParserConfigurationException;
 
+import javafx.scene.control.ComboBox;
 import javafx.scene.paint.Color;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -73,8 +74,12 @@ public class CourierChosenState implements State {
         controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
         controller.getWindow().getTextualView().updateData(controller.getUser(), idCourier);
         controller.getWindow().getTextualView().clearSelection();
-        controller.getWindow().setMessage("Courier " + controller.user.getCourierById(idCourier).getName() + " selected.");
+        controller.getWindow().getGraphicalView().clearSelection();
         controller.getWindow().getGraphicalView().updateMap(controller.getMap(), controller.user.getCourierById(idCourier));
+        controller.getWindow().setMessage("Courier " + controller.user.getCourierById(idCourier).getName() + " selected.");
+        controller.getWindow().allowNode("VALIDATE_DP", false);
+        controller.getWindow().allowNode("REMOVE_DP", false);
+        controller.getWindow().resetLateDeliveryNumber();
     }
     
     @Override
@@ -90,6 +95,7 @@ public class CourierChosenState implements State {
         window.getTextualView().updateData(controller.user, 1L);
         window.allowNode("COURIER_BOX", true);
         window.allowNode("TW_BOX", true);
+        window.resetLateDeliveryNumber();
         window.setMessage("Please choose a courier and a time-window to start adding delivery points.");
     }
     
@@ -134,6 +140,7 @@ public class CourierChosenState implements State {
         controller.setCurrentState(controller.dpRestoredState);
         controller.getWindow().allowNode("SAVE_DP", true);
         controller.getWindow().allowNode("CALCULATE_TOUR", true);
+        ((ComboBox<String>) controller.getWindow().lookup("#COURIER_BOX")).setValue(controller.getUser().getListCourierName()[0]);
     }
 
     @Override

@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
+
+import javafx.scene.control.ComboBox;
 import model.Courier;
 import model.DeliveryPoint;
 import model.Intersection;
@@ -39,6 +41,7 @@ public class PlanGeneratedState implements State {
         window.getTextualView().updateData(controller.user, 1L);
         window.allowNode("COURIER_BOX", true);
         window.allowNode("TW_BOX", true);
+        window.resetLateDeliveryNumber();
         window.setMessage("Please choose a courier and a time-window to start adding delivery points.");
     }
     
@@ -73,13 +76,18 @@ public class PlanGeneratedState implements State {
         controller.setCurrentState(controller.dpRestoredState);
         controller.getWindow().allowNode("SAVE_DP", true);
         controller.getWindow().allowNode("CALCULATE_TOUR", true);
+        ((ComboBox<String>) controller.getWindow().lookup("#COURIER_BOX")).setValue(controller.getUser().getListCourierName()[0]);
     }
     
     @Override
     public void selectCourier(Controller controller, Long idCourier) {
         controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
         controller.getWindow().getTextualView().updateData(controller.getUser(), idCourier);
+        controller.getWindow().getGraphicalView().clearSelection();
         controller.getWindow().setMessage("Courier " + controller.user.getCourierById(idCourier).getName() + " selected.");
         controller.getWindow().getGraphicalView().updateMap(controller.getMap(), controller.user.getCourierById(idCourier));
+        controller.getWindow().allowNode("VALIDATE_DP", false);
+        controller.getWindow().allowNode("REMOVE_DP", false);
+        controller.getWindow().resetLateDeliveryNumber();
     }
 }

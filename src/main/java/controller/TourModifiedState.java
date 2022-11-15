@@ -40,7 +40,7 @@ public class TourModifiedState implements State {
 
     @Override
     public void modifyTourEnterDP(Controller controller, Courier c, Intersection intersection,
-            Integer timeWindow, ListOfCommands loc) throws ParseException {
+                                  Integer timeWindow, ListOfCommands loc) throws ParseException {
         loc.add(new EnterCommand(controller, controller.map, c, intersection, timeWindow));
         List<DeliveryPoint> listDPcopy = c.getCurrentDeliveryPoints();
         Collections.sort(listDPcopy, (DeliveryPoint d1, DeliveryPoint d2) -> {
@@ -86,7 +86,6 @@ public class TourModifiedState implements State {
             }
             writer.close();
         } catch (IOException ex) {
-
         }*/
         // set estimatedDeliveryTime
         DeliveryPoint aDP = dp;
@@ -132,7 +131,7 @@ public class TourModifiedState implements State {
     public void undo(ListOfCommands loc) {
         loc.undo();
     }
-    
+
     @Override
     public void redo(ListOfCommands loc) {
         loc.redo();
@@ -140,7 +139,7 @@ public class TourModifiedState implements State {
 
     @Override
     public void generateDeliveryPlanForCourier(Controller controller, Courier c) throws ParserConfigurationException, SAXException, ExceptionXML,
-                                                                                                IOException, TransformerException{
+            IOException, TransformerException{
         Map map = controller.map;
         PlanTextWriter.getInstance().save(map, c);
         controller.getWindow().setMessage("Delivery plans saved.");

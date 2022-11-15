@@ -149,9 +149,8 @@ public class Controller {
     public void undo() {
         currentState.undo(listOfCommands);
     }
-    
+
     public void redo() {
         currentState.redo(listOfCommands);
     }
-    
 }

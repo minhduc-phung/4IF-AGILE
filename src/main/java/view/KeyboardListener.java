@@ -6,17 +6,10 @@
 package view;
 
 import controller.Controller;
-import java.text.ParseException;
 import javafx.event.EventHandler;
-import javafx.scene.control.ComboBox;
-import static javafx.scene.input.KeyCode.CONTROL;
 import static javafx.scene.input.KeyCode.Y;
 import static javafx.scene.input.KeyCode.Z;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
-import static javafx.scene.input.KeyEvent.KEY_PRESSED;
-import model.Courier;
 
 /**
  *
@@ -35,7 +28,7 @@ public class KeyboardListener implements EventHandler<KeyEvent> {
     public void handle(KeyEvent e) {
         if (e.isControlDown() && e.getCode() == Z) {
             controller.undo();
-        } else if (e.isControlDown() && e.getCode() == Y) {
+        } else if (e.isControlDown() && e.getCode() == Y){
             controller.redo();
         }
     }

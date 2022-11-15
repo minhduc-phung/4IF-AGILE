@@ -35,23 +35,19 @@ public class ButtonListener implements EventHandler<ActionEvent> {
                 }
                 break;
             case "VALIDATE_DP":
-                controller.enterDeliveryPoint(controller.getMap(), controller.getWindow().getGraphicalView().getSelectedIntersection().getId(),
+                    controller.enterDeliveryPoint(controller.getMap(), controller.getWindow().getGraphicalView().getSelectedIntersection().getId(),
                             controller.getWindow().getInteractivePane().getSelectedCourierId(), controller.getWindow().getInteractivePane().getSelectedTimeWindow());
-                
                 break;
             case "REMOVE_DP":
                 controller.removeDeliveryPoint(controller.getMap(), controller.getWindow().getTextualView().getSelectedDeliveryPoint(), controller.getWindow().getInteractivePane().getSelectedCourierId());
                 break;
             case "RESTORE_DP":
-                // For ergonomy
-
                 try {
                     controller.restoreDeliveryPointFromXML();
                 } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException
                     | ExceptionXML ex) {
                     throw new RuntimeException(ex);
                 }
-                ((ComboBox<String>) controller.getWindow().lookup("#COURIER_BOX")).setValue(controller.getUser().getListCourierName()[0]);
                 break;
             case "SAVE_DP":
                 try {
@@ -81,16 +77,12 @@ public class ButtonListener implements EventHandler<ActionEvent> {
                 }
                 break;
             case "MODIFY_ENTER_DP":
-                if (controller.getWindow().getTextualView().getSelectedDeliveryPoint() == null) {
-                    Courier cou = controller.getUser().getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId());
-                    Intersection intersection = controller.getMap().getIntersection(controller.getWindow().getGraphicalView().getSelectedIntersection().getId());
-                    try {
-                        controller.modifyTourEnterDP(cou, intersection, controller.getWindow().getInteractivePane().getSelectedTimeWindow());
-                    } catch (ParseException ex) {
-                        
-                    }
-
-                    
+                Courier courier = controller.getUser().getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId());
+                Intersection intersection = controller.getMap().getIntersection(controller.getWindow().getGraphicalView().getSelectedIntersection().getId());
+                try {
+                    controller.modifyTourEnterDP(courier, intersection, controller.getWindow().getInteractivePane().getSelectedTimeWindow());
+                } catch (ParseException ex) {
+                    throw new RuntimeException(ex);
                 }
                 break;
         }

@@ -63,8 +63,8 @@ public interface State {
     public default void mouseClickedOnTable(Controller controller, int indexDP) { };
     
     public default void undo(ListOfCommands loc) { };
-    
-    public default void redo(ListOfCommands loc) { };
+
+    public default void redo(ListOfCommands loc){};
     
     public default void modifyTour(Controller controller) {};
     

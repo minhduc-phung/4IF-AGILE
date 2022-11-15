@@ -30,6 +30,8 @@ public class InteractiveView extends Pane {
     // Combo box IDs
     protected static final String COURIER_BOX_ID = "COURIER_BOX";
     protected static final String TW_BOX_ID = "TW_BOX";
+    protected static final String ADD_DP_TO_TOUR_ID = "ADD_DP_TO_TOUR";
+    protected static final String REMOVE_DP_FROM_TOUR_ID = "REMOVE_DP_FROM_TOUR";
 
     // Not to be confused with "model.Map"
     private Map<String, Button> buttons = new HashMap<String, Button>();
@@ -187,6 +189,24 @@ public class InteractiveView extends Pane {
         loadMapButton.setDisable(false);
         buttons.put(LOAD_MAP_ID, loadMapButton);
 
+        Button addDeliveryPointToTourButton = new Button("Add");
+        addDeliveryPointToTourButton.setId(ADD_DP_TO_TOUR_ID);
+        addDeliveryPointToTourButton.setOnAction(buttonListener);
+        addDeliveryPointToTourButton.setPrefWidth(100);
+        addDeliveryPointToTourButton.setLayoutX(this.getPrefWidth() - addDeliveryPointToTourButton.getPrefWidth() - 25);
+        addDeliveryPointToTourButton.setLayoutY(700);
+        addDeliveryPointToTourButton.setStyle("-fx-background-color: #b5ead7; ");
+        addDeliveryPointToTourButton.setVisible(false);
+
+        Button removeDeliveryPointFromTourButton = new Button("Remove");
+        removeDeliveryPointFromTourButton.setId(REMOVE_DP_FROM_TOUR_ID);
+        removeDeliveryPointFromTourButton.setOnAction(buttonListener);
+        removeDeliveryPointFromTourButton.setPrefWidth(100);
+        removeDeliveryPointFromTourButton.setLayoutX(25);
+        removeDeliveryPointFromTourButton.setLayoutY(700);
+        removeDeliveryPointFromTourButton.setStyle("-fx-background-color: #ff9aa2; ");
+        removeDeliveryPointFromTourButton.setVisible(false);
+
         this.getChildren().add(label);
         this.getChildren().add(courierLabel);
         this.getChildren().add(timeWindowLabel);
@@ -240,6 +260,20 @@ public class InteractiveView extends Pane {
     public void hideButton(String nodeId){
         this.buttons.get(nodeId).setVisible(false);
         this.buttons.get(nodeId).setDisable(true);
-    }    
-    
+    }
+
+    public void updateOnCalculateTour(boolean allDeliveriesOnTime) {
+        if (allDeliveriesOnTime){
+            buttons.get(GENERATE_ID).setStyle("-fx-background-color: #b5ead7; ");
+            buttons.get(GENERATE_ID).setText("Generate delivery plan");
+        } else {
+            buttons.get(GENERATE_ID).setStyle("-fx-background-color: #ff9aa2; ");
+            buttons.get(GENERATE_ID).setText("Generate plan anyway");
+        }
+    }
+
+    public void resetGenerateButton() {
+        buttons.get(GENERATE_ID).setStyle("-fx-background-color: #c7ceea; ");
+        buttons.get(GENERATE_ID).setText("Generate delivery plan");
+    }
 }

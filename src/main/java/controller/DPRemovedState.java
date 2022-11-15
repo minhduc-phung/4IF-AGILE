@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.xml.parsers.ParserConfigurationException;
 
+import javafx.scene.control.ComboBox;
 import javafx.scene.paint.Color;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -52,6 +53,7 @@ public class DPRemovedState implements State {
         window.getTextualView().updateData(controller.user, 1L);
         window.allowNode("COURIER_BOX", true);
         window.allowNode("TW_BOX", true);
+        window.resetLateDeliveryNumber();
         window.setMessage("Please choose a courier and a time-window to start adding delivery points.");
     }
     
@@ -131,7 +133,7 @@ public class DPRemovedState implements State {
             Long idNextInter = c.getCurrentDeliveryPoints().get(tspSolutions.get(i + 1)).getId();
             List<Segment> listSeg = c.getListSegmentBetweenInters(idCurrentInter, idNextInter);
             for (Segment seg : listSeg) {
-                controller.getWindow().getGraphicalView().paintSegment(seg, Color.web("0x00B0FF"), controller.map);
+                controller.getWindow().getGraphicalView().paintArrow(seg, Color.web("0x00B0FF"));
             }
             c.addCurrentTour(idCurrentInter, listSeg);
         }
@@ -141,12 +143,17 @@ public class DPRemovedState implements State {
         c.addCurrentTour(idCurrentInter, listSeg);
 
         for (Segment seg : listSeg) {
-            controller.getWindow().getGraphicalView().paintSegment(seg, Color.web("0x00B0FF"), controller.map);
+            controller.getWindow().getGraphicalView().paintArrow(seg, Color.web("0x00B0FF"));
         }
 
+        int lateDeliveryCount = 0;
         for (DeliveryPoint d : c.getCurrentDeliveryPoints()) {
+            if (Objects.equals(d.getId(), idWarehouse)) {
+                continue;
+            }
             if (d.getEstimatedDeliveryTime().getHours() > d.getTimeWindow()) {
                 controller.getWindow().getGraphicalView().paintIntersection(d, LATE);
+                lateDeliveryCount++;
             } else {
                 controller.getWindow().getGraphicalView().paintIntersection(d, ON_TIME);
             }
@@ -157,6 +164,11 @@ public class DPRemovedState implements State {
         controller.getWindow().setMessage("The tour has been calculated.");
         controller.getWindow().allowNode("MODIFY_DP", true);
         controller.getWindow().allowNode("GENERATE_PLAN", true);
+        controller.getWindow().allowNode("LOAD_MAP", false);
+        controller.getWindow().allowNode("CALCULATE_TOUR", false);
+        controller.getWindow().allowNode("RESTORE_DP", false);
+        controller.getWindow().allowNode("SAVE_DP", false);
+        controller.getWindow().updateOnCalculateTour(lateDeliveryCount);
         controller.setCurrentState(controller.tourCalculatedState);
     }
     
@@ -226,8 +238,12 @@ public class DPRemovedState implements State {
     public void selectCourier(Controller controller, Long idCourier) {
         controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
         controller.getWindow().getTextualView().updateData(controller.getUser(), idCourier);
-        controller.getWindow().setMessage("Courier selected.");
+        controller.getWindow().getGraphicalView().clearSelection();
+        controller.getWindow().setMessage("Courier " + controller.user.getCourierById(idCourier).getName() + " selected.");
         controller.getWindow().getGraphicalView().updateMap(controller.getMap(), controller.user.getCourierById(idCourier));
+        controller.getWindow().allowNode("VALIDATE_DP", false);
+        controller.getWindow().allowNode("REMOVE_DP", false);
+        controller.getWindow().resetLateDeliveryNumber();
     }
     
     @Override
@@ -241,6 +257,7 @@ public class DPRemovedState implements State {
         controller.setCurrentState(controller.dpRestoredState);
         controller.getWindow().allowNode("SAVE_DP", true);
         controller.getWindow().allowNode("CALCULATE_TOUR", true);
+        ((ComboBox<String>) controller.getWindow().lookup("#COURIER_BOX")).setValue(controller.getUser().getListCourierName()[0]);
     }
 
     @Override

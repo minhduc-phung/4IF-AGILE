@@ -52,6 +52,7 @@ public class GraphicalView extends Pane implements Observer {
 
     public void drawMap(Map map){
         this.getChildren().clear();
+        circles.clear();
         minLatitude = map.getMinLatitude();
         minLongitude = map.getMinLongitude();
         maxLatitude = map.getMaxLatitude();
@@ -87,7 +88,7 @@ public class GraphicalView extends Pane implements Observer {
         Intersection warehouse = map.getWarehouse();
         Double posX = (warehouse.getLongitude() - minLongitude) * scale;
         Double posY = viewHeight - (warehouse.getLatitude() - minLatitude) * scale;
-        this.getChildren().add(new Circle(posX, posY, 6, Color.PURPLE));
+        this.getChildren().add(new Circle(posX, posY, 8, Color.PURPLE));
     }
 
     public void clearSelection(){
@@ -106,7 +107,7 @@ public class GraphicalView extends Pane implements Observer {
                         break;
                     case SELECTED:
                         circle.setFill(Color.BROWN);
-                        circle.setRadius(5);
+                        circle.setRadius(6);
                         break;
                     case LATE:
                         circle.setFill(Color.RED);
@@ -131,13 +132,12 @@ public class GraphicalView extends Pane implements Observer {
         }
     }
 
-    public void paintSegment(Segment segment, Color color, Map map) {
-        Double[] coords = map.getMinMaxCoordinates();
-        Double startX = (segment.getOrigin().getLongitude() - coords[1]) * scale;
-        Double startY = viewHeight - (segment.getOrigin().getLatitude() - coords[0]) * scale;
-        Double endX = (segment.getDestination().getLongitude() - coords[1]) * scale;
-        Double endY = viewHeight - (segment.getDestination().getLatitude() - coords[0]) * scale;
-        Integer arrowLength = 8;
+    public void paintArrow(Segment segment, Color color) {
+        Double startX = (segment.getOrigin().getLongitude() - minLongitude) * scale;
+        Double startY = viewHeight - (segment.getOrigin().getLatitude() - minLatitude) * scale;
+        Double endX = (segment.getDestination().getLongitude() - minLongitude) * scale;
+        Double endY = viewHeight - (segment.getDestination().getLatitude() - minLatitude) * scale;
+        Integer arrowLength = 7;
         double slope = (startY - endY) / (startX - endX);
         double lineAngle = Math.atan(slope);
         double arrowAngle = startX > endX ? Math.toRadians(45) : -Math.toRadians(225);

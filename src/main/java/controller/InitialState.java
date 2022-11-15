@@ -48,6 +48,7 @@ public class InitialState implements State {
         window.allowNode("COURIER_BOX", true);
         window.allowNode("TW_BOX", true);
         window.allowNode("RESTORE_DP", true);
+        window.resetLateDeliveryNumber();
         window.setMessage("Please choose a courier and a time-window to start adding delivery points, or restore them from a file.");
     }
     
