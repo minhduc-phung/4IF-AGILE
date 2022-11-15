@@ -5,6 +5,7 @@
  */
 package controller;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
@@ -13,7 +14,7 @@ import model.Courier;
 import model.Map;
 import org.xml.sax.SAXException;
 import xml.ExceptionXML;
-import xml.XMLPlanSerializer;
+import xml.PlanTextWriter;
 import model.DeliveryPoint;
 import model.User;
 
@@ -29,9 +30,10 @@ public class TourCalculatedState implements State {
     public void generateDeliveryPlanForCourier(Controller controller, Courier c) throws ParserConfigurationException, SAXException, ExceptionXML,
                                                                                                 IOException, TransformerException{
         Map map = controller.map;
-        XMLPlanSerializer.getInstance().save(map, c);
+        PlanTextWriter.getInstance().save(map, c);
         controller.getWindow().setMessage("Delivery plans saved.");
         controller.setCurrentState(controller.planGeneratedState);
+        
     }
     
     @Override
