@@ -20,14 +20,42 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 
 // We have no intentions to do scaling like PlaCo example.
+/**
+ * this class define the size, the layout, the text and the font of all window components
+ */
 public class Window extends Group {
+    /**
+     * this attribute represents the label that shows informative messages to the user (example: <b>welcome load a map to begin....<b/>)
+     */
     private Label messageFrame;
+
+    /**
+     * this attribute represents the label that shows user if a delivery point is late or not
+     */
     private Label lateDeliveriesNumber;
+    /**
+     * this attribute represents the label for general information about the application
+     */
     private Label aboutFrame;
+    /**
+     * this attribute represents the graphical view (map, intersections, segment) that will be shown in the window
+     */
     private GraphicalView graphicalView;
+    /**
+     * this attribute represents all the text that will be shown in the window
+     */
     private TextualView textualView;
+    /**
+     * this attribute represents all components (buttons, label...) and all events (buttonListener, BoxListener, and mouse listener) relative to a specific view
+     */
     private InteractiveView interactiveView;
+    /**
+     * this attribute represents the width of the window
+     */
     private final int WINDOW_WIDTH = 1500;
+    /**
+     * this attribute represents the height of the window
+     */
     private final int WINDOW_HEIGHT = 900;
 
 
@@ -130,6 +158,11 @@ public class Window extends Group {
         this.setOnKeyPressed(keyboardListener);
     }
 
+    /**
+     * this method is the setter for lateDeliveriesNumber attribute it show us if there is late in deliveries or not
+     *@param number represents the new value of the lateDeliveriesNumber (it's equal to 0 if there is no late)
+     * @see view.Window#lateDeliveriesNumber
+     */
     public void setLateDeliveriesNumber(int number) {
         if (number == 0) {
             lateDeliveriesNumber.setText("No late deliveries. Great!");
@@ -138,23 +171,49 @@ public class Window extends Group {
         }
     }
 
+    /**
+     * this method is for the message that will be shown to the user in the messageFrame label
+     *@param message the message that will be shown to the user
+     * @see view.Window#messageFrame
+     */
     public void setMessage(String message) {
         messageFrame.setText(message);
     }
 
+    /**
+     * this method is the getter method for the graphicalview view attribute (map, intersections, segment that will be shown in a specific view)
+     *@return the graphic that will be shown
+     * @see view.Window#graphicalView
+     */
     public GraphicalView getGraphicalView() {
         return graphicalView;
     }
 
+    /**
+     * this method is the getter method for the interactiveView attribute (it gets all the components (button, boxes, labels) and events relative to a specific view).
+     * @return components and events to handle in the view
+     * @see view.Window#interactiveView
+     */
     public InteractiveView getInteractivePane() {
         return interactiveView;
     }
 
+    /**
+     * this method is the getter method for the textualView attribute (it gets all the text that will be shown in a specific view).
+     * @return textualView all the text to show
+     * @see view.Window#textualView
+     */
     public TextualView getTextualView() {
         return textualView;
     }
 
+    /**
+     *this method allows to show or disable a component(button, combo-box) in a specific view.
+     *@param nodeId the id of the component.
+     *@param allow true if the node will be shown, false if not.
+     */
     public void allowNode (String nodeId, boolean allow) {
         interactiveView.allowNode(nodeId, allow);
+
     }
 }

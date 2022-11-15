@@ -5,32 +5,34 @@
  */
 package model;
 
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 /**
- *
- * @author bbbbb
+ * this method defines the user of this application (the one who assigns a delivery point to a courier, and prepare the delivery plan associated with each courier).
  */
 public class User {
 
+    /**
+     * this attribute represents the list of courier this user has access to
+     */
     private HashMap<Long, Courier> listCourier = new HashMap<>();
-    // Usage of LinkedHashMap to keep the order of insertion
-    private final LinkedHashMap<String, Integer> timeWindows = new LinkedHashMap<String, Integer>() {
-        {
-            put("08:00 - 09:00", 8);
-            put("09:00 - 10:00", 9);
-            put("10:00 - 11:00", 10);
-            put("11:00 - 12:00", 11);
-            put("12:00 - 13:00", 12);
-            put("13:00 - 14:00", 13);
-            put("14:00 - 15:00", 14);
-            put("15:00 - 16:00", 15);
-            put("16:00 - 17:00", 16);
-            put("17:00 - 18:00", 17);
-        }
-    };
+    /**This attribute represents the list of time windows this user has access to.
+     * The LinkedHashMap is used to keep the order of insertion
+     */
+    private final LinkedHashMap<String, Integer> timeWindows = new LinkedHashMap<String, Integer>() {{
+        put("08:00 - 09:00", 8);
+        put("09:00 - 10:00", 9);
+        put("10:00 - 11:00", 10);
+        put("11:00 - 12:00", 11);
+        put("12:00 - 13:00", 12);
+        put("13:00 - 14:00", 13);
+        put("14:00 - 15:00", 14);
+        put("15:00 - 16:00", 15);
+        put("16:00 - 17:00", 16);
+        put("17:00 - 18:00", 17);
+    }};
 
     public User() {
         Courier c1 = new Courier(Long.parseLong("1"), "GIYRAUD Vincent");
@@ -44,7 +46,7 @@ public class User {
         this.listCourier.put(c4.getId(), c4);
         this.listCourier.put(c5.getId(), c5);
     }
-
+    
     public HashMap<Long, Courier> getListCourier() {
         return this.listCourier;
     }
@@ -58,36 +60,20 @@ public class User {
         }
         return listCourierName;
     }
-
-    public Courier getCourierById(Long idCourier) {
+    public Courier getCourierById(Long idCourier){
         return listCourier.get(idCourier);
     }
 
-    public Courier getCourierByName(String nameCourier) {
+    public Courier getCourierByName(String nameCourier){
         Courier chosenCourier = null;
         for (Courier c : this.listCourier.values()) {
-            if (c.getName().equals(nameCourier)) {
+            if(c.getName().equals(nameCourier)){
                 chosenCourier = c;
             }
         }
         return chosenCourier;
     }
-
     public LinkedHashMap<String, Integer> getTimeWindows() {
         return timeWindows;
-    }
-
-    public void addWarehouse(Map map, Long idCourier) {
-        DeliveryPoint dpWarehouse = new DeliveryPoint(map.getWarehouse().getId(), map.getWarehouse().getLatitude(), map.getWarehouse().getLongitude());
-        Courier courier = this.listCourier.get(idCourier);
-        dpWarehouse.chooseCourier(courier);
-        courier.addDeliveryPoint(dpWarehouse);
-        courier.addPositionIntersection(dpWarehouse.getId());
-        HashMap<Long, Double> nestedMap = new HashMap<>();
-        nestedMap.put(dpWarehouse.getId(), 0.0);
-        courier.getShortestPathBetweenDPs().put(dpWarehouse.getId(), nestedMap);
-        Tour tour = new Tour();
-        tour.addTourRoute(dpWarehouse.getId(), new ArrayList<>());
-        courier.getListSegmentBetweenDPs().put(dpWarehouse.getId(), tour);
     }
 }

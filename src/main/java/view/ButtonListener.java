@@ -16,6 +16,11 @@ import java.text.ParseException;
 import model.Courier;
 import model.Intersection;
 
+
+/**
+ * this class handles the events happening after clicking on any button
+ *
+ */
 public class ButtonListener implements EventHandler<ActionEvent> {
 
     private Controller controller;
@@ -24,6 +29,11 @@ public class ButtonListener implements EventHandler<ActionEvent> {
         this.controller = controller;
     }
 
+    /**
+     * this method handles the action to do after the incoming Event.
+     *
+     * @param e represents the incoming event after clicking on a button
+     */
     @Override
     public void handle(ActionEvent e) {
         switch (((Node) e.getSource()).getId()) {

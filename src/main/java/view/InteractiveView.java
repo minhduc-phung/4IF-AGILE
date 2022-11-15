@@ -15,30 +15,87 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * this class define all the components (buttons, Combo-boxes, labels) and all the events (button Listeners, Box Listeners, and mouse listeners) relative to a specific view
+ */
 public class InteractiveView extends Pane {
     // IDs of the window buttons
+    /**
+     *the text in the remove delivery point button
+     */
     protected static final String REMOVE_DP_ID = "REMOVE_DP";
+    /**
+     *the text in the validate delivery point button
+     */
     protected static final String VALIDATE_DP_ID = "VALIDATE_DP";
+    /**
+     *the text in the save delivery point button
+     */
     protected static final String SAVE_DP_ID = "SAVE_DP";
+    /**
+     *the text in the restore delivery point button
+     */
     protected static final String RESTORE_DP_ID = "RESTORE_DP";
+    /**
+     * the text in the modify delivery point button
+     */
     protected static final String MODIFY_DP_ID = "MODIFY_DP";
+    /**
+     * the text in the generate delivery plan button
+     */
     protected static final String GENERATE_ID = "GENERATE_PLAN";
+    /**
+     * the text in the calculate tour button
+     */
     protected static final String CALCULATE_ID = "CALCULATE_TOUR";
+    /**
+     * the text in the load map button
+     */
     protected static final String LOAD_MAP_ID = "LOAD_MAP";
     protected static final String MODIFY_ENTER_DP_ID = "MODIFY_ENTER_DP";
 
     // Combo box IDs
+    /**
+     * the text in the courier combo-box
+     */
     protected static final String COURIER_BOX_ID = "COURIER_BOX";
+    /**
+     * the text in the time window combo-box
+     */
     protected static final String TW_BOX_ID = "TW_BOX";
 
     // Not to be confused with "model.Map"
+    /**
+     * this attribute represents the buttons and their texts
+     */
     private Map<String, Button> buttons = new HashMap<String, Button>();
+    /**
+     * this attribute represents the courier combo-box
+     */
     private ComboBox<String> courierBox;
+    /**
+     * this attribute represents the time window combo-box
+     */
     private ComboBox<String> twBox;
+    /**
+     * this attribute represents action listeners for the button events
+     */
     private ButtonListener buttonListener;
+    /**
+     * this attribute represents action listeners for the mouse events
+     */
     private MouseListener mouseListener;
+    /**
+     * this attribute represents action listeners for the combo-box events
+     */
     private BoxListener boxListener;
+    /**
+     * this attribute represents the value of a selected time window
+     */
     private Integer selectedTimeWindow;
+    /**
+     * this attribute represents the id of a selected courier
+     */
     private Long selectedCourierId;
 
     public InteractiveView(User user, Window window, Controller controller) {
@@ -200,28 +257,49 @@ public class InteractiveView extends Pane {
 
         window.getChildren().add(this);
     }
-
+    /**
+     * this method is the setter for the selectedCourier attribute
+     * @param selectedCourierId the id of the new courier to select
+     * @see view.InteractiveView#selectedCourierId
+     */
     public void setSelectedCourierId(Long selectedCourierId) {
         this.selectedCourierId = selectedCourierId;
     }
-
+    /**
+     *this method is the getter of the selectedCourierId attribute
+     *@return the id of the selected courier
+     * @see view.InteractiveView#selectedCourierId
+     */
     public Long getSelectedCourierId() {
         return selectedCourierId;
     }
-
+    /**
+     * this method is the getter of the selectedTimeWindow attribute
+     * @return the value of the selected time window
+     * @see view.InteractiveView#selectedTimeWindow
+     */
     public Integer getSelectedTimeWindow() {
         return selectedTimeWindow;
     }
-
+    /**
+     * this method is the setter of the selectedTimeWindow attribute
+     *@param selectedTimeWindow the new time window to select
+     */
     public void setSelectedTimeWindow(Integer selectedTimeWindow) {
         this.selectedTimeWindow = selectedTimeWindow;
     }
-
+    /**
+     * this method reset all combo-boxes
+     */
     public void resetComboBoxes() {
         courierBox.getSelectionModel().clearSelection();
         twBox.getSelectionModel().clearSelection();
     }
-
+    /**
+     *this method allows to show or disable a component(button, combo-box) in a specific view
+     *@param nodeId the id of the component
+     *@param allow true if the node will be shown, false if not
+     */
     public void allowNode(String nodeId, boolean allow){
         if (Objects.equals(nodeId, COURIER_BOX_ID)){
             courierBox.setDisable(!allow);

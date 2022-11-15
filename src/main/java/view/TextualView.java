@@ -20,14 +20,42 @@ import model.User;
 import observer.Observer;
 import observer.Observable;
 
+/**
+ *this class define the table view, update and delete the table view data and define the layout of the window.
+ */
 public class TextualView extends Pane implements Observer {
+
+    /**
+     * this attribute is defined to handle Mouse events
+     */
     private MouseListener mouseListener;
+    /**
+     * This attribute represents the table view
+     */
     private TableView<Map> tableView;
+    /**
+     * This attribute represents the text in the index column of the table view
+     */
     public static final String IndexMapKey = "Index";
+    /**
+     * This attribute represents the text in the TimeWindow column of the table view
+     */
     public static final String TimeWindowMapKey = "TimeWindow";
+    /**
+     * this attribute represents the text in Estimatedarrival column of the table view
+     */
     public static final String EstArrivalMapKey = "EstArrival";
+    /**
+     * This attribute represents the delivery point that will be selected in the table view
+     */
     private DeliveryPoint selectedDeliveryPoint;
+    /**
+     * This attribute represents the width of the table view
+     */
     private int width = 350;
+    /**
+     * This attribute represents the height of the table view
+     */
     private int height = 250;
 
     public TextualView (Window window, Controller controller){
@@ -64,6 +92,12 @@ public class TextualView extends Pane implements Observer {
         window.getChildren().add(this);
     }
 
+    /**
+     * this method put data into the table view
+     *@param user is the one who use this application
+     *@param idCourier id of a courier for a specific user
+     *@return all the data that should be put in the table view
+     */
     private ObservableList<Map> generateData(User user, Long idCourier) {
         ObservableList<Map> data = FXCollections.observableArrayList();
         Courier c = user.getCourierById(idCourier);
@@ -85,18 +119,36 @@ public class TextualView extends Pane implements Observer {
         return data;
     }
 
+    /**
+     *this method update the data of a selected item in the table view
+     *@param user is the one who use this application
+     *@param idCourier id of a courier for a specific user
+     */
     public void updateData(User user, Long idCourier) {
         tableView.setItems(generateData(user, idCourier));
     }
 
+    /**
+     * this method is the getter for the selectedDeliveryPoint attribute
+     * @return the delivery point selected by the user
+     * @see view.TextualView#selectedDeliveryPoint
+     */
     public DeliveryPoint getSelectedDeliveryPoint() {
         return selectedDeliveryPoint;
     }
 
+    /**
+     * this method is the setter for the selectedDeliveryPoint attribute, it updates the selected Delivery point.
+     * @param dp the new value of the selected delivery point
+     * @see view.TextualView#selectedDeliveryPoint
+     */
     public void setSelectedDeliveryPoint(DeliveryPoint dp) {
         this.selectedDeliveryPoint = dp;
     }
 
+    /**
+     * this method cancel the selection of a delivery point
+     */
     public void clearSelection() {
         tableView.getSelectionModel().clearSelection();
         selectedDeliveryPoint = null;
