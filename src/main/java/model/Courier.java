@@ -7,8 +7,10 @@ package model;
 
 
 import dijkstra.Dijkstra;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import observer.Observable;
@@ -21,6 +23,7 @@ public class Courier extends Observable {
     private Long id;
     private String name;
     private List<DeliveryPoint> currentDeliveryPoints = new ArrayList<>();
+    private HashMap <Long, Date> timeStampOfEachDP = new HashMap<>();
     private Tour currentTour = new Tour();
 
     private ArrayList<Long> positionIntersection = new ArrayList<>();
@@ -210,5 +213,13 @@ public class Courier extends Observable {
             }
         }
         return null;
+    }
+    
+    public void addTimeStampForDP (Long idDP, Date date) {
+        this.timeStampOfEachDP.put(idDP, date);
+    }
+    
+    public String getTimeStampForDP (Long idDP) {
+        return new SimpleDateFormat("HH:mm:ss").format(this.timeStampOfEachDP.get(idDP));
     }
 }
