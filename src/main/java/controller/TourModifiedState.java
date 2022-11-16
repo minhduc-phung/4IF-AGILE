@@ -118,6 +118,12 @@ public class TourModifiedState implements State {
             }
             aDP = listDPcopy.get(listDPcopy.indexOf(aDP)+1);
         }
+        
+        controller.getWindow().getGraphicalView().clearSelection();
+        controller.getWindow().getGraphicalView().paintIntersection(dp, DP);
+        controller.getWindow().getTextualView().updateData(controller.user, c.getId());
+        controller.getWindow().setMessage("Delivery point added.");
+        controller.getWindow().allowNode("CALCULATE_TOUR", false);
     }
     
     @Override
