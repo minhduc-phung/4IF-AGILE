@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
 import xml.ExceptionXML;
 /**
- * this is the class that test the calculateTour methods by going from the first state to the last
+ * This is the class that test the calculateTour methods by going from the first state to the last
  * @see controller.Controller#calculateTour(Courier, Long)
  */
 public class CalculateTourTest {
@@ -40,14 +40,7 @@ public class CalculateTourTest {
     public CalculateTourTest() {
     }
 
-    /**
-     * this method is preparing for the tests (by loading the map,...)
-     * @throws ParserConfigurationException
-     * @throws IOException
-     * @throws SAXException
-     * @throws ExceptionXML
-     * @throws ParseException
-     */
+
     @Before
     public void setUp() throws ParserConfigurationException, IOException, SAXException, ExceptionXML, ParseException {
         updateCalled = false;

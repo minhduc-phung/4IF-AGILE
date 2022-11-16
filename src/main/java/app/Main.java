@@ -21,8 +21,8 @@ public class Main extends Application {
     }
 
     /**
-     * This method is that displays everything inside the primary window of our JavaFX application, and show it to the user.
-     * @param stage the primary window of our JavaFX application
+     * Displays everything inside the primary window of our JavaFX application, and shows it to the user.
+     * @param stage
      * @throws Exception
      */
     @Override

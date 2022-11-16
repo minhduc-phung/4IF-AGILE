@@ -10,7 +10,7 @@ import java.util.List;
 import observer.Observable;
 
 /**
- *this class defines the map (graph loaded from an XML file containing a list of intersections and road segments)
+ *This class defines the map (graph loaded from an XML file containing a list of intersections and road segments)
  */
 public class Map extends Observable {
     /**
@@ -23,9 +23,7 @@ public class Map extends Observable {
      * @see Segment
      */
     private List<Segment> listSegment;
-    /**
-     * The warehouse: a special intersection where all parcels are stored, and each courier starts delivering parcels from here at 8 o'clock every morning and returns to the warehouse after delivering all the parcels every day.
-     */
+
     private Intersection warehouse;
     private String mapName;
 

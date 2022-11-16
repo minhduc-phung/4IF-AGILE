@@ -15,41 +15,22 @@ import model.User;
 
 // We have no intentions to do scaling like PlaCo example.
 /**
- * this class defines the size, the layout, the text and the font of all window components
+ * this class defines the size, the layout, the text and contains the views.
  */
 public class Window extends Group {
-    /**
-     * this attribute represents the label that shows informative messages to the user (example: <b>welcome load a map to begin....<b/>)
-     */
+
     private Label messageFrame;
 
-    /**
-     * this attribute represents the label that shows user if a delivery point is late or not
-     */
     private Label lateDeliveriesNumber;
-    /**
-     * this attribute represents the label for general information about the application
-     */
-    private Label aboutFrame;
-    /**
-     * this attribute represents the graphical view (map, intersections, segment) that will be shown in the window
-     */
+
     private GraphicalView graphicalView;
-    /**
-     * this attribute represents all the text that will be shown in the window
-     */
+
     private TextualView textualView;
-    /**
-     * this attribute represents all components (buttons, label...) and all events (buttonListener, BoxListener, and mouse listener) relative to a specific view
-     */
+
     private InteractiveView interactiveView;
-    /**
-     * this attribute represents the width of the window
-     */
+
     private final int WINDOW_WIDTH = 1500;
-    /**
-     * this attribute represents the height of the window
-     */
+
     private final int WINDOW_HEIGHT = 900;
 
     public Window(User user, Controller controller) {
@@ -166,9 +147,9 @@ public class Window extends Group {
     }
 
     /**
-     *Allows to show or disable a component(button, combo-box) in a specific view.
+     *Enables or disables a component(button, combo-box)
      *@param nodeId the id of the component.
-     *@param allow true if the node will be shown, false if not.
+     *@param allow true if the node will be enabled, false if not.
      */
     public void allowNode (String nodeId, boolean allow) {
         interactiveView.allowNode(nodeId, allow);
@@ -196,7 +177,7 @@ public class Window extends Group {
         }
     }
     /**
-     * Resets the number of late delivery and the relative button
+     * Resets the number of late delivery and the related button
      */
     public void resetLateDeliveryNumber() {
         lateDeliveriesNumber.setText("");

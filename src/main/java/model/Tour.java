@@ -20,9 +20,9 @@ public class Tour {
         
     }
     /**
-     * this method adds a route to the tour (delivery point and its segments)
+     * Adds a route to the tour (delivery point and its segments)
      * @param idDeliveryPoint the id of the delivery point to add
-     * @param listSeg the list of segments relative to the delivery point wanted to add
+     * @param listSeg the list of segments to get to that delivery point
      */
     public void addTourRoute(Long idDeliveryPoint, List<Segment> listSeg) {
         tourRoute.put(idDeliveryPoint, listSeg);
@@ -32,12 +32,10 @@ public class Tour {
         return tourRoute.get(idIntersection);
     }
 
-    /**
-     * this method clear this tour (make it empty by deleting all the delivery points and their segments)
-     */
-    public void emptyTourRoute() {
+
+    /*public void emptyTourRoute() {
         tourRoute.clear();
-    }
+    }*/
 
     @Override
     public String toString() {

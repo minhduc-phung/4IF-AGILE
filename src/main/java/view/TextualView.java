@@ -24,37 +24,21 @@ import observer.Observable;
  */
 public class TextualView extends Pane implements Observer {
 
-    /**
-     * this attribute is defined to handle Mouse events
-     */
+
     private MouseListener mouseListener;
-    /**
-     * This attribute represents the table view
-     */
+
     private TableView<Map> tableView;
-    /**
-     * This attribute represents the text in the index column of the table view
-     */
+
     public static final String IndexMapKey = "Index";
-    /**
-     * This attribute represents the text in the TimeWindow column of the table view
-     */
+
     public static final String TimeWindowMapKey = "TimeWindow";
-    /**
-     * this attribute represents the text in Estimatedarrival column of the table view
-     */
+
     public static final String EstArrivalMapKey = "EstArrival";
-    /**
-     * This attribute represents the delivery point that will be selected in the table view
-     */
+
     private DeliveryPoint selectedDeliveryPoint;
-    /**
-     * This attribute represents the width of the table view
-     */
+
     private int width = 350;
-    /**
-     * This attribute represents the height of the table view
-     */
+
     private int height = 250;
     public TextualView (Window window, Controller controller){
         super();
@@ -146,9 +130,9 @@ public class TextualView extends Pane implements Observer {
     }
 
     /**
-     *Updates the data of a selected item in the table view
-     *@param user is the one who use this application
-     *@param idCourier id of a courier for a specific user
+     *Updates the table
+     *@param user
+     *@param idCourier
      */
     public void updateData(User user, Long idCourier) {
         tableView.setItems(generateData(user, idCourier));

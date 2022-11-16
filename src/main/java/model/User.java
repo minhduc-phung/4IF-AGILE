@@ -10,16 +10,17 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 /**
- * This class defines the user of this application (the one who assigns a delivery point to a courier, and prepare the delivery plan associated with each courier).
+ * This class defines the couriers and save every changes on the program relating to each of them
+ * (the delivery points chosen for them, the tour for them to take)
  */
 public class User {
 
     /**
-     * The list of courier this user has access to
+     * The list of couriers
      */
     private HashMap<Long, Courier> listCourier = new HashMap<>();
     /**
-     * The list of time windows this user has access to.
+     * The list of the default time windows
      * The LinkedHashMap is used to keep the order of insertion
      */
     private final LinkedHashMap<String, Integer> timeWindows = new LinkedHashMap<String, Integer>() {

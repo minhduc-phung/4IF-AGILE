@@ -13,8 +13,8 @@ import model.Map;
 
 public class Dijkstra {
     /**
-     * This method calculates the minimum distance between two intersections
-     * @param aMap
+     * Calculates the minimum distance between two intersections using the Dijkstra algorithm
+     * @param aMap the map
      * @param idOrigin the id of the intersection origin
      * @param idDest the id of the intersection destination
      * @param precedentNode
