@@ -24,7 +24,10 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
 import xml.ExceptionXML;
-
+/**
+ * this is the class that test the calculateTour methods by going from the first state to the last
+ * @see controller.Controller#calculateTour(Courier, Long)
+ */
 public class CalculateTourTest {
 
     private Controller controller = new Controller();
@@ -33,9 +36,18 @@ public class CalculateTourTest {
     private Courier courier;
     private Map map;
 
+
     public CalculateTourTest() {
     }
 
+    /**
+     * this method is preparing for the tests (by loading the map,...)
+     * @throws ParserConfigurationException
+     * @throws IOException
+     * @throws SAXException
+     * @throws ExceptionXML
+     * @throws ParseException
+     */
     @Before
     public void setUp() throws ParserConfigurationException, IOException, SAXException, ExceptionXML, ParseException {
         updateCalled = false;
@@ -50,6 +62,10 @@ public class CalculateTourTest {
         courier = controller.getUser().getCourierById(1L);
     }
 
+    /**
+     * a test method for the calculateTour method
+     * @throws ParseException
+     */
     @Test
     public void test1() throws ParseException {
         Long[] listIdInter = {1850080438L, 2959901670L, 270298921L,
@@ -64,7 +80,11 @@ public class CalculateTourTest {
         Date deadline = sdf.parse(sd.format(now) + " 09:10:00");
         assert(lastPoint.getEstimatedDeliveryTime().before(deadline));
     }
-    
+
+    /**
+     * a test method for the calculateTour method
+     * @throws ParseException
+     */
     @Test
     public void test2() throws ParseException {
         Long[] listIdInter = {1850080438L, 2959901670L, 270298921L,

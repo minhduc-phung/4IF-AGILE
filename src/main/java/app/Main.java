@@ -10,11 +10,21 @@ public class Main extends Application {
     private final int WINDOW_WIDTH = 1500;
     private final int WINDOW_HEIGHT = 900;
     private final String TITLE = "Delivery Planner";
+
+    /**
+     * this is the method that launch the javaFX application
+     * @param args
+     */
     public static void main(String[] args) {
         launch(args);
 
     }
 
+    /**
+     * This method is that displays everything inside the primary window of our JavaFX application, and show it to the user.
+     * @param stage the primary window of our JavaFX application
+     * @throws Exception
+     */
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle(TITLE);
