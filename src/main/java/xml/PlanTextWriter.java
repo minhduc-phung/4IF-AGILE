@@ -35,10 +35,7 @@ public class PlanTextWriter {
         return instance;
     }
         /**
-     * Open an XML file and write an XML description of the plan in it 
-     * @param listDP
-     * @param user
-     * @param plan the plan to serialise
+     * Open an XML file and write an XML description of the plan in it
      * @throws ParserConfigurationException
      * @throws TransformerFactoryConfigurationError
      * @throws TransformerException
@@ -48,12 +45,16 @@ public class PlanTextWriter {
         File textPlan = TextFileOpener.getInstance().open(false);
         
         FileWriter writer = new FileWriter(textPlan.getAbsolutePath()); 
-        BufferedReader br = new BufferedReader(new FileReader(textPlan));
+                
+        //writer.write("hello");
+        BufferedReader br = new BufferedReader(new FileReader(textPlan.getAbsolutePath()));
         if (br.readLine() == null) {
-            writer.write("For courier " + courier.getName() + ": \n");
+            writer.write("------------------------------------------------------\n");
+            writer.write("***    Delivery plan for courier " + courier.getName() + "    ***\n");
+            writer.write("------------------------------------------------------\n");
             writeDPsToFile(map, courier, writer);
         } else {
-            throw new ExceptionXML("Not an empty file");
+            throw new ExceptionXML("Not an empty file.");
         }
         System.out.println(courier.getName());
         System.out.println(map.getMapName());
@@ -61,7 +62,7 @@ public class PlanTextWriter {
     }
 
     private void writeDPsToFile (Map map, Courier courier, FileWriter writer) throws IOException {       
-        writer.write("From ware house, go to: \n");  
+        writer.write("08:00:00 -- Start from Warehouse\n");
         Segment s;
         Long key = map.getWarehouse().getId();
         boolean firstElem = true;
@@ -81,15 +82,15 @@ public class PlanTextWriter {
             writeSegmentToFile(s, writer); 
             key = listSegmentsFromDP.get(listSegmentsFromDP.size()-1).getDestination().getId();
             if (!key.equals(map.getWarehouse().getId())) {
-                writer.write("You are expected to arrive in the next delivery point at around " + courier.getTimeStampForDP(key) + " then: \n");
+                writer.write(courier.getTimeStampForDP(key) + " -- Arrival at next delivery point" +"\n");
             }else{
-                writer.write("You will arrive back at the warehouse.");
+                writer.write("Go back to the warehouse.\n");
             }
             
         }
     }
     
     private void writeSegmentToFile(Segment s, FileWriter writer) throws IOException {
-        writer.write("+ Take " + s.getName() + " in " + s.getLength() + " m. \n");
+        writer.write("    Take road " + s.getName() + " - in " + Math.round(s.getLength()) + " m.\n");
     }    
 }
