@@ -56,7 +56,7 @@ public class CalculateTourTest {
     }
 
     /**
-     * a test method for the calculateTour method
+     * Test method for the calculateTour method
      * @throws ParseException
      */
     @Test

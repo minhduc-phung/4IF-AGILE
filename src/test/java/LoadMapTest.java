@@ -27,10 +27,6 @@ import org.junit.runners.Parameterized.Parameters;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.assertEquals;
 
-/**
- *
- * @author bbbbb
- */
 @RunWith(Parameterized.class)
 public class LoadMapTest {
 

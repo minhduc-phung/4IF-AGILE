@@ -229,12 +229,12 @@ public class TourModifiedState implements State {
     }
 
     @Override
-    public void undo(ListOfCommands loc) {
+    public void undo(ListOfCommands loc) throws ParseException {
         loc.undo();
     }
 
     @Override
-    public void redo(ListOfCommands loc) {
+    public void redo(ListOfCommands loc) throws ParseException {
         loc.redo();
         
     }

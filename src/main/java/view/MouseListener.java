@@ -7,7 +7,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 
 /**
- * This class is the listener for the mouse events on the graphical view and the textual view
+ * This class is the handles the mouse events on the window (the map and the table)
  */
 public class MouseListener implements EventHandler<MouseEvent> {
     private Controller controller;

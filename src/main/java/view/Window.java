@@ -15,7 +15,7 @@ import model.User;
 
 // We have no intentions to do scaling like PlaCo example.
 /**
- * this class defines the size, the layout, the text and contains the views.
+ * Defines the size, the layout, the text and contains the views.
  */
 public class Window extends Group {
 

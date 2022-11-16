@@ -36,7 +36,6 @@ public class DijsktraTest {
      * @throws IOException
      * @throws SAXException
      * @throws ExceptionXML
-     * @throws ParseException
      */
     @Before
     public void setUp() throws ParserConfigurationException, IOException, SAXException, ExceptionXML {

@@ -1,7 +1,12 @@
 # 4IF-AGILE
 Java PLD (Long-duration Project) AGILE
 
-
+## Run the executable
+In order to run the executable, you need to have the VM options set to the following to load the JavaFX libraries:
+```
+--module-path ".\javafx-sdk-19\lib" --add-modules javafx.controls,javafx.fxml
+```
+The JavaFX SDK should be available in the root directory of the project.
 ## Installation
 This part is here to guide any installation of external libraries that are needed to run the project.
 

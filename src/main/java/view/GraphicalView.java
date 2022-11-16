@@ -20,6 +20,9 @@ import static view.GraphicalView.IntersectionType.*;
  * The graphical representation of the map, which can be interacted with by the user via a mouse
  */
 public class GraphicalView extends Pane{
+    /**
+     * The types of intersection, used to determine the color of the intersection on the map
+     */
     public enum IntersectionType { UNSELECTED, SELECTED, LATE, ON_TIME, HOVERED, DP }
     private int viewHeight = 700;
     private final int viewWidth = 1000;

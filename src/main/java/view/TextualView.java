@@ -20,7 +20,7 @@ import model.User;
 import observer.Observer;
 import observer.Observable;
 /**
- *This class defines the table view, updates and deletes the table view data and define the layout of the window.
+ * This class defines the table representation of the map, updates and deletes the data of delivery points of a courier.
  */
 public class TextualView extends Pane implements Observer {
 
