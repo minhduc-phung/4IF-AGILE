@@ -231,6 +231,11 @@ public class CourierChosenState implements State {
         }
     }
 
+    /**
+     * @see Controller#mouseClickedOnTable(int) 
+     * @param controller the controller
+     * @param indexDP the index of the delivery point in the table
+     */
     @Override
     public void mouseClickedOnTable(Controller controller, int indexDP){
         Map map = controller.map;

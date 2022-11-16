@@ -14,6 +14,10 @@ import java.util.HashMap;
 import java.util.List;
 import observer.Observable;
 
+
+/**
+ *This class defines the person in charge of delivering
+ */
 public class Courier extends Observable {
 
     private Long id;

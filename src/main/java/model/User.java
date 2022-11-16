@@ -9,10 +9,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+/**
+ * This class defines the user of this application (the one who assigns a delivery point to a courier, and prepare the delivery plan associated with each courier).
+ */
 public class User {
 
+    /**
+     * The list of courier this user has access to
+     */
     private HashMap<Long, Courier> listCourier = new HashMap<>();
-    // Usage of LinkedHashMap to keep the order of insertion
+    /**
+     * The list of time windows this user has access to.
+     * The LinkedHashMap is used to keep the order of insertion
+     */
     private final LinkedHashMap<String, Integer> timeWindows = new LinkedHashMap<String, Integer>() {
         {
             put("08:00 - 09:00", 8);

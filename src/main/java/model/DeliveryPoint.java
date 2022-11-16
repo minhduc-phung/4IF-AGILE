@@ -8,6 +8,9 @@ package model;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * This class represents the delivery point (it is associated with a courier, and it's composed by an intersection to which the delivery is to be made and the corresponding time-window. After computation, it also contains the timestamps)
+ */
 public class DeliveryPoint extends Intersection {
     private Integer timeWindow;
     private Date estimatedDeliveryTime;
