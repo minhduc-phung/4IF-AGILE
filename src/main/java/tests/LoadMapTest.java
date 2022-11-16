@@ -8,7 +8,6 @@ package tests;
 
 import controller.Controller;
 import java.io.IOException;
-import java.util.HashMap;
 import javax.xml.parsers.ParserConfigurationException;
 import model.Map;
 import observer.Observable;
@@ -21,10 +20,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
 import xml.ExceptionXML;
-/**
- *This is the class that test the loadMap method
- * @see Controller#loadMapFromXML()
- */
+
 public class LoadMapTest {
     private final Controller controller = new Controller();
     private Observer observer;
@@ -33,14 +29,7 @@ public class LoadMapTest {
     
     public LoadMapTest() {
     }
-
-    /**
-     * this method prepares for the tests
-     * @throws ParserConfigurationException
-     * @throws IOException
-     * @throws SAXException
-     * @throws ExceptionXML
-     */
+    
     @Before
     public void setUp() throws ParserConfigurationException, IOException, SAXException, ExceptionXML {
         updateCalled = false;
@@ -49,19 +38,13 @@ public class LoadMapTest {
         map = controller.getMap();
         map.addObserver(observer);
     }
-
-    /**
-     * a test method
-     */
+    
     @Test
     public void loadTest1(){
         assert(updateCalled);
         assert(map.getListIntersection().size() > 0);
-    }
-
-    /**
-     * a test method
-     */
+    } 
+    
     @Test
     public void loadTest2() {
         assert(updateCalled);

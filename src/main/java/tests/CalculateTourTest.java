@@ -5,12 +5,18 @@ package tests;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import com.sun.glass.ui.Application;
 import controller.Controller;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
+
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import model.Courier;
 import model.DeliveryPoint;
 import model.Map;
@@ -22,12 +28,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+
+//import org.junit.runner.RunWith;
+//import de.saxsys.mvvmfx.testingutils.jfxrunner.JfxRunner;
 import org.xml.sax.SAXException;
 import xml.ExceptionXML;
-/**
- * This is the class that test the calculateTour methods by going from the first state to the last
- * @see controller.Controller#calculateTour(Courier, Long)
- */
+
+//@RunWith(JfxRunner.class)
 public class CalculateTourTest {
 
     private Controller controller = new Controller();
@@ -36,13 +43,13 @@ public class CalculateTourTest {
     private Courier courier;
     private Map map;
 
+    //private JPanel jPanel;
 
     public CalculateTourTest() {
     }
 
-
     @Before
-    public void setUp() throws ParserConfigurationException, IOException, SAXException, ExceptionXML, ParseException {
+    public void setUp() throws ParserConfigurationException, IOException, SAXException, ExceptionXML {
         updateCalled = false;
         observer = new Observer() {
             public void update(Observable o, Object arg) {
@@ -55,10 +62,6 @@ public class CalculateTourTest {
         courier = controller.getUser().getCourierById(1L);
     }
 
-    /**
-     * Test method for the calculateTour method
-     * @throws ParseException
-     */
     @Test
     public void test1() throws ParseException {
         Long[] listIdInter = {1850080438L, 2959901670L, 270298921L,
@@ -73,11 +76,7 @@ public class CalculateTourTest {
         Date deadline = sdf.parse(sd.format(now) + " 09:10:00");
         assert(lastPoint.getEstimatedDeliveryTime().before(deadline));
     }
-
-    /**
-     * a test method for the calculateTour method
-     * @throws ParseException
-     */
+    
     @Test
     public void test2() throws ParseException {
         Long[] listIdInter = {1850080438L, 2959901670L, 270298921L,
@@ -94,12 +93,14 @@ public class CalculateTourTest {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
         Date deadline = sdf.parse(sd.format(now) + " 09:10:00");
         assert(lastPoint.getEstimatedDeliveryTime().before(deadline));
-    }    
+    }
     
     @After
     public void tearDown() {
     }
-
     // TODO add test methods here.
     // The methods must be annotated with annotation @Test. For example:
+    //
+    // @Test
+    // public void hello() {}
 }
