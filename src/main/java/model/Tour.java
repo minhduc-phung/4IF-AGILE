@@ -10,21 +10,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * This class represents a tour (who's a sequence of paths for a courier who starts from the warehouse, to deliver all the parcels on that day and then go back to the warehouse at the minimum timestamp).
+ *
+ * @author bbbbb
  */
 public class Tour {
-    /**
-     * This attribute represents the tour route (all the delivery points and the segments between them)
-     */
     private HashMap<Long, List<Segment>> tourRoute = new HashMap<>();
     public Tour() {
         
     }
-    /**
-     * this method add a route to the tour (delivery point and its segments)
-     * @param idDeliveryPoint the id of the delivery point to add
-     * @param listSeg the list of segments relative to the delivery point wanted to add
-     */
+    
     public void addTourRoute(Long idDeliveryPoint, List<Segment> listSeg) {
         tourRoute.put(idDeliveryPoint, listSeg);
     }
@@ -32,9 +26,7 @@ public class Tour {
     public List<Segment> getListSegment(Long idIntersection) {
         return tourRoute.get(idIntersection);
     }
-    /**
-     * this method clear this tour (make it empty by deleting all the delivery points and their segments)
-     */
+    
     public void emptyTourRoute() {
         tourRoute.clear();
     }

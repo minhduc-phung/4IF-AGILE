@@ -14,19 +14,15 @@ import java.util.HashMap;
 import java.util.List;
 import observer.Observable;
 
-
 /**
- *This class defines the person in charge of delivering
+ *
+ * @author bbbbb
  */
 public class Courier extends Observable {
 
     private Long id;
     private String name;
-    /**
-     * This attribute represents the list of the delivery points that should be transported by the current courier
-     */
     private List<DeliveryPoint> currentDeliveryPoints = new ArrayList<>();
-
     private HashMap<Long, Date> timeStampOfEachDP = new HashMap<>();
     private Tour currentTour = new Tour();
 
@@ -43,11 +39,7 @@ public class Courier extends Observable {
     public Long getId() {
         return id;
     }
-    /**
-     * this is the getter method of the currentDeliveryPoints attribute
-     * @return The list of the delivery points chosen by the current courier
-     * @see Courier#getCurrentDeliveryPoints()
-     */
+
     public List<DeliveryPoint> getCurrentDeliveryPoints() {
         return currentDeliveryPoints;
     }
@@ -55,11 +47,7 @@ public class Courier extends Observable {
     public String getName() {
         return name;
     }
-    /**
-     * this method allows us to add a route into the current tour.
-     * @param idDeliveryPoint the id of the delivery point we want to add to the current
-     * @param listSeg the list of segments relative to this delivery point
-     */
+
     public void addCurrentTour(Long idDeliveryPoint, List<Segment> listSeg) {
         this.currentTour.addTourRoute(idDeliveryPoint, listSeg);
         this.notifyObservers();
@@ -76,10 +64,7 @@ public class Courier extends Observable {
     public ArrayList<Long> getPositionIntersection() {
         return positionIntersection;
     }
-    /**
-     * this method add a delivery point to the ones that should be transported by the current courier if it's not already added
-     * @param dp the delivery point to add
-     */
+
     public void addDeliveryPoint(DeliveryPoint dp) {
         if (!currentDeliveryPoints.contains(dp)) {
             this.currentDeliveryPoints.add(dp);
@@ -90,11 +75,6 @@ public class Courier extends Observable {
         return listSegmentBetweenDPs;
     }
 
-    /**
-     * this method remove a delivery point from the ones that should be transported by the current courier if it's existent.
-     * @param aDP the delivery point to remove
-     * @return true if the delivery point to remove found and removed, false otherwise
-     */
     public Boolean removeDeliveryPoint(DeliveryPoint aDP) {
         for (DeliveryPoint dp : this.currentDeliveryPoints) {
             if (dp.getId().equals(aDP.getId())) {

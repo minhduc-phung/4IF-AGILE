@@ -8,7 +8,8 @@ package model;
 import java.util.HashMap;
 
 /**
- * this class defines the points on the map called intersections (it occurs as two road segments cross, defined by a latitude and a longitude and is modeled as a node in a graph)
+ *
+ * @author nmngo
  */
 public class Intersection {
     protected Long id;
@@ -47,11 +48,7 @@ public class Intersection {
     public HashMap<Long, Double> getTimeToConnectedIntersection() {
         return timeToConnectedIntersection;
     }
-    /**
-     * this method add the necessary time to reach the next intersection
-     * @param idIntersection the id of the intersection we want to reach
-     * @param time the time necessary to reach the given intersection
-     */
+    
     public void addTravelTimeToNextIntersection (Long idIntersection, Double time) {
         this.timeToConnectedIntersection.put(idIntersection, time);
     }
