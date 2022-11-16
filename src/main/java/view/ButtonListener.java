@@ -40,7 +40,7 @@ public class ButtonListener implements EventHandler<ActionEvent> {
                 try {
                     controller.loadMapFromXML();
                 } catch (ParserConfigurationException | IOException | SAXException | ExceptionXML ex) {
-                    throw new RuntimeException(ex);
+                    controller.getWindow().setMessage(ex.getMessage());
                 }
                 break;
             case "VALIDATE_DP":
@@ -55,7 +55,7 @@ public class ButtonListener implements EventHandler<ActionEvent> {
                     controller.restoreDeliveryPointFromXML();
                 } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException
                     | ExceptionXML ex) {
-                    throw new RuntimeException(ex);
+                    controller.getWindow().setMessage("Error while restoring delivery points from XML file: " + ex.getMessage());
                 }
                 break;
             case "SAVE_DP":
@@ -63,7 +63,7 @@ public class ButtonListener implements EventHandler<ActionEvent> {
                     controller.saveDeliveryPointToFile();
                 } catch (XPathExpressionException | ParserConfigurationException | IOException | TransformerException
                     | SAXException | ExceptionXML ex) {
-                    throw new RuntimeException(ex);
+                    controller.getWindow().setMessage("Error while saving the delivery points to a file: " + ex.getMessage());
                 }
                 break;
             case "MODIFY_DP":
@@ -73,16 +73,16 @@ public class ButtonListener implements EventHandler<ActionEvent> {
                 Courier c = controller.getUser().getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId());
                 try {
                     controller.generatePlan(c);
-                } catch (ParserConfigurationException | SAXException | ExceptionXML
-                        | IOException | TransformerException ex) {
-                    throw new RuntimeException(ex);
+                } catch (ParserConfigurationException | TransformerException | IOException | ExceptionXML |
+                         SAXException ex) {
+                    controller.getWindow().setMessage("Error while generating the plan: " + ex.getMessage());
                 }
                 break;
             case "CALCULATE_TOUR":
                 try {
                     controller.calculateTour(controller.getUser().getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId()), controller.getMap().getWarehouse().getId());
                 } catch (ParseException ex) {
-                    throw new RuntimeException(ex);
+                    controller.getWindow().setMessage("Error while calculating the tour: " + ex.getMessage());
                 }
                 break;
             case "ADD_DP_TO_TOUR":
@@ -91,7 +91,7 @@ public class ButtonListener implements EventHandler<ActionEvent> {
                 try {
                     controller.modifyTourEnterDP(courierToAdd, intersectionToAdd, controller.getWindow().getInteractivePane().getSelectedTimeWindow());
                 } catch (ParseException ex) {
-                    throw new RuntimeException(ex);
+                    controller.getWindow().setMessage("Error while adding the delivery point to the tour: " + ex.getMessage());
                 }
                 break;
             case "REMOVE_DP_FROM_TOUR":

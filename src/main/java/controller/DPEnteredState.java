@@ -175,23 +175,7 @@ public class DPEnteredState implements State {
         List<Segment> listSeg = c.getListSegmentBetweenInters(idCurrentInter, idNextInter);
         c.addCurrentTour(idCurrentInter, listSeg);
 
-        int lateDeliveryCount = 0;
-
-        for (Segment seg : listSeg) {
-            controller.getWindow().getGraphicalView().paintArrow(seg, Color.web("0x00B0FF"));
-        }
-
-        for (DeliveryPoint d : c.getCurrentDeliveryPoints()) {
-            if (Objects.equals(d.getId(), idWarehouse)) {
-                continue;
-            }
-            if (d.getEstimatedDeliveryTime().getHours() > d.getTimeWindow()) {
-                controller.getWindow().getGraphicalView().paintIntersection(d, LATE);
-                lateDeliveryCount++;
-            } else {
-                controller.getWindow().getGraphicalView().paintIntersection(d, ON_TIME);
-            }
-        }
+        int lateDeliveryCount = controller.getWindow().getGraphicalView().updateCalculatedMap(controller.getMap(), c);
 
         controller.getWindow().getTextualView().updateData(controller.user, c.getId());
         controller.getWindow().getTextualView().getTableView().sort();
@@ -241,7 +225,6 @@ public class DPEnteredState implements State {
         controller.getWindow().allowNode("VALIDATE_DP", false);
         controller.getWindow().allowNode("SAVE_DP", true);
         controller.getWindow().allowNode("CALCULATE_TOUR", true);
-        controller.setCurrentState(controller.dpEnteredState);
     }
 
     /**
@@ -271,7 +254,6 @@ public class DPEnteredState implements State {
         controller.getWindow().getTextualView().updateData(controller.user, idCourier);
         controller.getWindow().allowNode("REMOVE_DP", false);
         controller.getWindow().allowNode("CALCULATE_TOUR", true);
-        controller.setCurrentState(controller.dpRemovedState);
     }
     /**
      * this method allows the user to save delivery points into an XML file

@@ -23,8 +23,9 @@ public class TextFileOpener extends FileFilter {// Singleton
          	returnVal = jFileChooserText.showOpenDialog(null);
         else
          	returnVal = jFileChooserText.showSaveDialog(null);
-        if (returnVal != JFileChooser.APPROVE_OPTION) 
-        	throw new ExceptionXML("Problem when opening file");
+		if (returnVal == JFileChooser.CANCEL_OPTION) throw new ExceptionXML("Save or open cancelled.");
+		if (returnVal != JFileChooser.APPROVE_OPTION)
+			throw new ExceptionXML("Problem when opening file.");
         return new File(jFileChooserText.getSelectedFile().getAbsolutePath());
  	}
  	
@@ -39,7 +40,7 @@ public class TextFileOpener extends FileFilter {// Singleton
 
 	@Override
 	public String getDescription() {
-		return "Txt file";
+		return "TXT File";
 	}
 
     private String getExtension(File f) {

@@ -38,7 +38,7 @@ public class XMLmapDeserializer {
         if (root.getNodeName().equals("map")) {
             map = buildFromDOMXML(root, map, xml.getName());
         } else {
-            throw new ExceptionXML("Wrong format");
+            throw new ExceptionXML("The chosen file does not have the correct format.");
         }
         
         return map;

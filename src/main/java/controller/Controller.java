@@ -49,7 +49,6 @@ public class Controller {
     protected final CourierChosenState courierChosenState = new CourierChosenState();
     protected final DPEnteredState dpEnteredState = new DPEnteredState();
     protected final DPRestoredState dpRestoredState = new DPRestoredState();
-    protected final DPRemovedState dpRemovedState = new DPRemovedState();
     protected final TourCalculatedState tourCalculatedState = new TourCalculatedState();
     protected final TourModifiedState tourModifiedState = new TourModifiedState();
     protected final PlanGeneratedState planGeneratedState = new PlanGeneratedState();

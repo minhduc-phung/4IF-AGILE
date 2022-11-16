@@ -52,10 +52,10 @@ public class XMLdpsDeserializer {
             if (nodeListCourier.getLength() >0) {
                 user = buildFromDOMXML(nodeListCourier, map, user, document);
             }else{
-                throw new ExceptionXML("No couriers found");
+                throw new ExceptionXML("No couriers found.");
             }
         } else {
-            throw new ExceptionXML("Wrong format");
+            throw new ExceptionXML("The chosen file does not have the correct format.");
         }
         
         return user;
