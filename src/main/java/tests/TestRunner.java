@@ -21,7 +21,7 @@ public class TestRunner extends Application {
         JUnitCore junit = new JUnitCore();
         junit.addListener(new TextListener(System.out));
         Result result = junit.run(
-                LoadMapTest.class);
+                CalculateTourTest.class);
         resultReport(result);
         Platform.exit();
     }
@@ -32,7 +32,7 @@ public class TestRunner extends Application {
             result.getIgnoreCount() + ". Tests run: " +
             result.getRunCount() + ". Time: " +
             result.getRunTime() + "ms.");
-    }
+    }    
 
     @Override
     public void start(Stage stage) throws Exception {

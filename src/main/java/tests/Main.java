@@ -26,6 +26,7 @@ import javax.xml.xpath.XPathExpressionException;
 import tsp.CompleteGraph;
 import model.Courier;
 import model.DeliveryPoint;
+import model.Intersection;
 import tsp.Graph;
 import model.Segment;
 import tsp.TSP;
@@ -168,16 +169,21 @@ public class Main extends Application {
                                 1957527541L, 21703591L, 21703594L, 
                                 1682387628L, 382011406L, 382011401L };
         for (i = 0 ; i < listIdInter.length ; i++) {
-            if (i < 8) {
-                controller.enterDeliveryPoint(map, listIdInter[i], 1L, 9);
-            } else {
-                controller.enterDeliveryPoint(map, listIdInter[i], 1L, 10);
-            }
+            controller.enterDeliveryPoint(map, listIdInter[i], c.getId(), 8);
         }
         
-        DeliveryPoint aDP = new DeliveryPoint(21703589L, 0.0, 0.0);
-        controller.removeDeliveryPoint(map, aDP, 1L);
         controller.calculateTour(c, idWarehouse);
+        HashMap<Long, List<Segment>> tourRoute = c.getCurrentTour().getTourRoute();
+        DeliveryPoint lastPoint = null;
+        for(Long key : tourRoute.keySet()) {
+            List<Segment> listSeg = tourRoute.get(key);
+            Intersection desti = listSeg.get(listSeg.size()-1).getDestination();
+            if (desti.getId().equals(map.getWarehouse().getId())) {
+                lastPoint = c.getDeliveryPointById(key);
+                break;
+            }
+        }
+        System.out.println(lastPoint.getEstimatedDeliveryTime());
         //FileWriter writer = new FileWriter("tour.txt");
         //for (Long key : c.getCurrentTour().getTourRoute().keySet()) {
         //    writer.write(key+":"+c.getCurrentTour().getListSegment(key)+"\n");
