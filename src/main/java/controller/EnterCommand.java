@@ -44,12 +44,11 @@ public class EnterCommand implements Command {
         courier.addPositionIntersection(dp.getId());
         HashMap<Long, Double> nestedMap = new HashMap<>();
         nestedMap.put(dp.getId(), 0.0);
-        courier.getShortestPathBetweenDPs().put(dp.getId(), nestedMap);
         
         Tour tour = new Tour();
         tour.addTourRoute(dp.getId(), new ArrayList<>());
         courier.getListSegmentBetweenDPs().put(dp.getId(), tour);
-        
+        courier.getShortestPathBetweenDPs().put(dp.getId(), nestedMap);
         courier.addShortestPathBetweenDP(map, dp);
 
     }

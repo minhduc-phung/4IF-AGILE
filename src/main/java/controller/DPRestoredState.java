@@ -148,19 +148,8 @@ public class DPRestoredState implements State {
             controller.getWindow().getGraphicalView().paintArrow(seg, Color.web("0x00B0FF"));
         }
 
-        int lateDeliveryCount = 0;
-        for (DeliveryPoint d : c.getCurrentDeliveryPoints()) {
-            if (Objects.equals(d.getId(), idWarehouse)) {
-                continue;
-            }
-            if (d.getEstimatedDeliveryTime().getHours() > d.getTimeWindow()) {
-                controller.getWindow().getGraphicalView().paintIntersection(d, LATE);
-                lateDeliveryCount++;
-            } else {
-                controller.getWindow().getGraphicalView().paintIntersection(d, ON_TIME);
-            }
-        }
-        
+        int lateDeliveryCount = controller.getWindow().getGraphicalView().updateCalculatedMap(controller.getMap(), c);
+
         controller.getWindow().getTextualView().updateData(controller.user, c.getId());
         controller.getWindow().getTextualView().getTableView().sort();
         controller.getWindow().setMessage("The tour has been calculated.");
@@ -224,7 +213,6 @@ public class DPRestoredState implements State {
         controller.getWindow().getTextualView().updateData(controller.user, idCourier);
         controller.getWindow().allowNode("REMOVE_DP", false);
         controller.getWindow().allowNode("CALCULATE_TOUR", true);
-        controller.setCurrentState(controller.dpRemovedState);
     }
     
     @Override

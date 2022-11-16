@@ -23,8 +23,9 @@ public class XMLfileOpener extends FileFilter {// Singleton
          	returnVal = jFileChooserXML.showOpenDialog(null);
         else
          	returnVal = jFileChooserXML.showSaveDialog(null);
+		if (returnVal == JFileChooser.CANCEL_OPTION) throw new ExceptionXML("Save or open cancelled.");
         if (returnVal != JFileChooser.APPROVE_OPTION) 
-        	throw new ExceptionXML("Problem when opening file");
+        	throw new ExceptionXML("Problem when opening file.");
         return new File(jFileChooserXML.getSelectedFile().getAbsolutePath());
  	}
  	
@@ -39,7 +40,7 @@ public class XMLfileOpener extends FileFilter {// Singleton
 
 	@Override
 	public String getDescription() {
-		return "XML file";
+		return "XML File";
 	}
 
     private String getExtension(File f) {

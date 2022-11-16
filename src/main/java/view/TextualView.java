@@ -1,6 +1,9 @@
 package view;
 
 import controller.Controller;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.IntegerBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
@@ -8,10 +11,8 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.MapValueFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 import javafx.scene.layout.Pane;
 import model.Courier;
@@ -56,6 +57,32 @@ public class TextualView extends Pane implements Observer {
         // get the selected row
         tableView.setRowFactory( tv -> {
             TableRow<Map> row = new TableRow<>();
+            // color the row if the estimated arrival time is after the time window
+            IntegerBinding late = new IntegerBinding() {
+                {
+                    super.bind(row.itemProperty());
+                }
+                @Override
+                protected int computeValue() {
+                    if (row.getItem() == null) {
+                        return 0;
+                    }
+                    String timeWindowString = row.itemProperty().get().get(TimeWindowMapKey).toString();
+                    Integer timeWindow = controller.getUser().getTimeWindows().get(timeWindowString);
+                    if (Objects.equals(row.itemProperty().get().get(EstArrivalMapKey).toString(), "")) {
+                        return 0;
+                    }
+                    String estArrivalHourString = row.itemProperty().get().get(EstArrivalMapKey).toString().substring(0, 2);
+                    Integer estArrivalHour = Integer.parseInt(estArrivalHourString);
+                    if (estArrivalHour > timeWindow) {
+                        return 1;
+                    }
+                    return -1;
+                }
+            };
+            // color the row red if the estimated arrival time is before the time window, and green if it is after, and white if it is not set
+            row.styleProperty().bind(Bindings.when(late.isEqualTo(1)).then("-fx-background-color: #ff9aa2;").otherwise(Bindings.when(late.isEqualTo(-1)).then("-fx-background-color: #b5ead7;").otherwise("-fx-background-color: #ffffff;")));
+
             row.setOnMouseClicked(mouseListener);
             return row ;
         });
