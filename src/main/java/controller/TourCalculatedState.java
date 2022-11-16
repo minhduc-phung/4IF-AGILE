@@ -6,13 +6,10 @@
 package controller;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import model.*;
-import xml.XMLPlanSerializer;
 import org.xml.sax.SAXException;
 import xml.ExceptionXML;
 import xml.PlanTextWriter;
@@ -20,10 +17,6 @@ import xml.PlanTextWriter;
 import static view.GraphicalView.IntersectionType.*;
 import static view.GraphicalView.IntersectionType.ON_TIME;
 
-/**
- *
- * @author bbbbb
- */
 public class TourCalculatedState implements State {
     @Override
     public void generateDeliveryPlanForCourier(Controller controller, Courier c) throws ParserConfigurationException, SAXException, ExceptionXML,
@@ -58,6 +51,8 @@ public class TourCalculatedState implements State {
         controller.getWindow().getInteractivePane().hideButton("VALIDATE_DP");
         controller.getWindow().getInteractivePane().showButton("ADD_DP_TO_TOUR");
         controller.getWindow().getInteractivePane().showButton("REMOVE_DP_FROM_TOUR");
+        controller.getWindow().allowNode("ADD_DP_TO_TOUR", false);
+        controller.getWindow().allowNode("REMOVE_DP_FROM_TOUR", false);
     }
 
     @Override

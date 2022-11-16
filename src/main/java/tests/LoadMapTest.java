@@ -21,10 +21,6 @@ import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
 import xml.ExceptionXML;
 
-/**
- *
- * @author bbbbb
- */
 public class LoadMapTest {
     private final Controller controller = new Controller();
     private Observer observer;

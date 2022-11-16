@@ -24,10 +24,6 @@ import xml.ExceptionXML;
 import xml.XMLdpsDeserializer;
 import xml.XMLmapDeserializer;
 
-/**
- *
- * @author bbbbb
- */
 public class PlanGeneratedState implements State {
     @Override
     public void loadMapFromXML(Controller controller, Window window) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {

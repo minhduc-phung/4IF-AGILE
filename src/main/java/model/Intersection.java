@@ -7,16 +7,18 @@ package model;
 
 import java.util.HashMap;
 
-/**
- *
- * @author nmngo
- */
 public class Intersection {
     protected Long id;
     protected Double latitude;
     protected Double longitude;
     protected HashMap<Long, Double> timeToConnectedIntersection;
 
+    /**
+     * Create an intersection with the given id, latitude and longitude
+     * @param id the id of the intersection
+     * @param latitude the latitude of the intersection
+     * @param longitude the longitude of the intersection
+     */
     public Intersection(Long id, Double latitude, Double longitude) {
         this.id = id;
         this.latitude = latitude;

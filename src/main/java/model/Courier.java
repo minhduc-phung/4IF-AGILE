@@ -14,10 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import observer.Observable;
 
-/**
- *
- * @author bbbbb
- */
 public class Courier extends Observable {
 
     private Long id;
@@ -25,13 +21,17 @@ public class Courier extends Observable {
     private List<DeliveryPoint> currentDeliveryPoints = new ArrayList<>();
     private HashMap<Long, Date> timeStampOfEachDP = new HashMap<>();
     private Tour currentTour = new Tour();
-
     private ArrayList<Long> positionIntersection = new ArrayList<>();
     private HashMap<Long, HashMap<Long, Double>> shortestPathBetweenDPs = new HashMap<>();
     private HashMap<Long, Tour> listSegmentBetweenDPs = new HashMap<>();
     
     private DeliveryPoint removedDP = null;
 
+    /**
+     * Create a courier with an id and a name
+     * @param id the id of the courier
+     * @param name the name of the courier
+     */
     public Courier(Long id, String name) {
         this.id = id;
         this.name = name;
@@ -57,11 +57,21 @@ public class Courier extends Observable {
         return name;
     }
 
+    /**
+     * Add a delivery point and the list of segments to arrive at that delivery point to the courier's tour
+     * @param idDeliveryPoint the id of the delivery point
+     * @param listSeg the list of segments to arrive at that delivery point
+     */
     public void addCurrentTour(Long idDeliveryPoint, List<Segment> listSeg) {
         this.currentTour.addTourRoute(idDeliveryPoint, listSeg);
         this.notifyObservers();
     }
 
+    /**
+     * Get the list of segments to arrive at a delivery point with the id given in parameter
+     * @param idDeliveryPoint the id of the delivery point
+     * @return the list of segments to arrive at the delivery point
+     */
     public List<Segment> getListSegmentCurrentTour(Long idDeliveryPoint) {
         return currentTour.getListSegment(idDeliveryPoint);
     }
@@ -94,6 +104,11 @@ public class Courier extends Observable {
         return false;
     }
 
+    /**
+     * Add the shortest path from a delivery point to another which is calculated by the Dijkstra algorithm
+     * @param aMap the map
+     * @param aDP the delivery point
+     */
     public void addShortestPathBetweenDP(Map aMap, DeliveryPoint aDP) {
         // handle time-window
         List<Integer> listTW = new ArrayList<>();
@@ -145,6 +160,11 @@ public class Courier extends Observable {
         }
     }
 
+    /**
+     * Remove a shortest path from a delivery point to another when a delivery point is removed
+     * @param map the map
+     * @param aDP the delivery point which is removed
+     */
     public void removeShortestPathBetweenDP(Map map, DeliveryPoint aDP) {
         DeliveryPoint warehouse = this.currentDeliveryPoints.get(0);
         List<DeliveryPoint> listDP = this.currentDeliveryPoints;

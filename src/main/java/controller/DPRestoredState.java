@@ -37,10 +37,6 @@ import xml.XMLmapDeserializer;
 
 import static view.GraphicalView.IntersectionType.*;
 
-/**
- *
- * @author bbbbb
- */
 public class DPRestoredState implements State {
         
     @Override
@@ -58,7 +54,12 @@ public class DPRestoredState implements State {
         window.resetLateDeliveryNumber();
         window.setMessage("Please choose a courier and a time-window to start adding delivery points.");
     }
-    
+
+    /**
+     * Method which adds the warehouse as the first node of the tour of all the couriers
+     * @param warehouse the warehouse
+     * @param user the user
+     */
     private void addWarehouse(Intersection warehouse, User user) {
         DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), warehouse.getLatitude(), warehouse.getLongitude());
         for (Long key : user.getListCourier().keySet()) {

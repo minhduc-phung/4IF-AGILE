@@ -9,10 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import observer.Observable;
 
-/**
- *
- * @author nmngo
- */
 public class Map extends Observable {
     private HashMap<Long, Intersection> listIntersection;
     private List<Segment> listSegment;
@@ -22,7 +18,14 @@ public class Map extends Observable {
     public Map() {
     
     }
-    
+
+    /**
+     * Create a map with the name of the XML file defining it, the list of intersections and the list of segments and the warehouse, all of which are defined in the XML file
+     * @param mapName the name of the XML file defining the map
+     * @param listIntersection the list of intersections
+     * @param listSegment the list of segments
+     * @param warehouse the warehouse
+     */
     public Map(String mapName, HashMap<Long, Intersection> listIntersection, List<Segment> listSegment, Intersection warehouse) {
         this.listIntersection = listIntersection;
         this.listSegment = listSegment;
@@ -60,33 +63,9 @@ public class Map extends Observable {
         return mapName;
     }
 
-    public Double[] getMinMaxCoordinates() {
-        Double[] minMax = new Double[4];
-        // first value, smallest Latitude
-        minMax[0] = Double.MAX_VALUE;
-        // second value, smallest Longitude
-        minMax[1] = Double.MAX_VALUE;
-        // third value, biggest Latitude
-        minMax[2] = Double.MIN_VALUE;
-        // fourth value, biggest Longitude
-        minMax[3] = Double.MIN_VALUE;
-        for (Intersection i : listIntersection.values()) {
-            if(i.getLatitude() < minMax[0]) {
-                minMax[0] = i.getLatitude();
-            }
-            if(i.getLatitude() > minMax[2]) {
-                minMax[2] = i.getLatitude();
-            }
-            if(i.getLongitude() < minMax[1]) {
-                minMax[1] = i.getLongitude();
-            }
-            if(i.getLongitude() > minMax[3]) {
-                minMax[3] = i.getLongitude();
-            }
-        }
-        return minMax;
-    }
-
+    /**
+     * Get the latitude of the lowest intersection
+     */
     public Double getMinLatitude() {
         Double minLat = Double.MAX_VALUE;
         for (Intersection i : listIntersection.values()) {
@@ -97,6 +76,9 @@ public class Map extends Observable {
         return minLat;
     }
 
+    /**
+     * Get the longitude of the left-most intersection
+     */
     public Double getMinLongitude() {
         Double minLong = Double.MAX_VALUE;
         for (Intersection i : listIntersection.values()) {
@@ -107,6 +89,9 @@ public class Map extends Observable {
         return minLong;
     }
 
+    /**
+     * Get the latitude of the highest intersection
+     */
     public Double getMaxLatitude() {
         Double maxLat = Double.MIN_VALUE;
         for (Intersection i : listIntersection.values()) {
@@ -117,6 +102,9 @@ public class Map extends Observable {
         return maxLat;
     }
 
+    /**
+     * Get the latitude of the right-most intersection
+     */
     public Double getMaxLongitude() {
         Double maxLong = Double.MIN_VALUE;
         for (Intersection i : listIntersection.values()) {

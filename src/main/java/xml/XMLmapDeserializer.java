@@ -22,7 +22,7 @@ import model.Segment;
 
 public class XMLmapDeserializer {
 	/**
-	 * Open an XML file and create plan from this file
+	 * Open an XML file and draw the map from this file
 	 * @param map the map to create from the file
 	 * @throws ParserConfigurationException
 	 * @throws SAXException

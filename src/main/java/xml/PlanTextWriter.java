@@ -34,8 +34,10 @@ public class PlanTextWriter {
         }
         return instance;
     }
-        /**
+    /**
      * Open an XML file and write an XML description of the plan in it
+     * @param map the loaded map
+     * @param courier the courier to whom the plan is related
      * @throws ParserConfigurationException
      * @throws TransformerFactoryConfigurationError
      * @throws TransformerException

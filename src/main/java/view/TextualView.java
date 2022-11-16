@@ -2,7 +2,6 @@ package view;
 
 import controller.Controller;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,7 +10,6 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.MapValueFactory;
 
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import javafx.scene.layout.Pane;

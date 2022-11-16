@@ -25,10 +25,6 @@ import xml.PlanTextWriter;
 import static view.GraphicalView.IntersectionType.*;
 import static view.GraphicalView.IntersectionType.ON_TIME;
 
-/**
- *
- * @author bbbbb
- */
 public class TourModifiedState implements State {
 
     @Override
@@ -123,7 +119,7 @@ public class TourModifiedState implements State {
     }
 
     @Override
-    public void modifyTourRemoveDP(Controller controller, Courier c, DeliveryPoint dp, ListOfCommands loc) throws ParseException{
+    public void modifyTourRemoveDP(Controller controller, Courier c, DeliveryPoint dp, ListOfCommands loc) throws ParseException {
         ArrayList<DeliveryPoint> listDPcopy = new ArrayList<>(c.getCurrentDeliveryPoints());        
         loc.add(new RemoveCommand(controller, controller.map, c, dp));
         Collections.sort(listDPcopy, (DeliveryPoint d1, DeliveryPoint d2) -> {
@@ -271,7 +267,12 @@ public class TourModifiedState implements State {
             Intersection oldSelectedIntersection = controller.getWindow().getGraphicalView().getSelectedIntersection();
             if (oldSelectedIntersection != null) {
                 if (dpIds.contains(oldSelectedIntersection.getId())) {
-                    controller.getWindow().getGraphicalView().paintIntersection(oldSelectedIntersection, DP);
+                    DeliveryPoint dp = c.getDeliveryPointById(oldSelectedIntersection.getId());
+                    if (dp.getEstimatedDeliveryTime().getHours() > dp.getTimeWindow()) {
+                        controller.getWindow().getGraphicalView().paintIntersection(dp, LATE);
+                    } else {
+                        controller.getWindow().getGraphicalView().paintIntersection(dp, ON_TIME);
+                    }
                 } else {
                     controller.getWindow().getGraphicalView().paintIntersection(oldSelectedIntersection, UNSELECTED);
                 }
@@ -314,7 +315,11 @@ public class TourModifiedState implements State {
         if (courier.getCurrentDeliveryPoints().size() > indexDP) {
             DeliveryPoint oldSelectedDP = controller.getWindow().getTextualView().getSelectedDeliveryPoint();
             if (oldSelectedDP != null) {
-                controller.getWindow().getGraphicalView().paintIntersection(oldSelectedDP, DP);
+                if (oldSelectedDP.getEstimatedDeliveryTime().getHours() > oldSelectedDP.getTimeWindow()) {
+                    controller.getWindow().getGraphicalView().paintIntersection(oldSelectedDP, LATE);
+                } else {
+                    controller.getWindow().getGraphicalView().paintIntersection(oldSelectedDP, ON_TIME);
+                }
             }
             DeliveryPoint dp = courier.getCurrentDeliveryPoints().get(indexDP);
             controller.getWindow().getTextualView().setSelectedDeliveryPoint(dp);

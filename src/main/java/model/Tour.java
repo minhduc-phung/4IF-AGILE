@@ -6,13 +6,8 @@
 package model;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
-/**
- *
- * @author bbbbb
- */
 public class Tour {
     private HashMap<Long, List<Segment>> tourRoute = new HashMap<>();
     public Tour() {

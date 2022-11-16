@@ -19,10 +19,6 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         stage.setTitle(TITLE);
         stage.setResizable(true);
-//        this.setHeight(WINDOW_HEIGHT);
-//        this.setTitle("Delivery Planner");
-//        this.setResizable(false);
-//        this.setOnCloseRequest(e -> System.exit(0));
         Scene scene = new Scene(controller.getWindow(), WINDOW_WIDTH, WINDOW_HEIGHT);
         stage.setScene(scene);
         stage.show();
