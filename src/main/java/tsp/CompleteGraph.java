@@ -8,7 +8,6 @@ public class CompleteGraph implements Graph {
 	private static final int MIN_COST = 10;
 	int nbVertices;
 	double[][] cost;
-        double minCost;
 	
 	/**
 	 * Create a complete directed graph such that each edge has a weight within [MIN_COST,MAX_COST]
@@ -19,7 +18,6 @@ public class CompleteGraph implements Graph {
             HashMap<Long, HashMap<Long, Double>> completeMap = c.getShortestPathBetweenDPs();
             this.nbVertices = completeMap.size();
             this.cost = new double[this.nbVertices][this.nbVertices];
-            this.minCost = Double.MAX_VALUE;
 		/*int iseed = 1;
 		cost = new int[nbVertices][nbVertices];
 		for (int i=0; i<nbVertices; i++){
@@ -44,12 +42,8 @@ public class CompleteGraph implements Graph {
                     } else {
                         cost[i][j] = completeMap.get(keyOrigin).get(keyDesti) + 5;
                     }
-                    if (cost[i][j] !=0 && minCost > cost[i][j]) {
-                        minCost = cost[i][j];
-                    }
                 }
             }
-            
 	}
 
 	@Override
@@ -76,9 +70,6 @@ public class CompleteGraph implements Graph {
             return cost;
         }
         
-        @Override
-        public double getMinCost() {
-            return this.minCost;
-        }
- 
+        
+
 }

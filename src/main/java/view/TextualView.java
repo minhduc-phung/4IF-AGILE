@@ -1,8 +1,6 @@
 package view;
 
 import controller.Controller;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
@@ -10,8 +8,10 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.MapValueFactory;
 
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javafx.scene.layout.Pane;
 import model.Courier;
@@ -83,27 +83,6 @@ public class TextualView extends Pane implements Observer {
         // get the selected row
         tableView.setRowFactory( tv -> {
             TableRow<Map> row = new TableRow<>();
-            // color the row if the estimated arrival time is after the time window
-            BooleanBinding late = new BooleanBinding() {
-                {
-                    super.bind(row.itemProperty());
-                }
-                @Override
-                protected boolean computeValue() {
-                    if (row.getItem() == null) {
-                        return false;
-                    }
-                    String timeWindowString = row.itemProperty().get().get(TimeWindowMapKey).toString();
-                    Integer timeWindow = controller.getUser().getTimeWindows().get(timeWindowString);
-                    if (Objects.equals(row.itemProperty().get().get(EstArrivalMapKey).toString(), "")) {
-                        return false;
-                    }
-                    String estArrivalHourString = row.itemProperty().get().get(EstArrivalMapKey).toString().substring(0, 2);
-                    Integer estArrivalHour = Integer.parseInt(estArrivalHourString);
-                    return estArrivalHour > timeWindow;
-                }
-            };
-            row.styleProperty().bind(Bindings.when(late).then("-fx-background-color: #ff9aa2;").otherwise(""));
             row.setOnMouseClicked(mouseListener);
             return row ;
         });

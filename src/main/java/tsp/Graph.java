@@ -20,8 +20,6 @@ public interface Graph {
 	 */
 	public abstract boolean isArc(int i, int j);
         
-        public abstract double[][] getCostTable();
-        
-        public abstract double getMinCost();
+        public abstract double[][] getCostTable(); 
 
 }

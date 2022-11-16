@@ -20,11 +20,11 @@ public abstract class TemplateTSP implements TSP {
         this.timeLimit = timeLimit;
         this.g = g;
         bestSol = new Integer[g.getNbVertices()];
-        ArrayList<Integer> unvisited = new ArrayList<Integer>(g.getNbVertices() - 1);
+        Collection<Integer> unvisited = new ArrayList<Integer>(g.getNbVertices() - 1);
         for (int i = 1; i < g.getNbVertices(); i++) {
             unvisited.add(i);
         }
-        ArrayList<Integer> visited = new ArrayList<Integer>(g.getNbVertices());
+        Collection<Integer> visited = new ArrayList<Integer>(g.getNbVertices());
         visited.add(0); // The first visited vertex is 0
         bestSolCost = Integer.MAX_VALUE;
         branchAndBound(0, unvisited, visited, 0);
@@ -54,7 +54,7 @@ public abstract class TemplateTSP implements TSP {
      * <code>unvisited</code> exactly once, and returning back to vertex
      * <code>0</code>.
      */
-    protected abstract double bound(Integer currentVertex, ArrayList<Integer> unvisited);
+    protected abstract int bound(Integer currentVertex, Collection<Integer> unvisited);
 
     /**
      * Method that must be defined in TemplateTSP subclasses
@@ -65,7 +65,7 @@ public abstract class TemplateTSP implements TSP {
      * @return an iterator for visiting all vertices in <code>unvisited</code>
      * which are successors of <code>currentVertex</code>
      */
-    protected abstract Iterator<Integer> iterator(Integer currentVertex, ArrayList<Integer> unvisited, Graph g);
+    protected abstract Iterator<Integer> iterator(Integer currentVertex, Collection<Integer> unvisited, Graph g);
 
     /**
      * Template method of a branch and bound algorithm for solving the TSP in
@@ -78,7 +78,7 @@ public abstract class TemplateTSP implements TSP {
      * @param currentCost the cost of the path corresponding to
      * <code>visited</code>
      */
-    private void branchAndBound(int currentVertex, ArrayList<Integer> unvisited,
+    private void branchAndBound(int currentVertex, Collection<Integer> unvisited,
             Collection<Integer> visited, double currentCost) {
         if (System.currentTimeMillis() - startTime > timeLimit) {
             return;

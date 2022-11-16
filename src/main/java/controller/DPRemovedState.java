@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package controller;
 
 import java.io.IOException;
@@ -17,6 +12,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import javafx.scene.control.ComboBox;
 import javafx.scene.paint.Color;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import tsp.CompleteGraph;
 import model.Courier;
@@ -33,15 +30,16 @@ import org.xml.sax.SAXException;
 import view.Window;
 import xml.ExceptionXML;
 import xml.XMLdpsDeserializer;
+import xml.XMLdpsSerializer;
 import xml.XMLmapDeserializer;
 
 import static view.GraphicalView.IntersectionType.*;
 
 /**
- * This class is for the state where delivery points are restored from an XML file.
+ * This class is for the state where a delivery point is removed.
  * Its methods are executed in the Controller class when the current state is DPEnteredState.
  */
-public class DPRestoredState implements State {
+public class DPRemovedState implements State {
     /**
      * this method allows us to load a map from an xml file
      * @param controller
@@ -124,7 +122,7 @@ public class DPRestoredState implements State {
         for (i = 0; i < nbVertices; i++) {
             tspSolutions.add(tsp.getSolution(i));
         }
-        
+
         //timeStamp of warehouse
         DeliveryPoint dp = c.getCurrentDeliveryPoints().get(0);
         long sum = timeStamp.getTime();
@@ -222,7 +220,6 @@ public class DPRestoredState implements State {
         courier.getListSegmentBetweenDPs().put(intersection.getId(), tour);
 
         courier.addShortestPathBetweenDP(map, dp);
-
         controller.getWindow().getGraphicalView().clearSelection();
         controller.getWindow().getGraphicalView().paintIntersection(dp, DP);
         controller.getWindow().getTextualView().updateData(controller.getUser(), idCourier);
@@ -251,8 +248,8 @@ public class DPRestoredState implements State {
         dp.assignTimeWindow(null);
         courier.removeDeliveryPoint(dp);
         courier.getPositionIntersection().remove(dp.getId());
-        
         courier.removeShortestPathBetweenDP(map, dp);
+        
         controller.getWindow().setMessage("Delivery point removed.");
         controller.getWindow().getGraphicalView().paintIntersection(dp, UNSELECTED);
         controller.getWindow().getTextualView().clearSelection();
@@ -263,27 +260,23 @@ public class DPRestoredState implements State {
         controller.setCurrentState(controller.dpRemovedState);
     }
     /**
-     * this method allows us to restore delivery points from an XML file
+     * this method allows the user to save delivery points into an XML file
      * @param controller
-     * @throws ParserConfigurationException
-     * @throws SAXException
      * @throws ExceptionXML
+     * @throws ParserConfigurationException
      * @throws IOException
+     * @throws SAXException
+     * @throws TransformerException
      * @throws XPathExpressionException
      */
     @Override
-    public void restoreDeliveryPointFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, IOException, 
-                                                    SAXException, XPathExpressionException {
-        //precondition : Map is loaded and XMLfile of deliveryPoints exists
+    public void saveDeliveryPointToFile(Controller controller) throws ParserConfigurationException, SAXException, ExceptionXML,
+                                        IOException, TransformerConfigurationException, TransformerException, XPathExpressionException {
         Map map = controller.map;
-        User user = new User();
-        
-        controller.user = XMLdpsDeserializer.loadDPList(map, user);
-        controller.getWindow().setMessage("Delivery points restored.");
-        controller.setCurrentState(controller.dpRestoredState);
-        controller.getWindow().allowNode("SAVE_DP", true);
-        controller.getWindow().allowNode("CALCULATE_TOUR", true);
-        ((ComboBox<String>) controller.getWindow().lookup("#COURIER_BOX")).setValue(controller.getUser().getListCourierName()[0]);
+        User user = controller.user;
+        XMLdpsSerializer.getInstance().save(map, user);
+        controller.getWindow().setMessage("Delivery points saved.");
+        controller.setCurrentState(controller.dpSavedState);
     }
     /**
      * this method allows the user to select a courier from those existent
@@ -301,6 +294,28 @@ public class DPRestoredState implements State {
         controller.getWindow().allowNode("VALIDATE_DP", false);
         controller.getWindow().allowNode("REMOVE_DP", false);
         controller.getWindow().resetLateDeliveryNumber();
+    }
+    /**
+     * this method allows us to restore delivery points from an XML file
+     * @param controller
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws ExceptionXML
+     * @throws IOException
+     * @throws XPathExpressionException
+     */
+    @Override
+    public void restoreDeliveryPointFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, IOException, 
+                                                    SAXException, XPathExpressionException {
+        //precondition : Map is loaded and XMLfile of deliveryPoints exists
+        Map map = controller.map;
+        User user = new User();
+        controller.user = XMLdpsDeserializer.loadDPList(map, user);
+        controller.getWindow().setMessage("Delivery points restored.");
+        controller.setCurrentState(controller.dpRestoredState);
+        controller.getWindow().allowNode("SAVE_DP", true);
+        controller.getWindow().allowNode("CALCULATE_TOUR", true);
+        ((ComboBox<String>) controller.getWindow().lookup("#COURIER_BOX")).setValue(controller.getUser().getListCourierName()[0]);
     }
     /**
      * this method shows us the nearest intersections whenever we move the mouse on the map (by changing their colors) which help us decide what intersection we're going to select.
@@ -384,8 +399,9 @@ public class DPRestoredState implements State {
             controller.getWindow().getGraphicalView().paintIntersection(controller.getWindow().getGraphicalView().getSelectedIntersection(), SELECTED);
         }
     }
+
     /**
-     * this method allows us to exit the mouse from the map
+     * this method allows the user to exit the map
      * @param controller
      */
     @Override
@@ -424,4 +440,5 @@ public class DPRestoredState implements State {
             controller.getWindow().allowNode("REMOVE_DP", true);
         }
     }
+    
 }

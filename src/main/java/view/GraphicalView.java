@@ -12,11 +12,10 @@ import observer.Observable;
 import observer.Observer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-import static view.GraphicalView.IntersectionType.*;
+import static view.GraphicalView.IntersectionType.DP;
 
 public class GraphicalView extends Pane implements Observer {
     public enum IntersectionType { UNSELECTED, SELECTED, LATE, ON_TIME, HOVERED, DP }
@@ -81,7 +80,7 @@ public class GraphicalView extends Pane implements Observer {
         for (Intersection intersection : map.getListIntersection().values()) {
             Double posX = (intersection.getLongitude() - minLongitude) * scale;
             Double posY = viewHeight - (intersection.getLatitude() - minLatitude) * scale;
-            Circle c = new Circle(posX, posY, 3, Color.WHITE);
+            Circle c = new Circle(posX, posY, 3.5, Color.WHITE);
             c.setId(intersection.getId().toString());
             circles.add(c);
             this.getChildren().add(c);
@@ -104,11 +103,11 @@ public class GraphicalView extends Pane implements Observer {
                 switch (type){
                     case UNSELECTED:
                         circle.setFill(Color.WHITE);
-                        circle.setRadius(3);
+                        circle.setRadius(3.5);
                         break;
                     case SELECTED:
                         circle.setFill(Color.BROWN);
-                        circle.setRadius(7);
+                        circle.setRadius(6);
                         break;
                     case LATE:
                         circle.setFill(Color.RED);
@@ -219,29 +218,5 @@ public class GraphicalView extends Pane implements Observer {
         for (DeliveryPoint deliveryPoint : courier.getCurrentDeliveryPoints()) {
             if (!Objects.equals(deliveryPoint.getId(), map.getWarehouse().getId())) paintIntersection(deliveryPoint, DP);
         }
-    }
-
-    public int updateCalculatedMap(Map map, Courier courier) {
-        Tour tour = courier.getCurrentTour();
-    	this.getChildren().clear();
-    	this.drawMap(map);
-        int lateDeliveryCount = 0;
-        for (HashMap.Entry<Long, List<Segment>> set : tour.getTourRoute().entrySet()) {
-            for (Segment seg : set.getValue()) {
-                paintArrow(seg, Color.web("0x00B0FF"));
-            }
-        }
-        for (DeliveryPoint d : courier.getCurrentDeliveryPoints()) {
-            if (Objects.equals(d.getId(), map.getWarehouse().getId())) {
-                continue;
-            }
-            if (d.getEstimatedDeliveryTime().getHours() > d.getTimeWindow()) {
-                paintIntersection(d, LATE);
-                lateDeliveryCount++;
-            } else {
-                paintIntersection(d, ON_TIME);
-            }
-        }
-        return lateDeliveryCount;
     }
 }
