@@ -19,17 +19,43 @@ import model.DeliveryPoint;
 import model.User;
 import observer.Observer;
 import observer.Observable;
-
+/**
+ *This class defines the table view, updates and deletes the table view data and define the layout of the window.
+ */
 public class TextualView extends Pane implements Observer {
-    private MouseListener mouseListener;
-    private TableView<Map> tableView;
-    public static final String IndexMapKey = "Index";
-    public static final String TimeWindowMapKey = "TimeWindow";
-    public static final String EstArrivalMapKey = "EstArrival";
-    private DeliveryPoint selectedDeliveryPoint;
-    private int width = 350;
-    private int height = 250;
 
+    /**
+     * this attribute is defined to handle Mouse events
+     */
+    private MouseListener mouseListener;
+    /**
+     * This attribute represents the table view
+     */
+    private TableView<Map> tableView;
+    /**
+     * This attribute represents the text in the index column of the table view
+     */
+    public static final String IndexMapKey = "Index";
+    /**
+     * This attribute represents the text in the TimeWindow column of the table view
+     */
+    public static final String TimeWindowMapKey = "TimeWindow";
+    /**
+     * this attribute represents the text in Estimatedarrival column of the table view
+     */
+    public static final String EstArrivalMapKey = "EstArrival";
+    /**
+     * This attribute represents the delivery point that will be selected in the table view
+     */
+    private DeliveryPoint selectedDeliveryPoint;
+    /**
+     * This attribute represents the width of the table view
+     */
+    private int width = 350;
+    /**
+     * This attribute represents the height of the table view
+     */
+    private int height = 250;
     public TextualView (Window window, Controller controller){
         super();
         setLayoutX(1075);
@@ -91,6 +117,13 @@ public class TextualView extends Pane implements Observer {
         window.getChildren().add(this);
     }
 
+    /**
+     * Puts data into the table view
+     *@param user is the one who use this application
+     *@param idCourier id of a courier for a specific user
+     *@return all the data that should be put in the table view
+     */
+
     private ObservableList<Map> generateData(User user, Long idCourier) {
         ObservableList<Map> data = FXCollections.observableArrayList();
         Courier c = user.getCourierById(idCourier);
@@ -112,9 +145,15 @@ public class TextualView extends Pane implements Observer {
         return data;
     }
 
+    /**
+     *Updates the data of a selected item in the table view
+     *@param user is the one who use this application
+     *@param idCourier id of a courier for a specific user
+     */
     public void updateData(User user, Long idCourier) {
         tableView.setItems(generateData(user, idCourier));
     }
+
 
     public DeliveryPoint getSelectedDeliveryPoint() {
         return selectedDeliveryPoint;
@@ -124,6 +163,9 @@ public class TextualView extends Pane implements Observer {
         this.selectedDeliveryPoint = dp;
     }
 
+    /**
+     * Cancels the selection of a delivery point
+     */
     public void clearSelection() {
         tableView.getSelectionModel().clearSelection();
         selectedDeliveryPoint = null;

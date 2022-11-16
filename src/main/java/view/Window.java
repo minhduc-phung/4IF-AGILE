@@ -14,15 +14,43 @@ import javafx.scene.text.TextAlignment;
 import model.User;
 
 // We have no intentions to do scaling like PlaCo example.
+/**
+ * this class defines the size, the layout, the text and the font of all window components
+ */
 public class Window extends Group {
+    /**
+     * this attribute represents the label that shows informative messages to the user (example: <b>welcome load a map to begin....<b/>)
+     */
     private Label messageFrame;
-    private Label lateDeliveriesNumber;
-    private GraphicalView graphicalView;
-    private TextualView textualView;
-    private InteractiveView interactiveView;
-    private final int WINDOW_WIDTH = 1500;
-    private final int WINDOW_HEIGHT = 900;
 
+    /**
+     * this attribute represents the label that shows user if a delivery point is late or not
+     */
+    private Label lateDeliveriesNumber;
+    /**
+     * this attribute represents the label for general information about the application
+     */
+    private Label aboutFrame;
+    /**
+     * this attribute represents the graphical view (map, intersections, segment) that will be shown in the window
+     */
+    private GraphicalView graphicalView;
+    /**
+     * this attribute represents all the text that will be shown in the window
+     */
+    private TextualView textualView;
+    /**
+     * this attribute represents all components (buttons, label...) and all events (buttonListener, BoxListener, and mouse listener) relative to a specific view
+     */
+    private InteractiveView interactiveView;
+    /**
+     * this attribute represents the width of the window
+     */
+    private final int WINDOW_WIDTH = 1500;
+    /**
+     * this attribute represents the height of the window
+     */
+    private final int WINDOW_HEIGHT = 900;
 
     public Window(User user, Controller controller) {
         super();
@@ -137,10 +165,19 @@ public class Window extends Group {
         return textualView;
     }
 
+    /**
+     *Allows to show or disable a component(button, combo-box) in a specific view.
+     *@param nodeId the id of the component.
+     *@param allow true if the node will be shown, false if not.
+     */
     public void allowNode (String nodeId, boolean allow) {
         interactiveView.allowNode(nodeId, allow);
     }
 
+    /**
+     * Shows the user if there is any late deliveries and their number if yes.
+     * @param numberOfLateDeliveries
+     */
     public void updateOnCalculateTour(int numberOfLateDeliveries) {
         if (numberOfLateDeliveries == 0) {
             lateDeliveriesNumber.setText("All deliveries are on time.");
@@ -158,7 +195,9 @@ public class Window extends Group {
             interactiveView.updateOnCalculateTour(false);
         }
     }
-
+    /**
+     * Resets the number of late delivery and the relative button
+     */
     public void resetLateDeliveryNumber() {
         lateDeliveriesNumber.setText("");
         lateDeliveriesNumber.setStyle("-fx-border-color: white; -fx-border-width: 5");

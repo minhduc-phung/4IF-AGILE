@@ -20,8 +20,8 @@ import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 import model.Courier;
 
 /**
- *
- * @author bbbbb
+ *This class is the listener for the keyboard events on the graphical view and the textual view.
+ * It allows the user to undo and redo using the keyboard (ctrl + z/ ctrl + y).
  */
 public class KeyboardListener implements EventHandler<KeyEvent> {
 
