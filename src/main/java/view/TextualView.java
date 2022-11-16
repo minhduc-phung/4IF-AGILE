@@ -13,6 +13,7 @@ import javafx.scene.control.cell.MapValueFactory;
 import java.util.*;
 
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import model.Courier;
 import model.DeliveryPoint;
 import model.User;
@@ -78,9 +79,10 @@ public class TextualView extends Pane implements Observer {
                     return -1;
                 }
             };
-            // color the row red if the estimated arrival time is before the time window, and green if it is after, and white if it is not set
-            row.styleProperty().bind(Bindings.when(late.isEqualTo(1)).then("-fx-background-color: #ff9aa2;").otherwise(Bindings.when(late.isEqualTo(-1)).then("-fx-background-color: #b5ead7;").otherwise("-fx-background-color: #ffffff;")));
-
+            row.setTextFill(Color.GRAY);
+            // color the row red if the estimated arrival time is before the time window, and green if it is after, blue if it's selected and white if it is not set
+            row.styleProperty().bind(Bindings.when(late.isEqualTo(1)).then("-fx-background-color: #ff9aa2;").otherwise(Bindings.when(late.isEqualTo(-1)).then("-fx-background-color: #b5ead7;")
+                    .otherwise(Bindings.when(row.selectedProperty()).then("-fx-background-color: #aec6cf;").otherwise("-fx-background-color: #ffffff;"))));
             row.setOnMouseClicked(mouseListener);
             return row ;
         });
