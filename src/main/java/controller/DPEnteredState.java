@@ -130,11 +130,13 @@ public class DPEnteredState implements State {
             } else {
                 timeWin = sdf.parse(sd.format(now) + " " + dp.getTimeWindow() + ":00:00");
             }
+            System.out.println(timeWin);
             if (estimatedDeliveryTime.before(timeWin)) {
                 sum = timeWin.getTime(); 
                 estimatedDeliveryTime.setTime(sum);
             }
             dp.setEstimatedDeliveryTime(estimatedDeliveryTime);
+            System.out.println(dp);
             c.addTimeStampForDP(dp.getId(), dp.getEstimatedDeliveryTime());
         }
 
@@ -160,14 +162,13 @@ public class DPEnteredState implements State {
         controller.getWindow().setMessage("The tour has been calculated.");
         controller.getWindow().allowNode("MODIFY_DP", true);
         controller.getWindow().allowNode("GENERATE_PLAN", true);
-        controller.getWindow().allowNode("LOAD_MAP", true);
+        controller.getWindow().allowNode("LOAD_MAP", false);
         controller.getWindow().allowNode("CALCULATE_TOUR", false);
         controller.getWindow().allowNode("RESTORE_DP", false);
         controller.getWindow().allowNode("SAVE_DP", false);
         controller.getWindow().updateOnCalculateTour(lateDeliveryCount);
         controller.setCurrentState(controller.tourCalculatedState);
     }
-
 
     @Override
     public void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Long idCourier, Integer timeWindow) {

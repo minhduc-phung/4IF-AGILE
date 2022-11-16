@@ -5,16 +5,18 @@
  */
 package controller;
 
+import java.text.ParseException;
+
 
 public interface Command {
     
     /**
      * Execute the command this
      */
-    public void doCommand();
+    public void doCommand()throws ParseException;
 
     /**
      * Execute the reverse command of this
      */
-    public void undoCommand();
+    public void undoCommand() throws ParseException;
 }

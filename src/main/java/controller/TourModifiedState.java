@@ -19,17 +19,15 @@ import model.Segment;
 import model.Tour;
 import model.User;
 import org.xml.sax.SAXException;
-import view.Window;
 import xml.ExceptionXML;
 import xml.PlanTextWriter;
-import xml.XMLmapDeserializer;
 
 import static view.GraphicalView.IntersectionType.*;
 import static view.GraphicalView.IntersectionType.ON_TIME;
+import view.Window;
+import xml.XMLmapDeserializer;
 
 public class TourModifiedState implements State {
-
-    @Override
     public void loadMapFromXML(Controller controller, Window window) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
         controller.map = XMLmapDeserializer.load(controller.map);
         controller.user = new User();
@@ -95,12 +93,12 @@ public class TourModifiedState implements State {
         });
 
         DeliveryPoint dp = c.getCurrentDeliveryPoints().get(listDPcopy.size() - 1);
-        System.out.println("dp1: " + dp);
+        //System.out.println("dp1: " + dp);
         int index = listDPcopy.indexOf(dp);
         // change currentTour
         DeliveryPoint headPoint = listDPcopy.get(index - 1);
 
-        System.out.println("headPoint:" + headPoint);
+        //System.out.println("headPoint:" + headPoint);
 
         if (index < listDPcopy.size() - 1) {
             DeliveryPoint nextPoint = listDPcopy.get(index + 1);
@@ -122,7 +120,7 @@ public class TourModifiedState implements State {
 
         long sum = headPoint.getEstimatedDeliveryTime().getTime();
         SimpleDateFormat sd = new SimpleDateFormat("dd-MM-yyyy");
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
         while (aDP.getId() != null) {
             Double dist = c.getShortestPathBetweenDPs().get(headPoint.getId()).get(aDP.getId());
@@ -135,7 +133,7 @@ public class TourModifiedState implements State {
             }
             Date estimatedTime = new Date(sum);
             if (estimatedTime.before(timeWin)) {
-                Date et = new Date(timeWin.getTime() + 5 * 60 * 1000);
+                Date et = new Date(timeWin.getTime());
                 aDP.setEstimatedDeliveryTime(et);
                 sum = et.getTime();
             } else {
@@ -194,7 +192,7 @@ public class TourModifiedState implements State {
         if (!nextPoint.getId().equals(c.getCurrentDeliveryPoints().get(0).getId())) {
             long sum = headPoint.getEstimatedDeliveryTime().getTime();
             SimpleDateFormat sd = new SimpleDateFormat("dd-MM-yyyy");
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
             while (nextPoint.getId() != null) {
                 Double dist = c.getShortestPathBetweenDPs().get(headPoint.getId()).get(nextPoint.getId());
@@ -207,7 +205,7 @@ public class TourModifiedState implements State {
                 }
                 Date estimatedTime = new Date(sum);
                 if (estimatedTime.before(timeWin)) {
-                    Date et = new Date(timeWin.getTime() + 5 * 60 * 1000);
+                    Date et = new Date(timeWin.getTime());
                     nextPoint.setEstimatedDeliveryTime(et);
                     sum = et.getTime();
                 } else {
