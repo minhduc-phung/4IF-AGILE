@@ -71,6 +71,7 @@ public interface State {
     public default void modifyTourEnterDP(Controller controller, Courier c, Intersection intersection,
                     Integer timeWindow, ListOfCommands loc) throws ParseException {};
     
-    public default void modifyTourRemoveDP(Controller controller, Courier c, DeliveryPoint dp, ListOfCommands loc) {};
+    public default void modifyTourRemoveDP(Controller controller, Courier c, 
+                    DeliveryPoint dp, ListOfCommands loc) throws ParseException {};
     
 }

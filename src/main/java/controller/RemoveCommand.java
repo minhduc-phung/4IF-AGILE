@@ -38,6 +38,7 @@ public class RemoveCommand implements Command {
         }
         dp.chooseCourier(null);
         dp.assignTimeWindow(null);
+        courier.setRemovedDP(dp);
         courier.removeDeliveryPoint(dp);
         courier.getPositionIntersection().remove(dp.getId());
         courier.removeShortestPathBetweenDP(map, dp);
@@ -54,7 +55,23 @@ public class RemoveCommand implements Command {
     @Override
     public void undoCommand() {
         if (dp.getId().equals(map.getWarehouse().getId())) {
+            
             return;
+        }
+        if (courier.getRemovedDP() != null) {
+            dp = courier.getRemovedDP();
+            controller.getWindow().getGraphicalView().clearSelection();
+            controller.getWindow().getTextualView().updateData(controller.user, courier.getId());
+            controller.getWindow().setMessage("Delivery point returned.");
+            controller.getWindow().allowNode("REMOVE_DP_FROM_TOUR", false);
+        }else{
+            controller.getWindow().getGraphicalView().clearSelection();
+            controller.getWindow().getGraphicalView().paintIntersection(dp, DP);
+            controller.getWindow().getTextualView().updateData(controller.getUser(), courier.getId());
+            controller.getWindow().setMessage("Delivery point added.");
+            controller.getWindow().allowNode("VALIDATE_DP", false);
+            controller.getWindow().allowNode("SAVE_DP", true);
+            controller.getWindow().allowNode("CALCULATE_TOUR", true);
         }
         dp.chooseCourier(courier);
         courier.addDeliveryPoint(dp);
@@ -67,14 +84,8 @@ public class RemoveCommand implements Command {
         courier.getListSegmentBetweenDPs().put(dp.getId(), tour);
         
         courier.addShortestPathBetweenDP(map, dp);
+        courier.addTimeStampForDP(dp.getId(), dp.getEstimatedDeliveryTime());
     
-        controller.getWindow().getGraphicalView().clearSelection();
-        controller.getWindow().getGraphicalView().paintIntersection(dp, DP);
-        controller.getWindow().getTextualView().updateData(controller.getUser(), courier.getId());
-        controller.getWindow().setMessage("Delivery point added.");
-        controller.getWindow().allowNode("VALIDATE_DP", false);
-        controller.getWindow().allowNode("SAVE_DP", true);
-        controller.getWindow().allowNode("CALCULATE_TOUR", true);
     }
     
 }

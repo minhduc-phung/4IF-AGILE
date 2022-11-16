@@ -21,6 +21,7 @@ import static view.GraphicalView.IntersectionType.UNSELECTED;
  * @author bbbbb
  */
 public class EnterCommand implements Command {
+
     private Controller controller;
     private Map map;
     private Courier courier;
@@ -37,14 +38,23 @@ public class EnterCommand implements Command {
 
     @Override
     public void doCommand() {
-        DeliveryPoint dp = new DeliveryPoint(intersection.getId(), intersection.getLatitude(), intersection.getLongitude());
+        DeliveryPoint dp;
+        if (courier.getRemovedDP() == null) {
+            dp = new DeliveryPoint(intersection.getId(), intersection.getLatitude(), intersection.getLongitude());
+        } else {
+            dp = courier.getRemovedDP();
+            controller.getWindow().getGraphicalView().clearSelection();
+            controller.getWindow().getTextualView().updateData(controller.user, courier.getId());
+            controller.getWindow().setMessage("Delivery point returned.");
+            controller.getWindow().allowNode("ADD_DP_TO_TOUR", false);
+        }
         dp.assignTimeWindow(timeWindow);
         dp.chooseCourier(courier);
         courier.addDeliveryPoint(dp);
         courier.addPositionIntersection(dp.getId());
         HashMap<Long, Double> nestedMap = new HashMap<>();
         nestedMap.put(dp.getId(), 0.0);
-        
+
         Tour tour = new Tour();
         tour.addTourRoute(dp.getId(), new ArrayList<>());
         courier.getListSegmentBetweenDPs().put(dp.getId(), tour);
@@ -56,18 +66,20 @@ public class EnterCommand implements Command {
     @Override
     public void undoCommand() {
         int size = courier.getCurrentDeliveryPoints().size();
-        DeliveryPoint dp = courier.getCurrentDeliveryPoints().get(size-1);
+        DeliveryPoint dp = courier.getCurrentDeliveryPoints().get(size - 1);
         dp.chooseCourier(null);
         dp.assignTimeWindow(null);
         courier.removeDeliveryPoint(dp);
         courier.getPositionIntersection().remove(dp.getId());
         courier.removeShortestPathBetweenDP(map, dp);
-       
+        courier.setRemovedDP(dp);
+
         controller.getWindow().setMessage("Delivery point removed.");
+        controller.getWindow().getTextualView().updateData(controller.user, courier.getId());
         controller.getWindow().getGraphicalView().paintIntersection(dp, UNSELECTED);
         controller.getWindow().getTextualView().clearSelection();
         controller.getWindow().getGraphicalView().clearSelection();
-        controller.getWindow().getTextualView().updateData(controller.user, courier.getId());
+
     }
 
 }

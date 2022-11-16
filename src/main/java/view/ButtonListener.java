@@ -14,6 +14,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Courier;
 import model.Intersection;
 
@@ -89,8 +91,15 @@ public class ButtonListener implements EventHandler<ActionEvent> {
             case "REMOVE_DP_FROM_TOUR":
                 Courier courierToRemove = controller.getUser().getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId());
                 DeliveryPoint deliveryPointToRemove = controller.getWindow().getTextualView().getSelectedDeliveryPoint();
-                controller.modifyTourRemoveDP(courierToRemove, deliveryPointToRemove);
+            
+                try {
+                    controller.modifyTourRemoveDP(courierToRemove, deliveryPointToRemove);
+                } catch (ParseException ex) {
+                    Logger.getLogger(ButtonListener.class.getName()).log(Level.INFO, null, ex);
+                }
+            
                 break;
+
 
         }
     }

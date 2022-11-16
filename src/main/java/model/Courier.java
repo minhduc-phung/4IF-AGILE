@@ -28,8 +28,9 @@ public class Courier extends Observable {
 
     private ArrayList<Long> positionIntersection = new ArrayList<>();
     private HashMap<Long, HashMap<Long, Double>> shortestPathBetweenDPs = new HashMap<>();
-    ;
     private HashMap<Long, Tour> listSegmentBetweenDPs = new HashMap<>();
+    
+    private DeliveryPoint removedDP = null;
 
     public Courier(Long id, String name) {
         this.id = id;
@@ -38,6 +39,14 @@ public class Courier extends Observable {
 
     public Long getId() {
         return id;
+    }
+
+    public DeliveryPoint getRemovedDP() {
+        return removedDP;
+    }
+
+    public void setRemovedDP(DeliveryPoint removedDP) {
+        this.removedDP = removedDP;
     }
 
     public List<DeliveryPoint> getCurrentDeliveryPoints() {
@@ -219,5 +228,9 @@ public class Courier extends Observable {
 
     public String getTimeStampForDP(Long idDP) {
         return new SimpleDateFormat("HH:mm:ss").format(this.timeStampOfEachDP.get(idDP));
+    }
+    
+    public void removeTimeStampForDP (Long idDP) {
+        this.timeStampOfEachDP.remove(idDP);
     }
 }

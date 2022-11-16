@@ -1,11 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package controller;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,17 +9,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPathExpressionException;
 
 import javafx.scene.control.ComboBox;
 import javafx.scene.paint.Color;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.xpath.XPathExpressionException;
 import tsp.CompleteGraph;
 import model.Courier;
 import model.DeliveryPoint;
 import tsp.Graph;
 import model.Intersection;
 import model.Map;
+import model.Segment;
 import model.Tour;
 import tsp.TSP;
 import tsp.TSP1;
@@ -33,7 +29,6 @@ import model.User;
 import org.xml.sax.SAXException;
 import view.Window;
 import xml.ExceptionXML;
-import model.Segment;
 import xml.XMLdpsDeserializer;
 import xml.XMLdpsSerializer;
 import xml.XMLmapDeserializer;
@@ -44,8 +39,8 @@ import static view.GraphicalView.IntersectionType.*;
  *
  * @author bbbbb
  */
-public class DPEnteredState implements State {
-
+public class DPRemovedState implements State {
+        
     @Override
     public void loadMapFromXML(Controller controller, Window window) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
         controller.map = XMLmapDeserializer.load(controller.map);
@@ -61,7 +56,7 @@ public class DPEnteredState implements State {
         window.resetLateDeliveryNumber();
         window.setMessage("Please choose a courier and a time-window to start adding delivery points.");
     }
-
+    
     private void addWarehouse(Intersection warehouse, User user) {
         DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), warehouse.getLatitude(), warehouse.getLongitude());
         for (Long key : user.getListCourier().keySet()) {
@@ -73,17 +68,16 @@ public class DPEnteredState implements State {
             HashMap<Long, Double> nestedMap = new HashMap<>();
             nestedMap.put(warehouse.getId(), Double.valueOf("0.0"));
             c.getShortestPathBetweenDPs().put(warehouse.getId(), nestedMap);
-
+            
             Tour tour = new Tour();
             tour.addTourRoute(dpWarehouse.getId(), new ArrayList<>());
             c.getListSegmentBetweenDPs().put(dpWarehouse.getId(), tour);
             user.getListCourier().replace(key, c);
         }
     }
-
+    
     @Override
     public void calculateTour(Controller controller, Courier c, Long idWarehouse) throws ParseException {
-//        System.out.println(DPEnteredState.class.toGenericString());
         int i;
         int nbVertices = c.getCurrentDeliveryPoints().size();
         Graph g = new CompleteGraph(c, idWarehouse);
@@ -96,7 +90,7 @@ public class DPEnteredState implements State {
         Date now = new Date();
         SimpleDateFormat sd = new SimpleDateFormat("dd-MM-yyyy");
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
-        Date timeStamp;
+        Date timeStamp = new Date();
         if (earliestTW < 10) {
             timeStamp = sdf.parse(sd.format(now) + " 0" + earliestTW + ":00:00");
         } else {
@@ -106,17 +100,13 @@ public class DPEnteredState implements State {
         List<Integer> tspSolutions = new ArrayList<>();
         for (i = 0; i < nbVertices; i++) {
             tspSolutions.add(tsp.getSolution(i));
-            if (tsp.getSolution(i) == null){
-                controller.getWindow().setMessage("No possible tour found for this set of intersections.\nPlease try again with a different set of intersections.");
-                return;
-            }
         }
 
         //timeStamp of warehouse
         DeliveryPoint dp = c.getCurrentDeliveryPoints().get(0);
         long sum = timeStamp.getTime();
         dp.setEstimatedDeliveryTime(timeStamp);
-
+        
         //timeStamp of other DPs
         for (i = 0; i < tspSolutions.size() - 1; i++) {
             long timeInMinute = (long) Math.ceil(g.getCost(tspSolutions.get(i), tspSolutions.get(i + 1)) * 60 * 1000);
@@ -124,7 +114,7 @@ public class DPEnteredState implements State {
             dp = c.getCurrentDeliveryPoints().get(tspSolutions.get(i + 1));
             Date estimatedDeliveryTime = new Date(sum);
             Date timeWin = new Date();
-            if (dp.getTimeWindow().compareTo(10) < 0) {
+            if ( dp.getTimeWindow().compareTo(10) < 0 ) {
                 timeWin = sdf.parse(sd.format(now) + " 0" + dp.getTimeWindow() + ":00:00");
             } else {
                 timeWin = sdf.parse(sd.format(now) + " " + dp.getTimeWindow() + ":00:00");
@@ -132,7 +122,7 @@ public class DPEnteredState implements State {
             if (estimatedDeliveryTime.before(timeWin)) {
                 sum = timeWin.getTime(); 
                 estimatedDeliveryTime.setTime(sum);
-            }
+            } 
             dp.setEstimatedDeliveryTime(estimatedDeliveryTime);
             c.addTimeStampForDP(dp.getId(), dp.getEstimatedDeliveryTime());
         }
@@ -152,8 +142,23 @@ public class DPEnteredState implements State {
         List<Segment> listSeg = c.getListSegmentBetweenInters(idCurrentInter, idNextInter);
         c.addCurrentTour(idCurrentInter, listSeg);
 
-        int lateDeliveryCount = controller.getWindow().getGraphicalView().updateCalculatedMap(controller.getMap(), c);
+        for (Segment seg : listSeg) {
+            controller.getWindow().getGraphicalView().paintArrow(seg, Color.web("0x00B0FF"));
+        }
 
+        int lateDeliveryCount = 0;
+        for (DeliveryPoint d : c.getCurrentDeliveryPoints()) {
+            if (Objects.equals(d.getId(), idWarehouse)) {
+                continue;
+            }
+            if (d.getEstimatedDeliveryTime().getHours() > d.getTimeWindow()) {
+                controller.getWindow().getGraphicalView().paintIntersection(d, LATE);
+                lateDeliveryCount++;
+            } else {
+                controller.getWindow().getGraphicalView().paintIntersection(d, ON_TIME);
+            }
+        }
+        
         controller.getWindow().getTextualView().updateData(controller.user, c.getId());
         controller.getWindow().getTextualView().getTableView().sort();
         controller.getWindow().setMessage("The tour has been calculated.");
@@ -166,7 +171,7 @@ public class DPEnteredState implements State {
         controller.getWindow().updateOnCalculateTour(lateDeliveryCount);
         controller.setCurrentState(controller.tourCalculatedState);
     }
-
+    
     @Override
     public void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Long idCourier, Integer timeWindow) {
         Intersection intersection = map.getIntersection(idIntersection);
@@ -187,7 +192,6 @@ public class DPEnteredState implements State {
         courier.getListSegmentBetweenDPs().put(intersection.getId(), tour);
 
         courier.addShortestPathBetweenDP(map, dp);
-
         controller.getWindow().getGraphicalView().clearSelection();
         controller.getWindow().getGraphicalView().paintIntersection(dp, DP);
         controller.getWindow().getTextualView().updateData(controller.getUser(), idCourier);
@@ -195,6 +199,7 @@ public class DPEnteredState implements State {
         controller.getWindow().allowNode("VALIDATE_DP", false);
         controller.getWindow().allowNode("SAVE_DP", true);
         controller.getWindow().allowNode("CALCULATE_TOUR", true);
+        controller.setCurrentState(controller.dpEnteredState);
     }
 
     @Override
@@ -208,7 +213,7 @@ public class DPEnteredState implements State {
         courier.removeDeliveryPoint(dp);
         courier.getPositionIntersection().remove(dp.getId());
         courier.removeShortestPathBetweenDP(map, dp);
-
+        
         controller.getWindow().setMessage("Delivery point removed.");
         controller.getWindow().getGraphicalView().paintIntersection(dp, UNSELECTED);
         controller.getWindow().getTextualView().clearSelection();
@@ -217,10 +222,10 @@ public class DPEnteredState implements State {
         controller.getWindow().allowNode("REMOVE_DP", false);
         controller.getWindow().allowNode("CALCULATE_TOUR", true);
     }
-
+    
     @Override
     public void saveDeliveryPointToFile(Controller controller) throws ParserConfigurationException, SAXException, ExceptionXML,
-            IOException, TransformerException, XPathExpressionException {
+                                        IOException, TransformerConfigurationException, TransformerException, XPathExpressionException {
         Map map = controller.map;
         User user = controller.user;
         XMLdpsSerializer.getInstance().save(map, user);
@@ -229,12 +234,23 @@ public class DPEnteredState implements State {
     }
 
     @Override
-    public void restoreDeliveryPointFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, IOException,
-            SAXException, XPathExpressionException {
+    public void selectCourier(Controller controller, Long idCourier) {
+        controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
+        controller.getWindow().getTextualView().updateData(controller.getUser(), idCourier);
+        controller.getWindow().getGraphicalView().clearSelection();
+        controller.getWindow().setMessage("Courier " + controller.user.getCourierById(idCourier).getName() + " selected.");
+        controller.getWindow().getGraphicalView().updateMap(controller.getMap(), controller.user.getCourierById(idCourier));
+        controller.getWindow().allowNode("VALIDATE_DP", false);
+        controller.getWindow().allowNode("REMOVE_DP", false);
+        controller.getWindow().resetLateDeliveryNumber();
+    }
+    
+    @Override
+    public void restoreDeliveryPointFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, IOException, 
+                                                    SAXException, XPathExpressionException {
         //precondition : Map is loaded and XMLfile of deliveryPoints exists
         Map map = controller.map;
         User user = new User();
-
         controller.user = XMLdpsDeserializer.loadDPList(map, user);
         controller.getWindow().setMessage("Delivery points restored.");
         controller.setCurrentState(controller.dpRestoredState);
@@ -287,19 +303,6 @@ public class DPEnteredState implements State {
     }
 
     @Override
-    public void selectCourier(Controller controller, Long idCourier) {
-        controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
-        controller.getWindow().getTextualView().updateData(controller.getUser(), idCourier);
-        controller.getWindow().getTextualView().clearSelection();
-        controller.getWindow().getGraphicalView().clearSelection();
-        controller.getWindow().setMessage("Courier " + controller.user.getCourierById(idCourier).getName() + " selected.");
-        controller.getWindow().getGraphicalView().updateMap(controller.getMap(), controller.user.getCourierById(idCourier));
-        controller.getWindow().allowNode("VALIDATE_DP", false);
-        controller.getWindow().allowNode("REMOVE_DP", false);
-        controller.getWindow().resetLateDeliveryNumber();
-    }
-
-    @Override
     public void mouseClickedOnMap(Controller controller) {
         if (controller.getWindow().getGraphicalView().getHoveredIntersection() != null) {
             Long selectedCourierId = controller.getWindow().getInteractivePane().getSelectedCourierId();
@@ -318,7 +321,7 @@ public class DPEnteredState implements State {
             controller.getWindow().getTextualView().clearSelection();
             if (dpIds.contains(selectedIntersection.getId())) {
                 controller.getWindow().getTextualView().setSelectedDeliveryPoint(c.getDeliveryPointById(selectedIntersection.getId()));
-                controller.getWindow().getTextualView().getTableView().getSelectionModel().select(dpIds.indexOf(selectedIntersection.getId()) - 1);
+                controller.getWindow().getTextualView().getTableView().getSelectionModel().select(dpIds.indexOf(selectedIntersection.getId())-1);
                 controller.getWindow().allowNode("REMOVE_DP", true);
                 controller.getWindow().allowNode("VALIDATE_DP", false);
             } else {
@@ -331,7 +334,7 @@ public class DPEnteredState implements State {
     }
 
     @Override
-    public void mouseExitedMap(Controller controller) {
+    public void mouseExitedMap(Controller controller){
         Intersection hoveredIntersection = controller.getWindow().getGraphicalView().getHoveredIntersection();
         if (hoveredIntersection != null) {
             if (hoveredIntersection.equals(controller.getWindow().getGraphicalView().getSelectedIntersection())) {
@@ -344,22 +347,23 @@ public class DPEnteredState implements State {
     }
 
     @Override
-    public void mouseClickedOnTable(Controller controller, int indexDP) {
+    public void mouseClickedOnTable(Controller controller, int indexDP){
         Map map = controller.map;
         User user = controller.user;
         Courier courier = user.getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId());
         if (courier.getCurrentDeliveryPoints().size() > indexDP) {
             DeliveryPoint oldSelectedDP = controller.getWindow().getTextualView().getSelectedDeliveryPoint();
-            if (oldSelectedDP != null) {
+            if (oldSelectedDP != null){
                 controller.getWindow().getGraphicalView().paintIntersection(oldSelectedDP, DP);
             }
             DeliveryPoint dp = courier.getCurrentDeliveryPoints().get(indexDP);
             controller.getWindow().getTextualView().setSelectedDeliveryPoint(dp);
+            System.out.println(dp);
             controller.getWindow().getGraphicalView().setSelectedIntersection(map.getIntersection(dp.getId()));
             controller.getWindow().getGraphicalView().paintIntersection(map.getIntersection(dp.getId()), SELECTED);
             controller.getWindow().allowNode("VALIDATE_DP", false);
             controller.getWindow().allowNode("REMOVE_DP", true);
         }
     }
-
+    
 }

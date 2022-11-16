@@ -12,9 +12,9 @@ public abstract class TemplateTSP implements TSP {
     private int timeLimit;
     private long startTime;
 
-    public void searchSolution(int timeLimit, Graph g) {
+    public boolean searchSolution(int timeLimit, Graph g) {
         if (timeLimit <= 0) {
-            return;
+            return false;
         }
         startTime = System.currentTimeMillis();
         this.timeLimit = timeLimit;
@@ -28,6 +28,7 @@ public abstract class TemplateTSP implements TSP {
         visited.add(0); // The first visited vertex is 0
         bestSolCost = Integer.MAX_VALUE;
         branchAndBound(0, unvisited, visited, 0);
+        return true;
     }
 
     public Integer getSolution(int i) {

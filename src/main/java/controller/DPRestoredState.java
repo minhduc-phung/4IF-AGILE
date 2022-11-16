@@ -112,7 +112,7 @@ public class DPRestoredState implements State {
         //timeStamp of other DPs
         for (i = 0; i < tspSolutions.size() - 1; i++) {
             long timeInMinute = (long) Math.ceil(g.getCost(tspSolutions.get(i), tspSolutions.get(i + 1)) * 60 * 1000);
-            sum += timeInMinute;
+            sum += timeInMinute - 5 * 60 * 1000;        //5 mins for delivery
             dp = c.getCurrentDeliveryPoints().get(tspSolutions.get(i + 1));
             Date estimatedDeliveryTime = new Date(sum);
             Date timeWin = new Date();
@@ -122,7 +122,7 @@ public class DPRestoredState implements State {
                 timeWin = sdf.parse(sd.format(now) + " " + dp.getTimeWindow() + ":00:00");
             }
             if (estimatedDeliveryTime.before(timeWin)) {
-                sum = timeWin.getTime() + 5*60*1000;        //5 mins for delivery
+                sum = timeWin.getTime();        
                 estimatedDeliveryTime.setTime(sum);
             } 
             dp.setEstimatedDeliveryTime(estimatedDeliveryTime);

@@ -110,7 +110,7 @@ public class Controller {
         this.currentState.modifyTourEnterDP(this, c, intersection, timeWindow, listOfCommands);
     }
     
-    public void modifyTourRemoveDP(Courier c, DeliveryPoint dp) {
+    public void modifyTourRemoveDP(Courier c, DeliveryPoint dp) throws ParseException {
         this.currentState.modifyTourRemoveDP(this, c, dp, listOfCommands);
     }
 

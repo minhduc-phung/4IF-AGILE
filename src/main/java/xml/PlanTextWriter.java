@@ -81,6 +81,7 @@ public class PlanTextWriter {
             } 
             writeSegmentToFile(s, writer); 
             key = listSegmentsFromDP.get(listSegmentsFromDP.size()-1).getDestination().getId();
+            System.out.println(courier.getCurrentDeliveryPoints());
             if (!key.equals(map.getWarehouse().getId())) {
                 writer.write(courier.getTimeStampForDP(key) + " -- Arrival at next delivery point" +"\n");
             }else{

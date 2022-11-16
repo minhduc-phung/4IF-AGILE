@@ -78,7 +78,7 @@ public class TourModifiedState implements State {
             c.getCurrentTour().getTourRoute().replace(headPoint.getId(), listSeg1);
             List<Segment> listSeg2 = c.getListSegmentBetweenInters(dp.getId(), nextPoint.getId());
             c.addCurrentTour(dp.getId(), listSeg2);
-        }
+        }        
 
         // set estimatedDeliveryTime
         DeliveryPoint aDP = dp;
@@ -99,7 +99,6 @@ public class TourModifiedState implements State {
             Date estimatedTime = new Date(sum);
             if (estimatedTime.before(timeWin)) {
                 Date et = new Date(timeWin.getTime() + 5 * 60 * 1000);
-                sum = et.getTime();
                 aDP.setEstimatedDeliveryTime(et);
                 sum = et.getTime();
             } else {
@@ -112,6 +111,8 @@ public class TourModifiedState implements State {
             }
             aDP = listDPcopy.get(listDPcopy.indexOf(aDP)+1);
         }
+        
+        c.addTimeStampForDP(dp.getId(), dp.getEstimatedDeliveryTime());
 
         controller.getWindow().getGraphicalView().clearSelection();
         controller.getWindow().getTextualView().updateData(controller.user, c.getId());
@@ -122,8 +123,74 @@ public class TourModifiedState implements State {
     }
 
     @Override
-    public void modifyTourRemoveDP(Controller controller, Courier c, DeliveryPoint dp, ListOfCommands loc) {
+    public void modifyTourRemoveDP(Controller controller, Courier c, DeliveryPoint dp, ListOfCommands loc) throws ParseException{
+        ArrayList<DeliveryPoint> listDPcopy = new ArrayList<>(c.getCurrentDeliveryPoints());        
         loc.add(new RemoveCommand(controller, controller.map, c, dp));
+        Collections.sort(listDPcopy, (DeliveryPoint d1, DeliveryPoint d2) -> {
+            if (d1.getEstimatedDeliveryTime().equals(d2.getEstimatedDeliveryTime())) {
+                return 0;
+            } else if (d1.getEstimatedDeliveryTime().compareTo(d2.getEstimatedDeliveryTime()) > 0) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+        
+        int index = listDPcopy.indexOf(dp);
+        DeliveryPoint headPoint = listDPcopy.get(index-1);
+        Tour currentTour = c.getCurrentTour();
+        
+        // branch to Warehouse
+        DeliveryPoint nextPoint = c.getCurrentDeliveryPoints().get(0); //warehouse
+        
+        if (index < listDPcopy.size() - 1) {            
+            nextPoint = listDPcopy.get(index + 1);                       
+        } 
+        
+        //update current tour
+        List<Segment> newListSegmentBetween2Points = c.getListSegmentBetweenInters(headPoint.getId(), nextPoint.getId());
+        currentTour.getTourRoute().replace(headPoint.getId(), newListSegmentBetween2Points);
+        currentTour.getTourRoute().remove(dp.getId()); 
+        c.removeTimeStampForDP(dp.getId());
+        
+        //update estimatedDeliveryTime
+        if (!nextPoint.getId().equals(c.getCurrentDeliveryPoints().get(0).getId())) {
+            long sum = headPoint.getEstimatedDeliveryTime().getTime();
+            SimpleDateFormat sd = new SimpleDateFormat("dd-MM-yyyy");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+
+            while (nextPoint.getId() != null) {
+                Double dist = c.getShortestPathBetweenDPs().get(headPoint.getId()).get(nextPoint.getId());
+                sum += (long) Math.ceil(5 * 60 * 1000 + dist * 60 * 1000);
+                Date timeWin;
+                if (nextPoint.getTimeWindow().compareTo(10) < 0) {
+                    timeWin = sdf.parse(sd.format(headPoint.getEstimatedDeliveryTime()) + " 0" + nextPoint.getTimeWindow() + ":00:00");
+                } else {
+                    timeWin = sdf.parse(sd.format(headPoint.getEstimatedDeliveryTime()) + " " + nextPoint.getTimeWindow() + ":00:00");
+                }
+                Date estimatedTime = new Date(sum);
+                if (estimatedTime.before(timeWin)) {
+                    Date et = new Date(timeWin.getTime() + 5 * 60 * 1000);
+                    nextPoint.setEstimatedDeliveryTime(et);
+                    sum = et.getTime();
+                } else {
+                    nextPoint.setEstimatedDeliveryTime(estimatedTime);
+                }
+
+                headPoint = nextPoint;
+                if (listDPcopy.indexOf(nextPoint) == listDPcopy.size() - 1) {
+                    break;
+                }
+                nextPoint = listDPcopy.get(listDPcopy.indexOf(nextPoint) + 1);
+            }
+        }
+     
+        controller.getWindow().getGraphicalView().clearSelection();
+        controller.getWindow().getTextualView().updateData(controller.user, c.getId());
+        Integer lateDeliveries = controller.getWindow().getGraphicalView().updateCalculatedMap(controller.getMap(), c);
+        controller.getWindow().updateOnCalculateTour(lateDeliveries);
+        controller.getWindow().setMessage("Delivery point removed.");
+        controller.getWindow().allowNode("REMOVE_DP_FROM_TOUR", false);
     }
 
     @Override
@@ -134,6 +201,7 @@ public class TourModifiedState implements State {
     @Override
     public void redo(ListOfCommands loc) {
         loc.redo();
+        
     }
 
     @Override
