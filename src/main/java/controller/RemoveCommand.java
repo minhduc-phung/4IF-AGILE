@@ -14,16 +14,19 @@ import model.Tour;
 import static view.GraphicalView.IntersectionType.DP;
 import static view.GraphicalView.IntersectionType.UNSELECTED;
 
-/**
- *
- * @author bbbbb
- */
 public class RemoveCommand implements Command {
     private Controller controller;
     private Map map;
     private Courier courier;
     private DeliveryPoint dp;
 
+    /**
+     * Create the command to remove a delivery point from the tour
+     * @param controller the controller
+     * @param map the map
+     * @param courier the courier who has the delivery point
+     * @param dp the delivery point to remove
+     */
     public RemoveCommand(Controller controller, Map map, Courier courier, DeliveryPoint dp) {
         this.controller = controller;
         this.map = map;
@@ -47,6 +50,8 @@ public class RemoveCommand implements Command {
         controller.getWindow().getGraphicalView().paintIntersection(dp, UNSELECTED);
         controller.getWindow().getTextualView().clearSelection();
         controller.getWindow().getGraphicalView().clearSelection();
+        Integer lateDeliveries = controller.getWindow().getGraphicalView().updateCalculatedMap(controller.getMap(), courier);
+        controller.getWindow().updateOnCalculateTour(lateDeliveries);
         controller.getWindow().getTextualView().updateData(controller.user, courier.getId());
         controller.getWindow().allowNode("REMOVE_DP", false);
         controller.getWindow().allowNode("CALCULATE_TOUR", true);
@@ -85,7 +90,10 @@ public class RemoveCommand implements Command {
         
         courier.addShortestPathBetweenDP(map, dp);
         courier.addTimeStampForDP(dp.getId(), dp.getEstimatedDeliveryTime());
-    
+        Integer lateDeliveries = controller.getWindow().getGraphicalView().updateCalculatedMap(controller.getMap(), courier);
+        controller.getWindow().updateOnCalculateTour(lateDeliveries);
+
+
     }
     
 }

@@ -9,10 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-/**
- *
- * @author bbbbb
- */
 public class User {
 
     private HashMap<Long, Courier> listCourier = new HashMap<>();
@@ -32,6 +28,9 @@ public class User {
         }
     };
 
+    /**
+     * Create a user with 5 example couriers with unrealistic names
+     */
     public User() {
         Courier c1 = new Courier(Long.parseLong("1"), "GIYRAUD Vincent");
         Courier c2 = new Courier(Long.parseLong("2"), "KLOEN Benjamin");

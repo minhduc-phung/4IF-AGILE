@@ -42,15 +42,16 @@ public class XMLPlanSerializer {
         }
         return instance;
     }
-        /**
+    /**
      * Open an XML file and write an XML description of the plan in it 
-     * @param listDP
-     * @param user
-     * @param plan the plan to serialise
+     * @param map the loaded map
+     * @param courier the courier to whom the plan is related
      * @throws ParserConfigurationException
      * @throws TransformerFactoryConfigurationError
      * @throws TransformerException
      * @throws ExceptionXML
+     * @throws IOException
+     * @throws SAXException
      */
     public void save(Map map, Courier courier) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException, ExceptionXML, SAXException, IOException{
         File xml = XMLfileOpener.getInstance().open(false);

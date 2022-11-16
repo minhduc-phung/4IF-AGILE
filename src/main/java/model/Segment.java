@@ -15,6 +15,13 @@ public class Segment {
     private Double length;
     private String name;
 
+    /**
+     * Create a segment with 2 intersections defining it, its length and its name
+     * @param origin the origin intersection
+     * @param destination the destination intersection
+     * @param length the length of the segment
+     * @param name the name of the segment
+     */
     public Segment(Intersection origin, Intersection destination, Double length, String name) {
         this.origin = origin;
         this.destination = destination;

@@ -14,7 +14,6 @@ public class ListOfCommands {
 
     /**
      * Add command c to this
-     *
      * @param c the command to add
      */
     public void add(Command c) {

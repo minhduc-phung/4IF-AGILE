@@ -43,9 +43,8 @@ public class XMLdpsSerializer {//implements Visitor{// Singleton
 
     /**
      * Open an XML file and write an XML description of the plan in it 
-     * @param listDP
+     * @param map
      * @param user
-     * @param plan the plan to serialise
      * @throws ParserConfigurationException
      * @throws TransformerFactoryConfigurationError
      * @throws TransformerException

@@ -34,10 +34,6 @@ import xml.ExceptionXML;
 import xml.XMLdpsDeserializer;
 import xml.XMLmapDeserializer;
 
-/**
- *
- * @author bbbbb
- */
 public class DPSavedState implements State {
         
     @Override
@@ -67,7 +63,12 @@ public class DPSavedState implements State {
         controller.getWindow().allowNode("REMOVE_DP", false);
         controller.getWindow().resetLateDeliveryNumber();
     }
-    
+
+    /**
+     * Method which adds the warehouse as the first node of the tour of all the couriers
+     * @param warehouse the warehouse
+     * @param user the user
+     */
     private void addWarehouse(Intersection warehouse, User user) {
         DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), warehouse.getLatitude(), warehouse.getLongitude());
         for (Long key : user.getListCourier().keySet()) {

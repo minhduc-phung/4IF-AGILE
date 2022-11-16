@@ -24,10 +24,6 @@ import xml.ExceptionXML;
 import xml.XMLdpsDeserializer;
 import xml.XMLmapDeserializer;
 
-/**
- *
- * @author bbbbb
- */
 public class MapLoadedState implements State {
     @Override
     public void loadMapFromXML(Controller controller, Window window) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
@@ -44,7 +40,12 @@ public class MapLoadedState implements State {
         window.resetLateDeliveryNumber();
         window.setMessage("Please choose a courier and a time-window to start adding delivery points.");
     }
-    
+
+    /**
+     * Method which adds the warehouse as the first node of the tour of all the couriers
+     * @param warehouse the warehouse
+     * @param user the user
+     */
     private void addWarehouse(Intersection warehouse, User user) {
         DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), warehouse.getLatitude(), warehouse.getLongitude());
         for (Long key : user.getListCourier().keySet()) {

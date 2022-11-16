@@ -16,10 +16,6 @@ import model.Tour;
 import static view.GraphicalView.IntersectionType.DP;
 import static view.GraphicalView.IntersectionType.UNSELECTED;
 
-/**
- *
- * @author bbbbb
- */
 public class EnterCommand implements Command {
 
     private Controller controller;
@@ -28,6 +24,14 @@ public class EnterCommand implements Command {
     private Intersection intersection;
     private Integer timeWindow;
 
+    /**
+     * Create the command to enter a delivery point in the tour
+     * @param controller the controller
+     * @param map the map
+     * @param courier the chosen courier to add the delivery point
+     * @param intersection the intersection where the delivery point is
+     * @param timeWindow the time-window of the delivery point
+     */
     public EnterCommand(Controller controller, Map map, Courier courier, Intersection intersection, Integer timeWindow) {
         this.controller = controller;
         this.map = map;
@@ -45,6 +49,8 @@ public class EnterCommand implements Command {
             dp = courier.getRemovedDP();
             controller.getWindow().getGraphicalView().clearSelection();
             controller.getWindow().getTextualView().updateData(controller.user, courier.getId());
+            Integer lateDeliveries = controller.getWindow().getGraphicalView().updateCalculatedMap(controller.getMap(), courier);
+            controller.getWindow().updateOnCalculateTour(lateDeliveries);
             controller.getWindow().setMessage("Delivery point returned.");
             controller.getWindow().allowNode("ADD_DP_TO_TOUR", false);
         }
@@ -77,6 +83,8 @@ public class EnterCommand implements Command {
         controller.getWindow().setMessage("Delivery point removed.");
         controller.getWindow().getTextualView().updateData(controller.user, courier.getId());
         controller.getWindow().getGraphicalView().paintIntersection(dp, UNSELECTED);
+        Integer lateDeliveries = controller.getWindow().getGraphicalView().updateCalculatedMap(controller.getMap(), courier);
+        controller.getWindow().updateOnCalculateTour(lateDeliveries);
         controller.getWindow().getTextualView().clearSelection();
         controller.getWindow().getGraphicalView().clearSelection();
 

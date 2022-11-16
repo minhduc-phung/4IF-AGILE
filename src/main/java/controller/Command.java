@@ -5,10 +5,7 @@
  */
 package controller;
 
-/**
- *
- * @author bbbbb
- */
+
 public interface Command {
     
     /**

@@ -19,22 +19,9 @@ import view.Window;
 import xml.ExceptionXML;
 import xml.XMLmapDeserializer;
 
-/**
- *
- * @author bbbbb
- */
 public class InitialState implements State {
-    
-    /**
-     *
-     * @param controller
-     * @param window
-     * @return
-     * @throws xml.ExceptionXML
-     * @throws ParserConfigurationException
-     * @throws IOException
-     * @throws SAXException
-     */
+    // Initial state of the application
+
     @Override
     public void loadMapFromXML(Controller controller, Window window) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
         controller.map = XMLmapDeserializer.load(controller.map);
@@ -51,7 +38,12 @@ public class InitialState implements State {
         window.resetLateDeliveryNumber();
         window.setMessage("Please choose a courier and a time-window to start adding delivery points, or restore them from a file.");
     }
-    
+
+    /**
+     * Method which adds the warehouse as the first node of the tour of all the couriers
+     * @param warehouse the warehouse
+     * @param user the user
+     */
     private void addWarehouse(Intersection warehouse, User user) {
         DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), warehouse.getLatitude(), warehouse.getLongitude());
         for (Long key : user.getListCourier().keySet()) {

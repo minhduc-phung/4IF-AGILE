@@ -4,7 +4,6 @@ import controller.Controller;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
@@ -13,11 +12,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import model.User;
-
-import java.util.Map;
-import static javafx.scene.input.KeyCode.Z;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 
 // We have no intentions to do scaling like PlaCo example.
 public class Window extends Group {
