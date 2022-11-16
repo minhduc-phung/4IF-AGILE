@@ -25,10 +25,19 @@ import xml.XMLdpsDeserializer;
 import xml.XMLmapDeserializer;
 
 /**
- *
- * @author bbbbb
+ * This class is for the state where a map is already loaded.
+ * Its methods are executed in the Controller class when the current state is DPEnteredState.
  */
 public class MapLoadedState implements State {
+    /**
+     * this method allows us to load a map from an xml file
+     * @param controller
+     * @param window
+     * @throws ExceptionXML
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws IOException
+     */
     @Override
     public void loadMapFromXML(Controller controller, Window window) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
         controller.map = XMLmapDeserializer.load(controller.map);
@@ -44,7 +53,13 @@ public class MapLoadedState implements State {
         window.resetLateDeliveryNumber();
         window.setMessage("Please choose a courier and a time-window to start adding delivery points.");
     }
-    
+    /**
+     * this method allows us to add a warehouse
+     * @param warehouse the intersection we want to add as a warehouse
+     * @param user the user of this application
+     * @see model.User
+     * @see model.Map the class Map : warehouse is one its attributes
+     */
     private void addWarehouse(Intersection warehouse, User user) {
         DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), warehouse.getLatitude(), warehouse.getLongitude());
         for (Long key : user.getListCourier().keySet()) {
@@ -63,7 +78,12 @@ public class MapLoadedState implements State {
             user.getListCourier().replace(key, c);
         }
     }
-    
+    /**
+     * this method allows the user to select a courier from those existent
+     * @param controller
+     * @param idCourier the id of the courier to select
+     * @see model.Courier
+     */
     @Override
     public void selectCourier(Controller controller, Long idCourier) {
         controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
@@ -76,7 +96,15 @@ public class MapLoadedState implements State {
         controller.getWindow().getInteractivePane().setSelectedTimeWindow(8);
         controller.getWindow().resetLateDeliveryNumber();
     }
-    
+    /**
+     * this method allows us to restore delivery points from an XML file
+     * @param controller
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws ExceptionXML
+     * @throws IOException
+     * @throws XPathExpressionException
+     */
     @Override
     public void restoreDeliveryPointFromXML(Controller controller) 
                                                     throws ExceptionXML, ParserConfigurationException, IOException, 

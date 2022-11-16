@@ -20,10 +20,20 @@ import xml.ExceptionXML;
 import xml.PlanTextWriter;
 
 /**
- *
- * @author bbbbb
+ * This class is for the state where the tour is already calculated.
+ * Its methods are executed in the Controller class when the current state is DPEnteredState.
  */
 public class TourCalculatedState implements State {
+    /**
+     * this method generates a delivery plan for a chosen courier
+     * @param controller
+     * @param c the courier chosen
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws ExceptionXML
+     * @throws IOException
+     * @throws TransformerException
+     */
     @Override
     public void generateDeliveryPlanForCourier(Controller controller, Courier c) throws ParserConfigurationException, SAXException, ExceptionXML,
                                                                                                 IOException, TransformerException{
@@ -33,7 +43,12 @@ public class TourCalculatedState implements State {
         controller.getWindow().allowNode("LOAD_MAP", true);
         controller.setCurrentState(controller.planGeneratedState);
     }
-
+    /**
+     * this method allows the user to select a courier from those existent
+     * @param controller
+     * @param idCourier the id of the courier to select
+     * @see model.Courier
+     */
     @Override
     public void selectCourier(Controller controller, Long idCourier) {
         controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
@@ -48,6 +63,10 @@ public class TourCalculatedState implements State {
         controller.getWindow().resetLateDeliveryNumber();
     }
 
+    /**
+     * this method allows the user to modify the tour by adding a delivery point or removing it
+     * @param controller
+     */
     @Override
     public void modifyTour(Controller controller) {
         controller.setCurrentState(controller.tourModifiedState);

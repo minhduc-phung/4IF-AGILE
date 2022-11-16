@@ -6,8 +6,7 @@
 package model;
 
 /**
- *
- * @author nmngo
+ *This class defines a segment (who's characterised by an origin intersection, a destination intersection, a name and a length in meters, it does not have any other intersection in it)>
  */
 public class Segment {
     private Intersection origin;

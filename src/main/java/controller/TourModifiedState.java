@@ -33,8 +33,8 @@ import xml.ExceptionXML;
 import xml.PlanTextWriter;
 
 /**
- *
- * @author bbbbb
+ * This class is for the state where the tour is modified.
+ * Its methods are executed in the Controller class when the current state is DPEnteredState.
  */
 public class TourModifiedState implements State {
 
@@ -122,6 +122,7 @@ public class TourModifiedState implements State {
         controller.getWindow().allowNode("CALCULATE_TOUR", false);
     }
 
+
     @Override
     public void modifyTourRemoveDP(Controller controller, Courier c, DeliveryPoint dp, ListOfCommands loc) {
         loc.add(new RemoveCommand(controller, controller.map, c, dp));
@@ -136,7 +137,16 @@ public class TourModifiedState implements State {
     public void redo(ListOfCommands loc) {
         loc.redo();
     }
-
+    /**
+     * this method generates a delivery plan for a chosen courier
+     * @param controller
+     * @param c the courier chosen
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws ExceptionXML
+     * @throws IOException
+     * @throws TransformerException
+     */
     @Override
     public void generateDeliveryPlanForCourier(Controller controller, Courier c) throws ParserConfigurationException, SAXException, ExceptionXML,
             IOException, TransformerException{
@@ -145,7 +155,12 @@ public class TourModifiedState implements State {
         controller.getWindow().setMessage("Delivery plans saved.");
         controller.setCurrentState(controller.planGeneratedState);
     }
-
+    /**
+     * this method shows us the nearest intersections whenever we move the mouse on the map (by changing their colors) which help us decide what intersection we're going to select.
+     * @param controller
+     * @param mousePosX
+     * @param mousePosY
+     */
     @Override
     public void mouseMovedOnMap(Controller controller, double mousePosX, double mousePosY) {
         Double scale = controller.getWindow().getGraphicalView().getScale();
@@ -188,7 +203,10 @@ public class TourModifiedState implements State {
 
         controller.getWindow().getGraphicalView().paintIntersection(nearestIntersection, HOVERED);
     }
-
+    /**
+     * this method enables an intersection on the map to be selected by clicking on it, which changes its color.
+     * @param controller
+     */
     @Override
     public void mouseClickedOnMap(Controller controller) {
         if (controller.getWindow().getGraphicalView().getHoveredIntersection() != null) {
@@ -219,7 +237,10 @@ public class TourModifiedState implements State {
             controller.getWindow().getGraphicalView().paintIntersection(controller.getWindow().getGraphicalView().getSelectedIntersection(), SELECTED);
         }
     }
-
+    /**
+     * this method allows us to exit the mouse from the map
+     * @param controller
+     */
     @Override
     public void mouseExitedMap(Controller controller) {
         Intersection hoveredIntersection = controller.getWindow().getGraphicalView().getHoveredIntersection();
@@ -232,7 +253,11 @@ public class TourModifiedState implements State {
             controller.getWindow().getGraphicalView().setHoveredIntersection(null);
         }
     }
-
+    /**
+     * this method allows us to click a delivery point on the table
+     * @param controller
+     * @param indexDP the index of the delivery point we want to select on the table
+     */
     @Override
     public void mouseClickedOnTable(Controller controller, int indexDP) {
         Map map = controller.map;

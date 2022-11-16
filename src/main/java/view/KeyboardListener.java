@@ -11,9 +11,10 @@ import static javafx.scene.input.KeyCode.Y;
 import static javafx.scene.input.KeyCode.Z;
 import javafx.scene.input.KeyEvent;
 
+
 /**
- *
- * @author bbbbb
+ *This class is the listener for the keyboard events on the graphical view and the textual view.
+ * It allows the user to undo and redo using the keyboard (ctrl + z/ ctrl + y).
  */
 public class KeyboardListener implements EventHandler<KeyEvent> {
 
@@ -24,6 +25,11 @@ public class KeyboardListener implements EventHandler<KeyEvent> {
         
     }
 
+    /**
+     * this method handles the action to do after the incoming Event.
+     *
+     * @param e represents the incoming keyboard event
+     */
     @Override
     public void handle(KeyEvent e) {
         if (e.isControlDown() && e.getCode() == Z) {

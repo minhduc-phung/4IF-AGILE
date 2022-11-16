@@ -6,7 +6,9 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
 
-// This class is the listener for the mouse events on the graphical view and the textual view
+/**
+ *This class is the listener for the mouse events on the graphical view and the textual view
+ */
 public class MouseListener implements EventHandler<MouseEvent> {
     private Controller controller;
 
@@ -14,6 +16,11 @@ public class MouseListener implements EventHandler<MouseEvent> {
         this.controller = c;
     }
 
+    /**
+     * this method handles the action to do after the incoming Event.
+     *
+     * @param mouseEvent represents the incoming mouse event
+     */
     @Override
     public void handle(MouseEvent mouseEvent) {
         switch (mouseEvent.getEventType().getName()){

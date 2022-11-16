@@ -10,12 +10,22 @@ import java.util.List;
 import observer.Observable;
 
 /**
- *
- * @author nmngo
+ *this class defines the map (graph loaded from an XML file containing a list of intersections and road segments)
  */
 public class Map extends Observable {
+    /**
+     * this attribute represents the list of intersections in this map
+     * @see Intersection
+     */
     private HashMap<Long, Intersection> listIntersection;
+    /**
+     * this attribute represents the list of segments on this map
+     * @see Segment
+     */
     private List<Segment> listSegment;
+    /***
+     * This attribute represents the warehouse (a special intersection where all parcels are stored, and each courier starts delivering parcels from here at 8 o'clock every morning and returns to the warehouse after delivering all the parcels every day).
+     */
     private Intersection warehouse;
     private String mapName;
 

@@ -36,11 +36,19 @@ import xml.XMLmapDeserializer;
 import static view.GraphicalView.IntersectionType.*;
 
 /**
- *
- * @author bbbbb
+ * This class is for the state where a delivery point is removed.
+ * Its methods are executed in the Controller class when the current state is DPEnteredState.
  */
 public class DPRemovedState implements State {
-        
+    /**
+     * this method allows us to load a map from an xml file
+     * @param controller
+     * @param window
+     * @throws ExceptionXML
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws IOException
+     */
     @Override
     public void loadMapFromXML(Controller controller, Window window) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
         controller.map = XMLmapDeserializer.load(controller.map);
@@ -56,7 +64,13 @@ public class DPRemovedState implements State {
         window.resetLateDeliveryNumber();
         window.setMessage("Please choose a courier and a time-window to start adding delivery points.");
     }
-    
+    /**
+     * this method allows us to add a warehouse
+     * @param warehouse the intersection we want to add as a warehouse
+     * @param user the user of this application
+     * @see model.User
+     * @see model.Map the class Map : warehouse is one its attributes
+     */
     private void addWarehouse(Intersection warehouse, User user) {
         DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), warehouse.getLatitude(), warehouse.getLongitude());
         for (Long key : user.getListCourier().keySet()) {
@@ -75,7 +89,14 @@ public class DPRemovedState implements State {
             user.getListCourier().replace(key, c);
         }
     }
-    
+
+    /**
+     * this method calculate the tour for the chosen courier
+     * @param controller
+     * @param c the chosen courier
+     * @param idWarehouse the id of the warehouse
+     * @throws ParseException
+     */
     @Override
     public void calculateTour(Controller controller, Courier c, Long idWarehouse) throws ParseException {
         int i;
@@ -171,7 +192,14 @@ public class DPRemovedState implements State {
         controller.getWindow().updateOnCalculateTour(lateDeliveryCount);
         controller.setCurrentState(controller.tourCalculatedState);
     }
-    
+    /**
+     * This method allow us to enter a delivery point
+     * @param controller
+     * @param map
+     * @param idIntersection
+     * @param idCourier
+     * @param timeWindow
+     */
     @Override
     public void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Long idCourier, Integer timeWindow) {
         Intersection intersection = map.getIntersection(idIntersection);
@@ -202,6 +230,14 @@ public class DPRemovedState implements State {
         controller.setCurrentState(controller.dpEnteredState);
     }
 
+    /**
+     * this method allows the user to remove a delivery point
+     * @param controller
+     * @param map
+     * @param dp the delivery point to remove
+     * @param idCourier the id of the chosen courier
+     * @see model.DeliveryPoint
+     */
     @Override
     public void removeDeliveryPoint(Controller controller, Map map, DeliveryPoint dp, Long idCourier) {
         if (dp.getId().equals(map.getWarehouse().getId())) {
@@ -223,7 +259,16 @@ public class DPRemovedState implements State {
         controller.getWindow().allowNode("CALCULATE_TOUR", true);
         controller.setCurrentState(controller.dpRemovedState);
     }
-    
+    /**
+     * this method allows the user to save delivery points into an XML file
+     * @param controller
+     * @throws ExceptionXML
+     * @throws ParserConfigurationException
+     * @throws IOException
+     * @throws SAXException
+     * @throws TransformerException
+     * @throws XPathExpressionException
+     */
     @Override
     public void saveDeliveryPointToFile(Controller controller) throws ParserConfigurationException, SAXException, ExceptionXML,
                                         IOException, TransformerConfigurationException, TransformerException, XPathExpressionException {
@@ -233,7 +278,12 @@ public class DPRemovedState implements State {
         controller.getWindow().setMessage("Delivery points saved.");
         controller.setCurrentState(controller.dpSavedState);
     }
-
+    /**
+     * this method allows the user to select a courier from those existent
+     * @param controller
+     * @param idCourier the id of the courier to select
+     * @see model.Courier
+     */
     @Override
     public void selectCourier(Controller controller, Long idCourier) {
         controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
@@ -245,7 +295,15 @@ public class DPRemovedState implements State {
         controller.getWindow().allowNode("REMOVE_DP", false);
         controller.getWindow().resetLateDeliveryNumber();
     }
-    
+    /**
+     * this method allows us to restore delivery points from an XML file
+     * @param controller
+     * @throws ParserConfigurationException
+     * @throws SAXException
+     * @throws ExceptionXML
+     * @throws IOException
+     * @throws XPathExpressionException
+     */
     @Override
     public void restoreDeliveryPointFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, IOException, 
                                                     SAXException, XPathExpressionException {
@@ -259,7 +317,12 @@ public class DPRemovedState implements State {
         controller.getWindow().allowNode("CALCULATE_TOUR", true);
         ((ComboBox<String>) controller.getWindow().lookup("#COURIER_BOX")).setValue(controller.getUser().getListCourierName()[0]);
     }
-
+    /**
+     * this method shows us the nearest intersections whenever we move the mouse on the map (by changing their colors) which help us decide what intersection we're going to select.
+     * @param controller
+     * @param mousePosX
+     * @param mousePosY
+     */
     @Override
     public void mouseMovedOnMap(Controller controller, double mousePosX, double mousePosY) {
         Double scale = controller.getWindow().getGraphicalView().getScale();
@@ -302,7 +365,10 @@ public class DPRemovedState implements State {
 
         controller.getWindow().getGraphicalView().paintIntersection(nearestIntersection, HOVERED);
     }
-
+    /**
+     * this method enables an intersection on the map to be selected by clicking on it, which changes its color.
+     * @param controller
+     */
     @Override
     public void mouseClickedOnMap(Controller controller) {
         if (controller.getWindow().getGraphicalView().getHoveredIntersection() != null) {
@@ -334,6 +400,10 @@ public class DPRemovedState implements State {
         }
     }
 
+    /**
+     * this method allows the user to exit the map
+     * @param controller
+     */
     @Override
     public void mouseExitedMap(Controller controller){
         Intersection hoveredIntersection = controller.getWindow().getGraphicalView().getHoveredIntersection();
@@ -346,7 +416,11 @@ public class DPRemovedState implements State {
             controller.getWindow().getGraphicalView().setHoveredIntersection(null);
         }
     }
-
+    /**
+     * this method allows us to click a delivery point on the table
+     * @param controller
+     * @param indexDP the index of the delivery point we want to select on the table
+     */
     @Override
     public void mouseClickedOnTable(Controller controller, int indexDP){
         Map map = controller.map;
