@@ -48,11 +48,9 @@ public class PlanTextWriter {
         File textPlan = TextFileOpener.getInstance().open(false);
         
         FileWriter writer = new FileWriter(textPlan.getAbsolutePath()); 
-                
-        //writer.write("hello");
         BufferedReader br = new BufferedReader(new FileReader(textPlan));
         if (br.readLine() == null) {
-            writer.write("For courier " + courier.getName() + " : \n");
+            writer.write("For courier " + courier.getName() + ": \n");
             writeDPsToFile(map, courier, writer);
         } else {
             throw new ExceptionXML("Not an empty file");
@@ -83,15 +81,15 @@ public class PlanTextWriter {
             writeSegmentToFile(s, writer); 
             key = listSegmentsFromDP.get(listSegmentsFromDP.size()-1).getDestination().getId();
             if (!key.equals(map.getWarehouse().getId())) {
-                writer.write("You will arrive in the next delivery point at around " + courier.getTimeStampForDP(key) + " then: \n");
+                writer.write("You are expected to arrive in the next delivery point at around " + courier.getTimeStampForDP(key) + " then: \n");
             }else{
-                writer.write("You will go back to the warehouse");
+                writer.write("You will arrive back at the warehouse.");
             }
             
         }
     }
     
     private void writeSegmentToFile(Segment s, FileWriter writer) throws IOException {
-        writer.write("Take road " + s.getName() + " in " + s.getLength() + " m. \n");
+        writer.write("+ Take " + s.getName() + " in " + s.getLength() + " m. \n");
     }    
 }

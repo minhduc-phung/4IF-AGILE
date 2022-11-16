@@ -1,5 +1,6 @@
 package tsp;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -15,7 +16,7 @@ public class SeqIter implements Iterator<Integer> {
 	 * @param currentVertex
 	 * @param g
 	 */
-	public SeqIter(Collection<Integer> unvisited, int currentVertex, Graph g){
+	public SeqIter(ArrayList<Integer> unvisited, int currentVertex, Graph g){
 		this.candidates = new Integer[unvisited.size()];
 		for (Integer s : unvisited){
 			if (g.isArc(currentVertex, s))
