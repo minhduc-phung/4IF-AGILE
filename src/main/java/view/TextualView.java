@@ -2,7 +2,7 @@ package view;
 
 import controller.Controller;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
+import javafx.beans.binding.IntegerBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
@@ -10,7 +10,6 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.MapValueFactory;
 
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import javafx.scene.layout.Pane;
@@ -20,43 +19,16 @@ import model.User;
 import observer.Observer;
 import observer.Observable;
 
-/**
- *this class define the table view, update and delete the table view data and define the layout of the window.
- */
 public class TextualView extends Pane implements Observer {
-
-    /**
-     * this attribute is defined to handle Mouse events
-     */
     private MouseListener mouseListener;
-    /**
-     * This attribute represents the table view
-     */
     private TableView<Map> tableView;
-    /**
-     * This attribute represents the text in the index column of the table view
-     */
     public static final String IndexMapKey = "Index";
-    /**
-     * This attribute represents the text in the TimeWindow column of the table view
-     */
     public static final String TimeWindowMapKey = "TimeWindow";
-    /**
-     * this attribute represents the text in Estimatedarrival column of the table view
-     */
     public static final String EstArrivalMapKey = "EstArrival";
-    /**
-     * This attribute represents the delivery point that will be selected in the table view
-     */
     private DeliveryPoint selectedDeliveryPoint;
-    /**
-     * This attribute represents the width of the table view
-     */
     private int width = 350;
-    /**
-     * This attribute represents the height of the table view
-     */
     private int height = 250;
+
     public TextualView (Window window, Controller controller){
         super();
         setLayoutX(1075);
@@ -84,26 +56,31 @@ public class TextualView extends Pane implements Observer {
         tableView.setRowFactory( tv -> {
             TableRow<Map> row = new TableRow<>();
             // color the row if the estimated arrival time is after the time window
-            BooleanBinding late = new BooleanBinding() {
+            IntegerBinding late = new IntegerBinding() {
                 {
                     super.bind(row.itemProperty());
                 }
                 @Override
-                protected boolean computeValue() {
+                protected int computeValue() {
                     if (row.getItem() == null) {
-                        return false;
+                        return 0;
                     }
                     String timeWindowString = row.itemProperty().get().get(TimeWindowMapKey).toString();
                     Integer timeWindow = controller.getUser().getTimeWindows().get(timeWindowString);
                     if (Objects.equals(row.itemProperty().get().get(EstArrivalMapKey).toString(), "")) {
-                        return false;
+                        return 0;
                     }
                     String estArrivalHourString = row.itemProperty().get().get(EstArrivalMapKey).toString().substring(0, 2);
                     Integer estArrivalHour = Integer.parseInt(estArrivalHourString);
-                    return estArrivalHour > timeWindow;
+                    if (estArrivalHour > timeWindow) {
+                        return 1;
+                    }
+                    return -1;
                 }
             };
-            row.styleProperty().bind(Bindings.when(late).then("-fx-background-color: #ff9aa2;").otherwise(""));
+            // color the row red if the estimated arrival time is before the time window, and green if it is after, and white if it is not set
+            row.styleProperty().bind(Bindings.when(late.isEqualTo(1)).then("-fx-background-color: #ff9aa2;").otherwise(Bindings.when(late.isEqualTo(-1)).then("-fx-background-color: #b5ead7;").otherwise("-fx-background-color: #ffffff;")));
+
             row.setOnMouseClicked(mouseListener);
             return row ;
         });
@@ -112,12 +89,6 @@ public class TextualView extends Pane implements Observer {
         window.getChildren().add(this);
     }
 
-    /**
-     * this method put data into the table view
-     *@param user is the one who use this application
-     *@param idCourier id of a courier for a specific user
-     *@return all the data that should be put in the table view
-     */
     private ObservableList<Map> generateData(User user, Long idCourier) {
         ObservableList<Map> data = FXCollections.observableArrayList();
         Courier c = user.getCourierById(idCourier);
@@ -139,36 +110,18 @@ public class TextualView extends Pane implements Observer {
         return data;
     }
 
-    /**
-     *this method update the data of a selected item in the table view
-     *@param user is the one who use this application
-     *@param idCourier id of a courier for a specific user
-     */
     public void updateData(User user, Long idCourier) {
         tableView.setItems(generateData(user, idCourier));
     }
 
-    /**
-     * this method is the getter for the selectedDeliveryPoint attribute
-     * @return the delivery point selected by the user
-     * @see view.TextualView#selectedDeliveryPoint
-     */
     public DeliveryPoint getSelectedDeliveryPoint() {
         return selectedDeliveryPoint;
     }
 
-    /**
-     * this method is the setter for the selectedDeliveryPoint attribute, it updates the selected Delivery point.
-     * @param dp the new value of the selected delivery point
-     * @see view.TextualView#selectedDeliveryPoint
-     */
     public void setSelectedDeliveryPoint(DeliveryPoint dp) {
         this.selectedDeliveryPoint = dp;
     }
 
-    /**
-     * this method cancel the selection of a delivery point
-     */
     public void clearSelection() {
         tableView.getSelectionModel().clearSelection();
         selectedDeliveryPoint = null;

@@ -8,8 +8,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import model.*;
-import observer.Observable;
-import observer.Observer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,7 +16,7 @@ import java.util.Objects;
 
 import static view.GraphicalView.IntersectionType.*;
 
-public class GraphicalView extends Pane implements Observer {
+public class GraphicalView extends Pane{
     public enum IntersectionType { UNSELECTED, SELECTED, LATE, ON_TIME, HOVERED, DP }
     private int viewHeight = 700;
     private final int viewWidth = 1000;
@@ -44,11 +42,6 @@ public class GraphicalView extends Pane implements Observer {
         this.setOnMouseClicked(mouseListener);
         this.setOnMouseExited(mouseListener);
         window.getChildren().add(this);
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        // TODO Auto-generated method stub
     }
 
     public void drawMap(Map map){

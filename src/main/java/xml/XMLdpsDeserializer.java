@@ -27,14 +27,14 @@ import model.User;
 
 public class XMLdpsDeserializer {
 	/**
-	 * Open an XML file and create plan from this file
+	 * Open an XML file and load the delivery points for each courier in the user object
 	 * @param map the map to create from the file
-         * @param user
+     * @param user the user which is edited
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 * @throws IOException
 	 * @throws ExceptionXML
-         * @throws javax.xml.xpath.XPathExpressionException
+     * @throws javax.xml.xpath.XPathExpressionException
 	 */
     public static User loadDPList(Map map, User user) throws ParserConfigurationException, SAXException, IOException, ExceptionXML, XPathExpressionException {
         File xml = XMLfileOpener.getInstance().open(true);

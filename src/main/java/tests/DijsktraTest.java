@@ -16,6 +16,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
+import xml.ExceptionXML;
 
 /**
  *
@@ -27,14 +28,11 @@ public class DijsktraTest {
     private HashMap<Long, Long> precedentNode = new HashMap<>();
     public DijsktraTest() {
     }
-    /*
+    
     @Before
-    public void setUp() throws ParserConfigurationException, IOException, SAXException {
-        map = this.controller.loadMapFromXML("maps/mediumMap.xml");
-    }
-    */
-    @After
-    public void tearDown() {
+    public void setUp() throws ParserConfigurationException, IOException, SAXException, ExceptionXML {
+        controller.loadMapFromXML();
+        map = controller.getMap();
     }
     
     @Test
@@ -47,6 +45,10 @@ public class DijsktraTest {
     public void TestDistance2() {
         Double dist = Dijkstra.dijkstra(map, 26149167L, 891129809L, precedentNode);
         assert(dist != Long.MAX_VALUE);
+    }    
+    
+    @After
+    public void tearDown() {
     }
 
     // TODO add test methods here.

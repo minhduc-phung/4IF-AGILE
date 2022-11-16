@@ -19,21 +19,9 @@ import view.Window;
 import xml.ExceptionXML;
 import xml.XMLmapDeserializer;
 
-/**
- * This class is for the initial state.
- * Its methods are executed in the Controller class when the current state is DPEnteredState.
- */
 public class InitialState implements State {
+    // Initial state of the application
 
-    /**
-     * this method allows us to load a map from an xml file
-     * @param controller
-     * @param window
-     * @throws ExceptionXML
-     * @throws ParserConfigurationException
-     * @throws SAXException
-     * @throws IOException
-     */
     @Override
     public void loadMapFromXML(Controller controller, Window window) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
         controller.map = XMLmapDeserializer.load(controller.map);
@@ -50,12 +38,11 @@ public class InitialState implements State {
         window.resetLateDeliveryNumber();
         window.setMessage("Please choose a courier and a time-window to start adding delivery points, or restore them from a file.");
     }
+
     /**
-     * this method allows us to add a warehouse
-     * @param warehouse the intersection we want to add as a warehouse
-     * @param user the user of this application
-     * @see model.User
-     * @see model.Map the class Map : warehouse is one its attributes
+     * Method which adds the warehouse as the first node of the tour of all the couriers
+     * @param warehouse the warehouse
+     * @param user the user
      */
     private void addWarehouse(Intersection warehouse, User user) {
         DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), warehouse.getLatitude(), warehouse.getLongitude());

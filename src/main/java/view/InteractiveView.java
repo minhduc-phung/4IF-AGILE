@@ -15,9 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * this class define all the components (buttons, Combo-boxes, labels) and all the events (button Listeners, Box Listeners, and mouse listeners) relative to a specific view
- */
 public class InteractiveView extends Pane {
     // IDs of the window buttons
     protected static final String REMOVE_DP_ID = "REMOVE_DP";
@@ -36,37 +33,13 @@ public class InteractiveView extends Pane {
     protected static final String REMOVE_DP_FROM_TOUR_ID = "REMOVE_DP_FROM_TOUR";
 
     // Not to be confused with "model.Map"
-    /**
-     * this attribute represents the buttons and their texts
-     */
     private Map<String, Button> buttons = new HashMap<String, Button>();
-    /**
-     * this attribute represents the courier combo-box
-     */
     private ComboBox<String> courierBox;
-    /**
-     * this attribute represents the time window combo-box
-     */
     private ComboBox<String> twBox;
-    /**
-     * this attribute represents action listeners for the button events
-     */
     private ButtonListener buttonListener;
-    /**
-     * this attribute represents action listeners for the mouse events
-     */
     private MouseListener mouseListener;
-    /**
-     * this attribute represents action listeners for the combo-box events
-     */
     private BoxListener boxListener;
-    /**
-     * this attribute represents the value of a selected time window
-     */
     private Integer selectedTimeWindow;
-    /**
-     * this attribute represents the id of a selected courier
-     */
     private Long selectedCourierId;
 
     public InteractiveView(User user, Window window, Controller controller) {
@@ -237,49 +210,28 @@ public class InteractiveView extends Pane {
 
         window.getChildren().add(this);
     }
-    /**
-     * this method is the setter for the selectedCourier attribute
-     * @param selectedCourierId the id of the new courier to select
-     * @see view.InteractiveView#selectedCourierId
-     */
+
     public void setSelectedCourierId(Long selectedCourierId) {
         this.selectedCourierId = selectedCourierId;
     }
-    /**
-     *this method is the getter of the selectedCourierId attribute
-     *@return the id of the selected courier
-     * @see view.InteractiveView#selectedCourierId
-     */
+
     public Long getSelectedCourierId() {
         return selectedCourierId;
     }
-    /**
-     * this method is the getter of the selectedTimeWindow attribute
-     * @return the value of the selected time window
-     * @see view.InteractiveView#selectedTimeWindow
-     */
+
     public Integer getSelectedTimeWindow() {
         return selectedTimeWindow;
     }
-    /**
-     * this method is the setter of the selectedTimeWindow attribute
-     *@param selectedTimeWindow the new time window to select
-     */
+
     public void setSelectedTimeWindow(Integer selectedTimeWindow) {
         this.selectedTimeWindow = selectedTimeWindow;
     }
-    /**
-     * this method reset all combo-boxes
-     */
+
     public void resetComboBoxes() {
         courierBox.getSelectionModel().clearSelection();
         twBox.getSelectionModel().clearSelection();
     }
-    /**
-     *this method allows to show or disable a component(button, combo-box) in a specific view
-     *@param nodeId the id of the component
-     *@param allow true if the node will be shown, false if not
-     */
+
     public void allowNode(String nodeId, boolean allow){
         if (Objects.equals(nodeId, COURIER_BOX_ID)){
             courierBox.setDisable(!allow);
@@ -289,29 +241,17 @@ public class InteractiveView extends Pane {
             buttons.get(nodeId).setDisable(!allow);
         }
     }
-
-    /**
-     * this method shows a given button
-     * @param nodeId the id of the button to show
-     */
+    
     public void showButton(String nodeId){
         this.buttons.get(nodeId).setVisible(true);
         this.buttons.get(nodeId).setDisable(false);
     }
-
-    /**
-     * this method hide a given button
-     * @param nodeId the id of the button to hide
-     */
+    
     public void hideButton(String nodeId){
         this.buttons.get(nodeId).setVisible(false);
         this.buttons.get(nodeId).setDisable(true);
     }
 
-    /**
-     * this method generates a button depending on if all the deliveries are on time or not.
-     * @param allDeliveriesOnTime
-     */
     public void updateOnCalculateTour(boolean allDeliveriesOnTime) {
         if (allDeliveriesOnTime){
             buttons.get(GENERATE_ID).setStyle("-fx-background-color: #b5ead7; ");
@@ -322,9 +262,6 @@ public class InteractiveView extends Pane {
         }
     }
 
-    /**
-     * this method reset the generate button.
-     */
     public void resetGenerateButton() {
         buttons.get(GENERATE_ID).setStyle("-fx-background-color: #c7ceea; ");
         buttons.get(GENERATE_ID).setText("Generate delivery plan");

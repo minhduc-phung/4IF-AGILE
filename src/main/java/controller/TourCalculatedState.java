@@ -6,13 +6,10 @@
 package controller;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import model.*;
-import xml.XMLPlanSerializer;
 import org.xml.sax.SAXException;
 import xml.ExceptionXML;
 import xml.PlanTextWriter;
@@ -20,21 +17,7 @@ import xml.PlanTextWriter;
 import static view.GraphicalView.IntersectionType.*;
 import static view.GraphicalView.IntersectionType.ON_TIME;
 
-/**
- * This class is for the state where the tour is already calculated.
- * Its methods are executed in the Controller class when the current state is DPEnteredState.
- */
 public class TourCalculatedState implements State {
-    /**
-     * this method generates a delivery plan for a chosen courier
-     * @param controller
-     * @param c the courier chosen
-     * @throws ParserConfigurationException
-     * @throws SAXException
-     * @throws ExceptionXML
-     * @throws IOException
-     * @throws TransformerException
-     */
     @Override
     public void generateDeliveryPlanForCourier(Controller controller, Courier c) throws ParserConfigurationException, SAXException, ExceptionXML,
                                                                                                 IOException, TransformerException{
@@ -45,12 +28,7 @@ public class TourCalculatedState implements State {
         controller.getWindow().allowNode("GENERATE_PLAN", false);
         controller.setCurrentState(controller.planGeneratedState);
     }
-    /**
-     * this method allows the user to select a courier from those existent
-     * @param controller
-     * @param idCourier the id of the courier to select
-     * @see model.Courier
-     */
+
     @Override
     public void selectCourier(Controller controller, Long idCourier) {
         controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
@@ -65,10 +43,6 @@ public class TourCalculatedState implements State {
         controller.getWindow().resetLateDeliveryNumber();
     }
 
-    /**
-     * this method allows the user to modify the tour by adding a delivery point or removing it
-     * @param controller
-     */
     @Override
     public void modifyTour(Controller controller) {
         controller.setCurrentState(controller.tourModifiedState);
@@ -77,6 +51,8 @@ public class TourCalculatedState implements State {
         controller.getWindow().getInteractivePane().hideButton("VALIDATE_DP");
         controller.getWindow().getInteractivePane().showButton("ADD_DP_TO_TOUR");
         controller.getWindow().getInteractivePane().showButton("REMOVE_DP_FROM_TOUR");
+        controller.getWindow().allowNode("ADD_DP_TO_TOUR", false);
+        controller.getWindow().allowNode("REMOVE_DP_FROM_TOUR", false);
     }
 
     @Override

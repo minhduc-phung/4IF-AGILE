@@ -11,10 +11,6 @@ import java.util.List;
 import model.Intersection;
 import model.Map;
 
-/**
- *
- * @author bbbbb
- */
 public class Dijkstra {
     public static Double dijkstra(Map aMap, Long idOrigin, Long idDest, HashMap<Long, Long> precedentNode) {
         List<Long> idWhiteNodes = new ArrayList<>();

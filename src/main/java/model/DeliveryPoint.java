@@ -8,56 +8,33 @@ package model;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * This class represents the delivery point (it is associated with a courier, and it's composed by an intersection to which the delivery is to be made and the corresponding time-window. After computation, it also contains the timestamps)
- */
 public class DeliveryPoint extends Intersection {
-    /**
-     * this attribute represents the time window : a 1-hour long time interval that starts at 8/9/10/11/… am.
-     */
     private Integer timeWindow;
-    /**
-     * this attribute represents the estimated computed time at which the courier should arrive at a delivery point
-     */
     private Date estimatedDeliveryTime;
-    /**
-     * this attribute represents the person in charge of the delivering
-     */
     private Courier courier;
+
     /**
-     * the constructor of this class
-     * @param id
-     * @param latitude
-     * @param longitude
+     * Create a delivery point with the given id, latitude, longitude and time window
+     * @param id the id of the delivery point
+     * @param latitude the latitude of the delivery point
+     * @param longitude the longitude of the delivery point
      */
     public DeliveryPoint(Long id, Double latitude, Double longitude) {
         super(id, latitude, longitude);
     }
-    /**
-     * this method allows us to choose a courier
-     * @param c the chosen courier
-     */
+    
     public void chooseCourier(Courier c) {
         this.courier = c;
     }
-    /**
-     * this is a getter method for the attribute courier
-     *
-     */
+
     public Courier getCourier() {
         return courier;
     }
-    /**
-     * this is a getter method for the attribute time window
-     *
-     */
+
     public Integer getTimeWindow() {
         return timeWindow;
     }
-    /**
-     * this method assign a time window
-     * @param t
-     */
+    
     public void assignTimeWindow(Integer t) {
         this.timeWindow = t;
     }
@@ -76,6 +53,10 @@ public class DeliveryPoint extends Intersection {
                 ", courier=" + courier + '}';
     }
 
+    /**
+     * Get the estimated delivery time of the delivery point in a string format
+     * @return the estimated delivery time of the delivery point in a string format
+     */
     public String getTimeWindowString() {
         // format the time window to be "HH:00 - HH:00"
         String timeWindowString = "";
@@ -90,6 +71,10 @@ public class DeliveryPoint extends Intersection {
         return timeWindowString;
     }
 
+    /**
+     * Get the estimated delivery time of the delivery point in a string format
+     * @return the estimated delivery time of the delivery point in a string format
+     */
     public String getEstimatedDeliveryTimeString() {
         return new SimpleDateFormat("HH:mm:ss").format(estimatedDeliveryTime);
 

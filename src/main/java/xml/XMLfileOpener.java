@@ -4,7 +4,7 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.*;
 
-public class XMLfileOpener extends FileFilter {// Singleton
+public class XMLfileOpener extends FileFilter { // Singleton
 	
 	private static XMLfileOpener instance = null;
 	private XMLfileOpener(){}

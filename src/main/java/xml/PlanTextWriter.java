@@ -34,8 +34,10 @@ public class PlanTextWriter {
         }
         return instance;
     }
-        /**
+    /**
      * Open an XML file and write an XML description of the plan in it
+     * @param map the loaded map
+     * @param courier the courier to whom the plan is related
      * @throws ParserConfigurationException
      * @throws TransformerFactoryConfigurationError
      * @throws TransformerException
@@ -81,6 +83,7 @@ public class PlanTextWriter {
             } 
             writeSegmentToFile(s, writer); 
             key = listSegmentsFromDP.get(listSegmentsFromDP.size()-1).getDestination().getId();
+            System.out.println(courier.getCurrentDeliveryPoints());
             if (!key.equals(map.getWarehouse().getId())) {
                 writer.write(courier.getTimeStampForDP(key) + " -- Arrival at next delivery point" +"\n");
             }else{

@@ -14,16 +14,19 @@ import model.Tour;
 import static view.GraphicalView.IntersectionType.DP;
 import static view.GraphicalView.IntersectionType.UNSELECTED;
 
-/**
- *
- * @author bbbbb
- */
 public class RemoveCommand implements Command {
     private Controller controller;
     private Map map;
     private Courier courier;
     private DeliveryPoint dp;
 
+    /**
+     * Create the command to remove a delivery point from the tour
+     * @param controller the controller
+     * @param map the map
+     * @param courier the courier who has the delivery point
+     * @param dp the delivery point to remove
+     */
     public RemoveCommand(Controller controller, Map map, Courier courier, DeliveryPoint dp) {
         this.controller = controller;
         this.map = map;
@@ -38,6 +41,7 @@ public class RemoveCommand implements Command {
         }
         dp.chooseCourier(null);
         dp.assignTimeWindow(null);
+        courier.setRemovedDP(dp);
         courier.removeDeliveryPoint(dp);
         courier.getPositionIntersection().remove(dp.getId());
         courier.removeShortestPathBetweenDP(map, dp);
@@ -46,6 +50,8 @@ public class RemoveCommand implements Command {
         controller.getWindow().getGraphicalView().paintIntersection(dp, UNSELECTED);
         controller.getWindow().getTextualView().clearSelection();
         controller.getWindow().getGraphicalView().clearSelection();
+        Integer lateDeliveries = controller.getWindow().getGraphicalView().updateCalculatedMap(controller.getMap(), courier);
+        controller.getWindow().updateOnCalculateTour(lateDeliveries);
         controller.getWindow().getTextualView().updateData(controller.user, courier.getId());
         controller.getWindow().allowNode("REMOVE_DP", false);
         controller.getWindow().allowNode("CALCULATE_TOUR", true);
@@ -54,7 +60,23 @@ public class RemoveCommand implements Command {
     @Override
     public void undoCommand() {
         if (dp.getId().equals(map.getWarehouse().getId())) {
+            
             return;
+        }
+        if (courier.getRemovedDP() != null) {
+            dp = courier.getRemovedDP();
+            controller.getWindow().getGraphicalView().clearSelection();
+            controller.getWindow().getTextualView().updateData(controller.user, courier.getId());
+            controller.getWindow().setMessage("Delivery point returned.");
+            controller.getWindow().allowNode("REMOVE_DP_FROM_TOUR", false);
+        }else{
+            controller.getWindow().getGraphicalView().clearSelection();
+            controller.getWindow().getGraphicalView().paintIntersection(dp, DP);
+            controller.getWindow().getTextualView().updateData(controller.getUser(), courier.getId());
+            controller.getWindow().setMessage("Delivery point added.");
+            controller.getWindow().allowNode("VALIDATE_DP", false);
+            controller.getWindow().allowNode("SAVE_DP", true);
+            controller.getWindow().allowNode("CALCULATE_TOUR", true);
         }
         dp.chooseCourier(courier);
         courier.addDeliveryPoint(dp);
@@ -67,14 +89,11 @@ public class RemoveCommand implements Command {
         courier.getListSegmentBetweenDPs().put(dp.getId(), tour);
         
         courier.addShortestPathBetweenDP(map, dp);
-    
-        controller.getWindow().getGraphicalView().clearSelection();
-        controller.getWindow().getGraphicalView().paintIntersection(dp, DP);
-        controller.getWindow().getTextualView().updateData(controller.getUser(), courier.getId());
-        controller.getWindow().setMessage("Delivery point added.");
-        controller.getWindow().allowNode("VALIDATE_DP", false);
-        controller.getWindow().allowNode("SAVE_DP", true);
-        controller.getWindow().allowNode("CALCULATE_TOUR", true);
+        courier.addTimeStampForDP(dp.getId(), dp.getEstimatedDeliveryTime());
+        Integer lateDeliveries = controller.getWindow().getGraphicalView().updateCalculatedMap(controller.getMap(), courier);
+        controller.getWindow().updateOnCalculateTour(lateDeliveries);
+
+
     }
     
 }

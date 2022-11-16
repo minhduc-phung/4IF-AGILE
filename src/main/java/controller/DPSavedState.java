@@ -6,38 +6,36 @@
 package controller;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
 import javafx.scene.control.ComboBox;
+import javafx.scene.paint.Color;
 import model.Courier;
 import model.DeliveryPoint;
 import model.Intersection;
 import model.Map;
+import model.Segment;
 import model.Tour;
 import model.User;
 import org.xml.sax.SAXException;
+import tsp.CompleteGraph;
+import tsp.Graph;
+import tsp.TSP;
+import tsp.TSP1;
 import view.Window;
 import xml.ExceptionXML;
 import xml.XMLdpsDeserializer;
 import xml.XMLmapDeserializer;
 
-/**
- * This class is for the state where delivery points are saved into an XML file.
- * Its methods are executed in the Controller class when the current state is DPEnteredState.
- */
 public class DPSavedState implements State {
-    /**
-     * this method allows us to load a map from an xml file
-     * @param controller
-     * @param window
-     * @throws ExceptionXML
-     * @throws ParserConfigurationException
-     * @throws SAXException
-     * @throws IOException
-     */
+        
     @Override
     public void loadMapFromXML(Controller controller, Window window) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
         controller.map = XMLmapDeserializer.load(controller.map);
@@ -53,12 +51,7 @@ public class DPSavedState implements State {
         window.resetLateDeliveryNumber();
         window.setMessage("Please choose a courier and a time-window to start adding delivery points.");
     }
-    /**
-     * this method allows the user to select a courier from those existent
-     * @param controller
-     * @param idCourier the id of the courier to select
-     * @see model.Courier
-     */
+
     @Override
     public void selectCourier(Controller controller, Long idCourier) {
         controller.getWindow().getInteractivePane().setSelectedCourierId(idCourier);
@@ -70,12 +63,11 @@ public class DPSavedState implements State {
         controller.getWindow().allowNode("REMOVE_DP", false);
         controller.getWindow().resetLateDeliveryNumber();
     }
+
     /**
-     * this method allows us to add a warehouse
-     * @param warehouse the intersection we want to add as a warehouse
-     * @param user the user of this application
-     * @see model.User
-     * @see model.Map the class Map : warehouse is one its attributes
+     * Method which adds the warehouse as the first node of the tour of all the couriers
+     * @param warehouse the warehouse
+     * @param user the user
      */
     private void addWarehouse(Intersection warehouse, User user) {
         DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), warehouse.getLatitude(), warehouse.getLongitude());
@@ -94,16 +86,8 @@ public class DPSavedState implements State {
             c.getListSegmentBetweenDPs().put(dpWarehouse.getId(), tour);
             user.getListCourier().replace(key, c);
         }
-    }
-    /**
-     * this method allows us to restore delivery points from an XML file
-     * @param controller
-     * @throws ParserConfigurationException
-     * @throws SAXException
-     * @throws ExceptionXML
-     * @throws IOException
-     * @throws XPathExpressionException
-     */
+    }       
+    
     @Override
     public void restoreDeliveryPointFromXML(Controller controller) throws ExceptionXML, ParserConfigurationException, IOException, 
                                                     SAXException, XPathExpressionException {
@@ -116,6 +100,92 @@ public class DPSavedState implements State {
         controller.getWindow().allowNode("SAVE_DP", true);
         controller.getWindow().allowNode("CALCULATE_TOUR", true);
         ((ComboBox<String>) controller.getWindow().lookup("#COURIER_BOX")).setValue(controller.getUser().getListCourierName()[0]);
+    }
+    
+    @Override
+    public void calculateTour(Controller controller, Courier c, Long idWarehouse) throws ParseException {
+//        System.out.println(DPEnteredState.class.toGenericString());
+        int i;
+        int nbVertices = c.getCurrentDeliveryPoints().size();
+        Graph g = new CompleteGraph(c, idWarehouse);
+        TSP tsp = new TSP1();
+        tsp.searchSolution(20000, g);
+
+        // take the earliest time window in ListCurrentDPs
+        Integer earliestTW = c.getCurrentDeliveryPoints().get(0).getTimeWindow();
+
+        Date now = new Date();
+        SimpleDateFormat sd = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+        Date timeStamp;
+        if (earliestTW < 10) {
+            timeStamp = sdf.parse(sd.format(now) + " 0" + earliestTW + ":00:00");
+        } else {
+            timeStamp = sdf.parse(sd.format(now) + " " + earliestTW + ":00:00");
+        }
+
+        List<Integer> tspSolutions = new ArrayList<>();
+        for (i = 0; i < nbVertices; i++) {
+            tspSolutions.add(tsp.getSolution(i));
+            if (tsp.getSolution(i) == null){
+                controller.getWindow().setMessage("No possible tour found for this set of intersections.\nPlease try again with a different set of intersections.");
+                return;
+            }
+        }
+
+        //timeStamp of warehouse
+        DeliveryPoint dp = c.getCurrentDeliveryPoints().get(0);
+        long sum = timeStamp.getTime();
+        dp.setEstimatedDeliveryTime(timeStamp);
+
+        //timeStamp of other DPs
+        for (i = 0; i < tspSolutions.size() - 1; i++) {
+            long timeInMinute = (long) Math.ceil(g.getCost(tspSolutions.get(i), tspSolutions.get(i + 1)) * 60 * 1000);
+            sum += timeInMinute - 5 * 60 * 1000;        //5 mins for delivery
+            dp = c.getCurrentDeliveryPoints().get(tspSolutions.get(i + 1));
+            Date estimatedDeliveryTime = new Date(sum);
+            Date timeWin = new Date();
+            if (dp.getTimeWindow().compareTo(10) < 0) {
+                timeWin = sdf.parse(sd.format(now) + " 0" + dp.getTimeWindow() + ":00:00");
+            } else {
+                timeWin = sdf.parse(sd.format(now) + " " + dp.getTimeWindow() + ":00:00");
+            }
+            if (estimatedDeliveryTime.before(timeWin)) {
+                sum = timeWin.getTime();    
+                estimatedDeliveryTime.setTime(sum);
+            }
+            dp.setEstimatedDeliveryTime(estimatedDeliveryTime);
+            c.addTimeStampForDP(dp.getId(), dp.getEstimatedDeliveryTime());
+        }
+
+        // set currentTour
+        for (i = 0; i < c.getCurrentDeliveryPoints().size() - 1; i++) {
+            Long idCurrentInter = c.getCurrentDeliveryPoints().get(tspSolutions.get(i)).getId();
+            Long idNextInter = c.getCurrentDeliveryPoints().get(tspSolutions.get(i + 1)).getId();
+            List<Segment> listSeg = c.getListSegmentBetweenInters(idCurrentInter, idNextInter);
+            for (Segment seg : listSeg) {
+                controller.getWindow().getGraphicalView().paintArrow(seg, Color.web("0x00B0FF"));
+            }
+            c.addCurrentTour(idCurrentInter, listSeg);
+        }
+        Long idCurrentInter = c.getCurrentDeliveryPoints().get(tspSolutions.get(i)).getId();
+        Long idNextInter = c.getCurrentDeliveryPoints().get(tspSolutions.get(0)).getId();
+        List<Segment> listSeg = c.getListSegmentBetweenInters(idCurrentInter, idNextInter);
+        c.addCurrentTour(idCurrentInter, listSeg);
+
+        int lateDeliveryCount = controller.getWindow().getGraphicalView().updateCalculatedMap(controller.getMap(), c);
+
+        controller.getWindow().getTextualView().updateData(controller.user, c.getId());
+        controller.getWindow().getTextualView().getTableView().sort();
+        controller.getWindow().setMessage("The tour has been calculated.");
+        controller.getWindow().allowNode("MODIFY_DP", true);
+        controller.getWindow().allowNode("GENERATE_PLAN", true);
+        controller.getWindow().allowNode("LOAD_MAP", false);
+        controller.getWindow().allowNode("CALCULATE_TOUR", false);
+        controller.getWindow().allowNode("RESTORE_DP", false);
+        controller.getWindow().allowNode("SAVE_DP", false);
+        controller.getWindow().updateOnCalculateTour(lateDeliveryCount);
+        controller.setCurrentState(controller.tourCalculatedState);
     }
 
 

@@ -14,13 +14,11 @@ import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Courier;
 import model.Intersection;
 
-/**
- * this class handles the events happening after clicking on any button
- *
- */
 public class ButtonListener implements EventHandler<ActionEvent> {
 
     private Controller controller;
@@ -28,11 +26,7 @@ public class ButtonListener implements EventHandler<ActionEvent> {
     public ButtonListener(Controller controller) {
         this.controller = controller;
     }
-    /**
-     * this method handles the action to do after the incoming Event.
-     *
-     * @param e represents the incoming event after clicking on a button
-     */
+
     @Override
     public void handle(ActionEvent e) {
         switch (((Node) e.getSource()).getId()) {
@@ -97,8 +91,15 @@ public class ButtonListener implements EventHandler<ActionEvent> {
             case "REMOVE_DP_FROM_TOUR":
                 Courier courierToRemove = controller.getUser().getCourierById(controller.getWindow().getInteractivePane().getSelectedCourierId());
                 DeliveryPoint deliveryPointToRemove = controller.getWindow().getTextualView().getSelectedDeliveryPoint();
-                controller.modifyTourRemoveDP(courierToRemove, deliveryPointToRemove);
+            
+                try {
+                    controller.modifyTourRemoveDP(courierToRemove, deliveryPointToRemove);
+                } catch (ParseException ex) {
+                    Logger.getLogger(ButtonListener.class.getName()).log(Level.INFO, null, ex);
+                }
+            
                 break;
+
 
         }
     }

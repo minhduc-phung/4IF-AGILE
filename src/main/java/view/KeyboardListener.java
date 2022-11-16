@@ -6,15 +6,22 @@
 package view;
 
 import controller.Controller;
+import java.text.ParseException;
 import javafx.event.EventHandler;
+import javafx.scene.control.ComboBox;
+import static javafx.scene.input.KeyCode.CONTROL;
+import static javafx.scene.input.KeyCode.ENTER;
 import static javafx.scene.input.KeyCode.Y;
 import static javafx.scene.input.KeyCode.Z;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
-
+import static javafx.scene.input.KeyEvent.KEY_PRESSED;
+import model.Courier;
 
 /**
- *This class is the listener for the keyboard events on the graphical view and the textual view.
- * It allows the user to undo and redo using the keyboard (ctrl + z/ ctrl + y).
+ *
+ * @author bbbbb
  */
 public class KeyboardListener implements EventHandler<KeyEvent> {
 
@@ -25,17 +32,15 @@ public class KeyboardListener implements EventHandler<KeyEvent> {
         
     }
 
-    /**
-     * this method handles the action to do after the incoming Event.
-     *
-     * @param e represents the incoming keyboard event
-     */
     @Override
     public void handle(KeyEvent e) {
         if (e.isControlDown() && e.getCode() == Z) {
             controller.undo();
-        } else if (e.isControlDown() && e.getCode() == Y){
+        } else if (e.isControlDown() && e.getCode() == Y) {
             controller.redo();
+        } else if (e.getCode() == ENTER) {
+            controller.enterDeliveryPoint(controller.getMap(), controller.getWindow().getGraphicalView().getSelectedIntersection().getId(),
+                            controller.getWindow().getInteractivePane().getSelectedCourierId(), controller.getWindow().getInteractivePane().getSelectedTimeWindow());
         }
     }
     

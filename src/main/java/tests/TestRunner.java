@@ -12,16 +12,12 @@ import org.junit.internal.TextListener;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 
-/**
- *
- * @author bbbbb
- */
 public class TestRunner extends Application {
     public static void main(String[] args) {
         JUnitCore junit = new JUnitCore();
         junit.addListener(new TextListener(System.out));
         Result result = junit.run(
-                LoadMapTest.class);
+                LoadMapTest.class, CalculateTourTest.class);
         resultReport(result);
         Platform.exit();
     }

@@ -21,56 +21,43 @@ import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
 import xml.ExceptionXML;
 
-/**
- *
- * @author bbbbb
- */
 public class LoadMapTest {
     private final Controller controller = new Controller();
     private Observer observer;
     private Boolean updateCalled;
+    private Map map;
     
     public LoadMapTest() {
     }
     
     @Before
-    public void setUp() {
+    public void setUp() throws ParserConfigurationException, IOException, SAXException, ExceptionXML {
         updateCalled = false;
 	observer = new Observer(){public void update(Observable o, Object arg){updateCalled = true;}};   
+        this.controller.loadMapFromXML();
+        map = controller.getMap();
+        map.addObserver(observer);
     }
     
     @Test
-    public void loadTest1() throws ParserConfigurationException, IOException, SAXException, ExceptionXML {
-        this.controller.loadMapFromXML();
-        Map map = controller.getMap();
-        map.addObserver(observer);
+    public void loadTest1(){
         assert(updateCalled);
         assert(map.getListIntersection().size() > 0);
     } 
     
     @Test
-    public void loadTest2() throws ParserConfigurationException, IOException, SAXException, ExceptionXML {
-        this.controller.loadMapFromXML();
-        Map map = controller.getMap();
-        map.addObserver(observer);
+    public void loadTest2() {
         assert(updateCalled);
         assert(map.getListIntersection().size() > 0);
     } 
     
     @Test
-    public void loadTest3() throws ParserConfigurationException, IOException, SAXException, ExceptionXML {
-        this.controller.loadMapFromXML();
-        Map map = controller.getMap();
-        map.addObserver(observer);
-        assert(updateCalled);
-        assert(map.getListIntersection().size() > 0);
+    public void loadTest3() {
+        assert(map != null);
     }
     
     @Test
-    public void TestContain1() throws ParserConfigurationException, IOException, SAXException, ExceptionXML {
-        this.controller.loadMapFromXML();
-        Map map = controller.getMap();
-        map.addObserver(observer);
+    public void TestContain1() {
         assert(updateCalled);
         assertNull( map.getIntersection(Long.parseLong("1")) );        
     }
