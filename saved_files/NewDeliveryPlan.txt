@@ -1,0 +1,22 @@
+------------------------------------------------------
+***    Delivery plan for courier GIYRAUD Vincent    ***
+------------------------------------------------------
+08:00:00 -- Start from Warehouse
+    Take road Avenue Lacassagne - in 1435 m.
+    Take road Rue Pascal - in 49 m.
+09:00:00 -- Arrival at next delivery point
+    Take road Rue Pascal - in 49 m.
+    Take road Avenue Lacassagne - in 318 m.
+    Take road Rue Constant - in 404 m.
+    Take road Rue Ferdinand Buisson - in 57 m.
+12:00:00 -- Arrival at next delivery point
+    Take road Rue Charles Richard - in 549 m.
+    Take road Rue Bonnand - in 44 m.
+    Take road Rue Antonin Perrin - in 20 m.
+    Take road Route de Genas - in 411 m.
+15:00:00 -- Arrival at next delivery point
+    Take road Route de Genas - in 165 m.
+    Take road Rue Bellicard - in 235 m.
+    Take road Rue Félix - in 79 m.
+    Take road Rue Feuillat - in 349 m.
+Go back to the warehouse.

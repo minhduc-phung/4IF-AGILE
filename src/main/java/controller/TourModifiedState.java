@@ -19,14 +19,55 @@ import model.Segment;
 import model.Tour;
 import model.User;
 import org.xml.sax.SAXException;
+import view.Window;
 import xml.ExceptionXML;
 import xml.PlanTextWriter;
+import xml.XMLmapDeserializer;
 
 import static view.GraphicalView.IntersectionType.*;
 import static view.GraphicalView.IntersectionType.ON_TIME;
 
 public class TourModifiedState implements State {
 
+    @Override
+    public void loadMapFromXML(Controller controller, Window window) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
+        controller.map = XMLmapDeserializer.load(controller.map);
+        controller.user = new User();
+        Intersection warehouse = controller.getMap().getWarehouse();
+        addWarehouse(warehouse, controller.user);
+        controller.setCurrentState(controller.mapLoadedState);
+        window.getGraphicalView().drawMap(controller.getMap());
+        window.getInteractivePane().resetComboBoxes();
+        window.getTextualView().updateData(controller.user, 1L);
+        window.allowNode("COURIER_BOX", true);
+        window.allowNode("TW_BOX", true);
+        window.resetLateDeliveryNumber();
+        window.setMessage("Please choose a courier and a time-window to start adding delivery points.");
+    }
+
+    /**
+     * Method which adds the warehouse as the first node of the tour of all the couriers
+     * @param warehouse the warehouse
+     * @param user the user
+     */
+    private void addWarehouse(Intersection warehouse, User user) {
+        DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), warehouse.getLatitude(), warehouse.getLongitude());
+        for (Long key : user.getListCourier().keySet()) {
+            Courier c = user.getListCourier().get(key);
+            dpWarehouse.chooseCourier(c);
+            c.addDeliveryPoint(dpWarehouse);
+
+            c.addPositionIntersection(warehouse.getId());
+            HashMap<Long, Double> nestedMap = new HashMap<>();
+            nestedMap.put(warehouse.getId(), Double.valueOf("0.0"));
+            c.getShortestPathBetweenDPs().put(warehouse.getId(), nestedMap);
+
+            Tour tour = new Tour();
+            tour.addTourRoute(dpWarehouse.getId(), new ArrayList<>());
+            c.getListSegmentBetweenDPs().put(dpWarehouse.getId(), tour);
+            user.getListCourier().replace(key, c);
+        }
+    }
     @Override
     public void modifyTourEnterDP(Controller controller, Courier c, Intersection intersection,
                                   Integer timeWindow, ListOfCommands loc) throws ParseException {

@@ -17,7 +17,7 @@ public class TestRunner extends Application {
         JUnitCore junit = new JUnitCore();
         junit.addListener(new TextListener(System.out));
         Result result = junit.run(
-                LoadMapTest.class, CalculateTourTest.class);
+                CalculateTourTest.class);
         resultReport(result);
         Platform.exit();
     }

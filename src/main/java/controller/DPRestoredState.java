@@ -156,14 +156,15 @@ public class DPRestoredState implements State {
         controller.getWindow().setMessage("The tour has been calculated.");
         controller.getWindow().allowNode("MODIFY_DP", true);
         controller.getWindow().allowNode("GENERATE_PLAN", true);
-        controller.getWindow().allowNode("LOAD_MAP", false);
+        controller.getWindow().allowNode("LOAD_MAP", true);
         controller.getWindow().allowNode("CALCULATE_TOUR", false);
         controller.getWindow().allowNode("RESTORE_DP", false);
         controller.getWindow().allowNode("SAVE_DP", false);
         controller.getWindow().updateOnCalculateTour(lateDeliveryCount);
         controller.setCurrentState(controller.tourCalculatedState);
     }
-    
+
+
     @Override
     public void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Long idCourier, Integer timeWindow) {
         Intersection intersection = map.getIntersection(idIntersection);

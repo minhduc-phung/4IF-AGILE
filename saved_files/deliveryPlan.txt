@@ -1,0 +1,89 @@
+------------------------------------------------------
+***    Delivery plan for courier PATTIT Philipe    ***
+------------------------------------------------------
+08:00:00 -- Start from Warehouse
+    Take road Avenue Lacassagne - in 603 m.
+    Take road Rue Ferdinand Buisson - in 387 m.
+    Take road Cours Eugénie - in 152 m.
+    Take road Rue Pierre Bonnaud - in 587 m.
+08:06:54 -- Arrival at next delivery point
+    Take road Place Charles Dufraine - in 88 m.
+    Take road Rue Bellevue - in 133 m.
+    Take road Boulevard Pinel - in 93 m.
+    Take road Rue du Vinatier - in 276 m.
+    Take road Cours Richard Vitton - in 65 m.
+    Take road Route de Genas - in 44 m.
+08:09:42 -- Arrival at next delivery point
+    Take road Route de Genas - in 666 m.
+    Take road Rue Général Leclerc - in 446 m.
+10:05:00 -- Arrival at next delivery point
+    Take road Rue Général Leclerc - in 151 m.
+    Take road Place Jules Grandclément - in 453 m.
+    Take road Rue Jean Jaurès - in 611 m.
+    Take road Place des Maisons Neuves - in 137 m.
+    Take road Rue Frédéric Mistral - in 11 m.
+    Take road Rue Paul Bert - in 271 m.
+    Take road Rue Saint-Eusèbe - in 138 m.
+10:17:05 -- Arrival at next delivery point
+    Take road Rue Antoine Charial - in 253 m.
+    Take road Rue Frédéric Mistral - in 128 m.
+    Take road Place des Maisons Neuves - in 95 m.
+    Take road Route de Genas - in 90 m.
+    Take road Rue Feuillat - in 350 m.
+    Take road Rue Jeanne d'Arc - in 152 m.
+    Take road Rue du Docteur Paul Diday - in 180 m.
+    Take road Rue du Docteur Rebatel - in 606 m.
+    Take road Place Ambroise Courtois - in 178 m.
+    Take road Rue Antoine Lumière - in 91 m.
+10:30:34 -- Arrival at next delivery point
+    Take road Rue Léo et Maurice Trouilhet - in 172 m.
+    Take road Rue Saint-Maurice - in 88 m.
+    Take road Avenue des Frères Lumière - in 481 m.
+    Take road Rue Maryse Bastié - in 120 m.
+    Take road Rue Feuillat - in 1194 m.
+    Take road Route de Genas - in 522 m.
+    Take road Cours Richard Vitton - in 141 m.
+    Take road Rue Antonin Perrin - in 64 m.
+    Take road Rue George Sand - in 284 m.
+12:00:00 -- Arrival at next delivery point
+    Take road Rue George Sand - in 79 m.
+    Take road Rue de l'Amitié - in 156 m.
+    Take road Route de Genas - in 813 m.
+    Take road Rue Galilée - in 212 m.
+13:00:00 -- Arrival at next delivery point
+    Take road Rue Jean Jaurès - in 106 m.
+    Take road Place des Maisons Neuves - in 199 m.
+    Take road Rue du Dauphiné - in 650 m.
+    Take road Rue du Professeur Paul Sisley - in 157 m.
+13:04:26 -- Arrival at next delivery point
+    Take road Rue du Professeur Paul Sisley - in 177 m.
+    Take road Rue des Dahlias - in 362 m.
+    Take road Rue du Docteur Rebatel - in 106 m.
+    Take road Rue de l'Harmonie - in 130 m.
+    Take road Rue du Docteur Bonhomme - in 424 m.
+    Take road Avenue des Frères Lumière - in 449 m.
+    Take road Place d'Arsonval - in 46 m.
+    Take road Avenue Rockefeller - in 253 m.
+17:00:00 -- Arrival at next delivery point
+    Take road Avenue Rockefeller - in 248 m.
+    Take road Rue Viala - in 301 m.
+    Take road Rue Martin - in 187 m.
+    Take road Cours Eugénie - in 414 m.
+    Take road Rue Pierre Bonnaud - in 587 m.
+    Take road Place Charles Dufraine - in 88 m.
+    Take road Rue Jules Massenet - in 27 m.
+17:12:24 -- Arrival at next delivery point
+    Take road Rue Jules Massenet - in 27 m.
+    Take road Rue Bellevue - in 133 m.
+    Take road Boulevard Pinel - in 118 m.
+    Take road Rue Gelas - in 142 m.
+    Take road Rue Gelas Rue Sainte-Marie - in 89 m.
+    Take road Rue Sainte-Marie - in 233 m.
+    Take road Cours Docteur Long - in 220 m.
+17:21:15 -- Arrival at next delivery point
+    Take road Cours Docteur Long - in 418 m.
+    Take road Rue Louise - in 77 m.
+    Take road Rue du Capitaine - in 79 m.
+    Take road Rue Jeanne d'Arc - in 630 m.
+    Take road Rue Feuillat - in 237 m.
+Go back to the warehouse.

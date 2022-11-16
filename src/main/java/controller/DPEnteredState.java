@@ -96,7 +96,7 @@ public class DPEnteredState implements State {
 
         Date now = new Date();
         SimpleDateFormat sd = new SimpleDateFormat("dd-MM-yyyy");
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         Date timeStamp;
         if (earliestTW < 10) {
             timeStamp = sdf.parse(sd.format(now) + " 0" + earliestTW + ":00:00");
@@ -160,13 +160,14 @@ public class DPEnteredState implements State {
         controller.getWindow().setMessage("The tour has been calculated.");
         controller.getWindow().allowNode("MODIFY_DP", true);
         controller.getWindow().allowNode("GENERATE_PLAN", true);
-        controller.getWindow().allowNode("LOAD_MAP", false);
+        controller.getWindow().allowNode("LOAD_MAP", true);
         controller.getWindow().allowNode("CALCULATE_TOUR", false);
         controller.getWindow().allowNode("RESTORE_DP", false);
         controller.getWindow().allowNode("SAVE_DP", false);
         controller.getWindow().updateOnCalculateTour(lateDeliveryCount);
         controller.setCurrentState(controller.tourCalculatedState);
     }
+
 
     @Override
     public void enterDeliveryPoint(Controller controller, Map map, Long idIntersection, Long idCourier, Integer timeWindow) {

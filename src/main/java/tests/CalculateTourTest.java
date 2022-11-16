@@ -34,7 +34,6 @@ public class CalculateTourTest {
     private Map map;
 
     public CalculateTourTest() {
-        courier = controller.getUser().getCourierById(1L);
     }
 
     @Before
@@ -47,6 +46,8 @@ public class CalculateTourTest {
         };
         controller.loadMapFromXML();
         map = controller.getMap();
+        controller.selectCourier(1L);
+        courier = controller.getUser().getCourierById(1L);
     }
 
     @Test
