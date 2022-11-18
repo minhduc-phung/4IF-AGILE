@@ -96,7 +96,7 @@ public class DPEnteredState implements State {
 
         Date now = new Date();
         SimpleDateFormat sd = new SimpleDateFormat("dd-MM-yyyy");
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
         Date timeStamp;
         if (earliestTW < 10) {
             timeStamp = sdf.parse(sd.format(now) + " 0" + earliestTW + ":00:00");
@@ -130,13 +130,11 @@ public class DPEnteredState implements State {
             } else {
                 timeWin = sdf.parse(sd.format(now) + " " + dp.getTimeWindow() + ":00:00");
             }
-            System.out.println(timeWin);
             if (estimatedDeliveryTime.before(timeWin)) {
                 sum = timeWin.getTime(); 
                 estimatedDeliveryTime.setTime(sum);
             }
             dp.setEstimatedDeliveryTime(estimatedDeliveryTime);
-            System.out.println(dp);
             c.addTimeStampForDP(dp.getId(), dp.getEstimatedDeliveryTime());
         }
 

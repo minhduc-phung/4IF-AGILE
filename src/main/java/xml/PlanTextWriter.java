@@ -20,6 +20,11 @@ import model.Map;
 import model.Segment;
 import org.xml.sax.SAXException;
 
+
+/**
+ *
+ * @author PQV
+ */
 public class PlanTextWriter {
     private static PlanTextWriter instance = null;
     private PlanTextWriter(){}

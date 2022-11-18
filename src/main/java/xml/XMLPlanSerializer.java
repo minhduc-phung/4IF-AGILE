@@ -27,6 +27,11 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+
+/**
+ *
+ * @author PQV
+ */
 public class XMLPlanSerializer {
     private Document document;
     private static XMLPlanSerializer instance = null;

@@ -9,20 +9,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-/**
- * This class defines the couriers and save every changes on the program relating to each of them
- * (the delivery points chosen for them, the tour for them to take)
- */
 public class User {
 
-    /**
-     * The list of couriers
-     */
     private HashMap<Long, Courier> listCourier = new HashMap<>();
-    /**
-     * The list of the default time windows
-     * The LinkedHashMap is used to keep the order of insertion
-     */
+    // Usage of LinkedHashMap to keep the order of insertion
     private final LinkedHashMap<String, Integer> timeWindows = new LinkedHashMap<String, Integer>() {
         {
             put("08:00 - 09:00", 8);

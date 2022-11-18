@@ -9,21 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import observer.Observable;
 
-/**
- *This class defines the map (graph loaded from an XML file containing a list of intersections and road segments)
- */
 public class Map extends Observable {
-    /**
-     * The list of intersections in this map
-     * @see Intersection
-     */
     private HashMap<Long, Intersection> listIntersection;
-    /**
-     * The list of segments on this map
-     * @see Segment
-     */
     private List<Segment> listSegment;
-
     private Intersection warehouse;
     private String mapName;
 

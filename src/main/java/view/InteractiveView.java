@@ -15,9 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * This class defines the buttons, the Combo-boxes on the right of the map.
- */
 public class InteractiveView extends Pane {
     // IDs of the window buttons
     protected static final String REMOVE_DP_ID = "REMOVE_DP";
@@ -36,21 +33,13 @@ public class InteractiveView extends Pane {
     protected static final String REMOVE_DP_FROM_TOUR_ID = "REMOVE_DP_FROM_TOUR";
 
     // Not to be confused with "model.Map"
-
     private Map<String, Button> buttons = new HashMap<String, Button>();
-
     private ComboBox<String> courierBox;
-
     private ComboBox<String> twBox;
-
     private ButtonListener buttonListener;
-
     private MouseListener mouseListener;
-
     private BoxListener boxListener;
-
     private Integer selectedTimeWindow;
-
     private Long selectedCourierId;
 
     public InteractiveView(User user, Window window, Controller controller) {
@@ -237,18 +226,12 @@ public class InteractiveView extends Pane {
     public void setSelectedTimeWindow(Integer selectedTimeWindow) {
         this.selectedTimeWindow = selectedTimeWindow;
     }
-    /**
-     * this method reset all combo-boxes
-     */
+
     public void resetComboBoxes() {
         courierBox.getSelectionModel().clearSelection();
         twBox.getSelectionModel().clearSelection();
     }
-    /**
-     *Enables or disables a component(button, combo-box) in this
-     *@param nodeId the id of the component
-     *@param allow true if the node will be enabled, false if not
-     */
+
     public void allowNode(String nodeId, boolean allow){
         if (Objects.equals(nodeId, COURIER_BOX_ID)){
             courierBox.setDisable(!allow);
@@ -258,18 +241,12 @@ public class InteractiveView extends Pane {
             buttons.get(nodeId).setDisable(!allow);
         }
     }
-    /**
-     * Shows a given button
-     * @param nodeId the id of the button to show
-     */
+    
     public void showButton(String nodeId){
         this.buttons.get(nodeId).setVisible(true);
         this.buttons.get(nodeId).setDisable(false);
     }
-    /**
-     * Hides a given button
-     * @param nodeId the id of the button to hide
-     */
+    
     public void hideButton(String nodeId){
         this.buttons.get(nodeId).setVisible(false);
         this.buttons.get(nodeId).setDisable(true);

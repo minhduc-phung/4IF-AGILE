@@ -13,33 +13,22 @@ import javafx.scene.control.cell.MapValueFactory;
 import java.util.*;
 
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import model.Courier;
 import model.DeliveryPoint;
 import model.User;
 import observer.Observer;
 import observer.Observable;
-/**
- * This class defines the table representation of the map, updates and deletes the data of delivery points of a courier.
- */
+
 public class TextualView extends Pane implements Observer {
-
-
     private MouseListener mouseListener;
-
     private TableView<Map> tableView;
-
     public static final String IndexMapKey = "Index";
-
     public static final String TimeWindowMapKey = "TimeWindow";
-
     public static final String EstArrivalMapKey = "EstArrival";
-
     private DeliveryPoint selectedDeliveryPoint;
-
     private int width = 350;
-
     private int height = 250;
+
     public TextualView (Window window, Controller controller){
         super();
         setLayoutX(1075);
@@ -89,10 +78,9 @@ public class TextualView extends Pane implements Observer {
                     return -1;
                 }
             };
-            row.setTextFill(Color.GRAY);
-            // color the row red if the estimated arrival time is before the time window, and green if it is after, blue if it's selected and white if it is not set
-            row.styleProperty().bind(Bindings.when(late.isEqualTo(1)).then("-fx-background-color: #ff9aa2;").otherwise(Bindings.when(late.isEqualTo(-1)).then("-fx-background-color: #b5ead7;")
-                    .otherwise(Bindings.when(row.selectedProperty()).then("-fx-background-color: #aec6cf;").otherwise("-fx-background-color: #ffffff;"))));
+            // color the row red if the estimated arrival time is before the time window, and green if it is after, and white if it is not set
+            row.styleProperty().bind(Bindings.when(late.isEqualTo(1)).then("-fx-background-color: #ff9aa2;").otherwise(Bindings.when(late.isEqualTo(-1)).then("-fx-background-color: #b5ead7;").otherwise("-fx-background-color: #ffffff;")));
+
             row.setOnMouseClicked(mouseListener);
             return row ;
         });
@@ -100,13 +88,6 @@ public class TextualView extends Pane implements Observer {
         getChildren().add(tableView);
         window.getChildren().add(this);
     }
-
-    /**
-     * Puts data into the table view
-     *@param user is the one who use this application
-     *@param idCourier id of a courier for a specific user
-     *@return all the data that should be put in the table view
-     */
 
     private ObservableList<Map> generateData(User user, Long idCourier) {
         ObservableList<Map> data = FXCollections.observableArrayList();
@@ -129,15 +110,9 @@ public class TextualView extends Pane implements Observer {
         return data;
     }
 
-    /**
-     *Updates the table
-     *@param user
-     *@param idCourier
-     */
     public void updateData(User user, Long idCourier) {
         tableView.setItems(generateData(user, idCourier));
     }
-
 
     public DeliveryPoint getSelectedDeliveryPoint() {
         return selectedDeliveryPoint;
@@ -147,9 +122,6 @@ public class TextualView extends Pane implements Observer {
         this.selectedDeliveryPoint = dp;
     }
 
-    /**
-     * Cancels the selection of a delivery point
-     */
     public void clearSelection() {
         tableView.getSelectionModel().clearSelection();
         selectedDeliveryPoint = null;

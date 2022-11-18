@@ -71,10 +71,6 @@ public class Controller {
 
     /**
      * Method called by window when the user click on the button "Validate"
-     * @param map the map
-     * @param idIntersection the id of the intersection
-     * @param idCourier the id of the courier
-     * @param timeWindow the time window
      */
     public void enterDeliveryPoint(Map map, Long idIntersection, Long idCourier, Integer timeWindow) {
         System.out.println(this.currentState.getClass());
@@ -165,9 +161,6 @@ public class Controller {
     /**
      * Method called by the window when the user click on the button "Add" after
      * having calculated the tour and clicked on "Modify"
-     * @param c the courier chosen in the comboBox "Courier"
-     * @param intersection the chosen intersection
-     * @param timeWindow the time window
      */
     public void modifyTourEnterDP(Courier c, Intersection intersection, Integer timeWindow) throws ParseException {
         this.currentState.modifyTourEnterDP(this, c, intersection, timeWindow, listOfCommands);
@@ -176,8 +169,6 @@ public class Controller {
     /**
      * Method called by the window when the user click on the button "Remove" after
      * having calculated the tour and clicked on "Modify"
-     * @param c the courier chosen in the comboBox "Courier"
-     * @param dp the delivery point to remove
      */
     public void modifyTourRemoveDP(Courier c, DeliveryPoint dp) throws ParseException {
         this.currentState.modifyTourRemoveDP(this, c, dp, listOfCommands);
@@ -228,13 +219,13 @@ public class Controller {
     /**
      * Method called by the window when the user used the Ctrl+Z shortcut
      */
-    public void undo() throws ParseException {
+    public void undo() {
         currentState.undo(listOfCommands);
     }
     /**
      * Method called by the window when the user used the Ctrl+Y shortcut
      */
-    public void redo() throws ParseException {
+    public void redo() {
         currentState.redo(listOfCommands);
     }
 }

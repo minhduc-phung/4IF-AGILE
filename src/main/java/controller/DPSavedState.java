@@ -116,7 +116,7 @@ public class DPSavedState implements State {
 
         Date now = new Date();
         SimpleDateFormat sd = new SimpleDateFormat("dd-MM-yyyy");
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
         Date timeStamp;
         if (earliestTW < 10) {
             timeStamp = sdf.parse(sd.format(now) + " 0" + earliestTW + ":00:00");

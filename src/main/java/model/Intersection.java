@@ -7,11 +7,6 @@ package model;
 
 import java.util.HashMap;
 
-
-/**
- * this class defines the points on the map called intersections
- * (it occurs as two road segments cross, defined by a latitude and a longitude and is modeled as a node in a graph)
- */
 public class Intersection {
     protected Long id;
     protected Double latitude;

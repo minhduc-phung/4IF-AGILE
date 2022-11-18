@@ -14,24 +14,15 @@ import javafx.scene.text.TextAlignment;
 import model.User;
 
 // We have no intentions to do scaling like PlaCo example.
-/**
- * Defines the size, the layout, the text and contains the views.
- */
 public class Window extends Group {
-
     private Label messageFrame;
-
     private Label lateDeliveriesNumber;
-
     private GraphicalView graphicalView;
-
     private TextualView textualView;
-
     private InteractiveView interactiveView;
-
     private final int WINDOW_WIDTH = 1500;
-
     private final int WINDOW_HEIGHT = 900;
+
 
     public Window(User user, Controller controller) {
         super();
@@ -146,19 +137,10 @@ public class Window extends Group {
         return textualView;
     }
 
-    /**
-     *Enables or disables a component(button, combo-box)
-     *@param nodeId the id of the component.
-     *@param allow true if the node will be enabled, false if not.
-     */
     public void allowNode (String nodeId, boolean allow) {
         interactiveView.allowNode(nodeId, allow);
     }
 
-    /**
-     * Shows the user if there is any late deliveries and their number if yes.
-     * @param numberOfLateDeliveries
-     */
     public void updateOnCalculateTour(int numberOfLateDeliveries) {
         if (numberOfLateDeliveries == 0) {
             lateDeliveriesNumber.setText("All deliveries are on time.");
@@ -176,9 +158,7 @@ public class Window extends Group {
             interactiveView.updateOnCalculateTour(false);
         }
     }
-    /**
-     * Resets the number of late delivery and the related button
-     */
+
     public void resetLateDeliveryNumber() {
         lateDeliveriesNumber.setText("");
         lateDeliveriesNumber.setStyle("-fx-border-color: white; -fx-border-width: 5");

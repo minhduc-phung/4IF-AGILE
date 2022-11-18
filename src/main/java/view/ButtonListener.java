@@ -19,10 +19,6 @@ import java.util.logging.Logger;
 import model.Courier;
 import model.Intersection;
 
-/**
- * This class handles the events happening after clicking on any button.
- *
- */
 public class ButtonListener implements EventHandler<ActionEvent> {
 
     private Controller controller;

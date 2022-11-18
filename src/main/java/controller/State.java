@@ -149,12 +149,12 @@ public interface State {
      * Method called by window when the user do a Ctrl+Z to undo the last action
      * @param loc the list of commands made by the user
      */
-    public default void undo(ListOfCommands loc) throws ParseException { };
+    public default void undo(ListOfCommands loc) { };
     /**
      * Method called by window when the user do a Ctrl+Y to redo the last undid action
      * @param loc the list of commands made by the user
      */
-    public default void redo(ListOfCommands loc) throws ParseException {};
+    public default void redo(ListOfCommands loc){};
 
     /**
      * Method called by window when the user click on the button "Modify"

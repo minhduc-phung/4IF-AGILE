@@ -24,48 +24,9 @@ import xml.PlanTextWriter;
 
 import static view.GraphicalView.IntersectionType.*;
 import static view.GraphicalView.IntersectionType.ON_TIME;
-import view.Window;
-import xml.XMLmapDeserializer;
 
 public class TourModifiedState implements State {
-    public void loadMapFromXML(Controller controller, Window window) throws ExceptionXML, ParserConfigurationException, SAXException, IOException {
-        controller.map = XMLmapDeserializer.load(controller.map);
-        controller.user = new User();
-        Intersection warehouse = controller.getMap().getWarehouse();
-        addWarehouse(warehouse, controller.user);
-        controller.setCurrentState(controller.mapLoadedState);
-        window.getGraphicalView().drawMap(controller.getMap());
-        window.getInteractivePane().resetComboBoxes();
-        window.getTextualView().updateData(controller.user, 1L);
-        window.allowNode("COURIER_BOX", true);
-        window.allowNode("TW_BOX", true);
-        window.resetLateDeliveryNumber();
-        window.setMessage("Please choose a courier and a time-window to start adding delivery points.");
-    }
 
-    /**
-     * Method which adds the warehouse as the first node of the tour of all the couriers
-     * @param warehouse the warehouse
-     * @param user the user
-     */
-    private void addWarehouse(Intersection warehouse, User user) {
-        DeliveryPoint dpWarehouse = new DeliveryPoint(warehouse.getId(), warehouse.getLatitude(), warehouse.getLongitude());
-        for (Long key : user.getListCourier().keySet()) {
-            Courier c = user.getListCourier().get(key);
-            dpWarehouse.chooseCourier(c);
-            c.addDeliveryPoint(dpWarehouse);
-
-            c.addPositionIntersection(warehouse.getId());
-            HashMap<Long, Double> nestedMap = new HashMap<>();
-            nestedMap.put(warehouse.getId(), Double.valueOf("0.0"));
-            c.getShortestPathBetweenDPs().put(warehouse.getId(), nestedMap);
-
-            Tour tour = new Tour();
-            tour.addTourRoute(dpWarehouse.getId(), new ArrayList<>());
-            c.getListSegmentBetweenDPs().put(dpWarehouse.getId(), tour);
-            user.getListCourier().replace(key, c);
-        }
-    }
     @Override
     public void modifyTourEnterDP(Controller controller, Courier c, Intersection intersection,
                                   Integer timeWindow, ListOfCommands loc) throws ParseException {
@@ -93,12 +54,12 @@ public class TourModifiedState implements State {
         });
 
         DeliveryPoint dp = c.getCurrentDeliveryPoints().get(listDPcopy.size() - 1);
-        //System.out.println("dp1: " + dp);
+        System.out.println("dp1: " + dp);
         int index = listDPcopy.indexOf(dp);
         // change currentTour
         DeliveryPoint headPoint = listDPcopy.get(index - 1);
 
-        //System.out.println("headPoint:" + headPoint);
+        System.out.println("headPoint:" + headPoint);
 
         if (index < listDPcopy.size() - 1) {
             DeliveryPoint nextPoint = listDPcopy.get(index + 1);
@@ -120,7 +81,7 @@ public class TourModifiedState implements State {
 
         long sum = headPoint.getEstimatedDeliveryTime().getTime();
         SimpleDateFormat sd = new SimpleDateFormat("dd-MM-yyyy");
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
 
         while (aDP.getId() != null) {
             Double dist = c.getShortestPathBetweenDPs().get(headPoint.getId()).get(aDP.getId());
@@ -133,7 +94,7 @@ public class TourModifiedState implements State {
             }
             Date estimatedTime = new Date(sum);
             if (estimatedTime.before(timeWin)) {
-                Date et = new Date(timeWin.getTime());
+                Date et = new Date(timeWin.getTime() + 5 * 60 * 1000);
                 aDP.setEstimatedDeliveryTime(et);
                 sum = et.getTime();
             } else {
@@ -192,7 +153,7 @@ public class TourModifiedState implements State {
         if (!nextPoint.getId().equals(c.getCurrentDeliveryPoints().get(0).getId())) {
             long sum = headPoint.getEstimatedDeliveryTime().getTime();
             SimpleDateFormat sd = new SimpleDateFormat("dd-MM-yyyy");
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
 
             while (nextPoint.getId() != null) {
                 Double dist = c.getShortestPathBetweenDPs().get(headPoint.getId()).get(nextPoint.getId());
@@ -205,7 +166,7 @@ public class TourModifiedState implements State {
                 }
                 Date estimatedTime = new Date(sum);
                 if (estimatedTime.before(timeWin)) {
-                    Date et = new Date(timeWin.getTime());
+                    Date et = new Date(timeWin.getTime() + 5 * 60 * 1000);
                     nextPoint.setEstimatedDeliveryTime(et);
                     sum = et.getTime();
                 } else {
@@ -229,12 +190,12 @@ public class TourModifiedState implements State {
     }
 
     @Override
-    public void undo(ListOfCommands loc) throws ParseException {
+    public void undo(ListOfCommands loc) {
         loc.undo();
     }
 
     @Override
-    public void redo(ListOfCommands loc) throws ParseException {
+    public void redo(ListOfCommands loc) {
         loc.redo();
         
     }

@@ -16,13 +16,7 @@ import java.util.Objects;
 
 import static view.GraphicalView.IntersectionType.*;
 
-/**
- * The graphical representation of the map, which can be interacted with by the user via a mouse
- */
 public class GraphicalView extends Pane{
-    /**
-     * The types of intersection, used to determine the color of the intersection on the map
-     */
     public enum IntersectionType { UNSELECTED, SELECTED, LATE, ON_TIME, HOVERED, DP }
     private int viewHeight = 700;
     private final int viewWidth = 1000;
@@ -212,11 +206,6 @@ public class GraphicalView extends Pane{
         this.selectedIntersection = selectedIntersection;
     }
 
-    /**
-     * Refreshes the entire map whenever the user choose another courier or add a delivery point ,...
-     * @param map the map
-     * @param courier the chosen courier
-     */
     public void updateMap(Map map, Courier courier) {
     	this.getChildren().clear();
     	this.drawMap(map);
@@ -224,11 +213,7 @@ public class GraphicalView extends Pane{
             if (!Objects.equals(deliveryPoint.getId(), map.getWarehouse().getId())) paintIntersection(deliveryPoint, DP);
         }
     }
-    /**
-     * Refreshes the entire map whenever the user add or remove a delivery point from the calculated tour
-     * @param map the map
-     * @param courier the chosen courier
-     */
+
     public int updateCalculatedMap(Map map, Courier courier) {
         Tour tour = courier.getCurrentTour();
     	this.getChildren().clear();

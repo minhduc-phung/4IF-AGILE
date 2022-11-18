@@ -12,14 +12,6 @@ import model.Intersection;
 import model.Map;
 
 public class Dijkstra {
-    /**
-     * Calculates the minimum distance between two intersections using the Dijkstra algorithm
-     * @param aMap the map
-     * @param idOrigin the id of the intersection origin
-     * @param idDest the id of the intersection destination
-     * @param precedentNode
-     * @return
-     */
     public static Double dijkstra(Map aMap, Long idOrigin, Long idDest, HashMap<Long, Long> precedentNode) {
         List<Long> idWhiteNodes = new ArrayList<>();
         List<Long> idGreyNodes = new ArrayList<>();

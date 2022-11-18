@@ -5,9 +5,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
 
-/**
- * This class handle the events relative to the combo-boxes
- */
 public class BoxListener implements EventHandler<ActionEvent> {
     private Controller controller;
     public BoxListener(Controller controller){
